@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
    <head>
       <meta charset="UTF-8">
@@ -175,7 +175,7 @@
 
 
 
-   <h6 class="section-header">Popular Tours</h6>
+
       <div class="p-3">
                 <div class="row g-3 mb-3">
                    <div class="col-6">
@@ -187,6 +187,10 @@
                             </a>
                          </div>
                       </div>
+                      <div class="text-center mt-2">
+                        <h6 class="mb-0">Kitulo Express</h6>
+                        <small class="text-muted">Premium Sleeper - Kitulo, home for flowers</small>
+                      </div>
                    </div>
                    <div class="col-6">
                       <div class="bus-header position-relative">
@@ -197,15 +201,17 @@
                             </a>
                          </div>
                       </div>
+                      <div class="text-center mt-2">
+                        <h6 class="mb-0">Safari Coach</h6>
+                        <small class="text-muted">Luxury Bus - Enjoy a comfortable journey</small>
+                      </div>
                    </div>
                 </div>
 
         
       </div>
-   <!-- Content Container -->
-       <!-- Bus Details -->
          <div class="bus-details mt-1" style="padding: 0 27px;margin: 0 23px;border-radius: 10px; border: 1px solid #ccc;">
-            <div class="d-flex justify-content-between align-items-start mb-1 mt-1">
+            <div class="d-flex justify-content-between align-items-left mb-1 mt-1">
                <div>
                   <h5 class="fw-bold mb-1">Kitulo, home for flowers</h5>
                   <div class="text-muted">Premium Sleeper</div>
@@ -233,15 +239,15 @@
          <!-- Search Section -->
          <div class="search-card">
             <h6 class="text-primary-color mb-3 fw-semibold">
-               <i class="bi bi-search me-2"></i>Find Your Tour
+               <i class="bi bi-search me-2"></i>Check tour availability
             </h6>
             <form action="bus-listing.html">
                <div class="mb-3">
                   <label for="fromLocation" class="form-label">
-                  <i class="bi bi-geo-alt me-1 text-primary-color"></i>From
+                  <i class="bi bi-geo-alt me-1 text-primary-color"></i>Location
                   </label>
                   <select class="form-select" id="fromLocation">
-                     <option selected="">Select departure city</option>
+                     <option selected="">Select location to visit</option>
                      <option>New York</option>
                      <option>Boston</option>
                      <option>Washington DC</option>
@@ -250,10 +256,10 @@
                </div>
                <div class="mb-3">
                   <label for="toLocation" class="form-label">
-                  <i class="bi bi-geo-alt-fill me-1 text-secondary-color"></i>To
+                  <i class="bi bi-geo-alt-fill me-1 text-secondary-color"></i>National Park / game reserve
                   </label>
                   <select class="form-select" id="toLocation">
-                     <option selected="">Select destination city</option>
+                     <option selected="">Select national park / game reserve</option>
                      <option>New York</option>
                      <option>Boston</option>
                      <option>Washington DC</option>
@@ -262,108 +268,33 @@
                </div>
                <div class="mb-3">
                   <label for="travelDate" class="form-label">
-                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of Journey
+                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of Visit
                   </label>
                   <input type="date" class="form-control" id="travelDate">
                </div>
                <button type="submit" class="btn-app p-2 fw-bold btn">
-               <i class="bi bi-search me-2"></i>Search Buses
+               <i class="bi bi-search me-2"></i>Search Available Tours
                </button>
             </form>
          </div>
-         <!-- Popular Routes (Horizontal Scrollable) -->
-         <h6 class="section-header">Popular Routes</h6>
-         <div class="scroll-container ms-3">
-            <a href="bus-listing.html" class="scroll-item">
-               <div class="route-visual">
-                  <div class="route-point start"></div>
-                  <div class="route-line"></div>
-                  <div class="route-point end"></div>
-                  <div class="route-cities">
-                     <div class="fw-semibold">NYC</div>
-                     <div class="fw-semibold">Boston</div>
-                  </div>
-               </div>
-               <div class="mt-3">
-                  <div class="fw-bold text-primary-color">$45</div>
-                  <div class="d-flex align-items-center mt-1">
-                     <i class="bi bi-clock me-1 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">4h 30m</span>
-                  </div>
-               </div>
-            </a>
-            <a href="bus-listing.html" class="scroll-item">
-               <div class="route-visual">
-                  <div class="route-point start"></div>
-                  <div class="route-line"></div>
-                  <div class="route-point end"></div>
-                  <div class="route-cities">
-                     <div class="fw-semibold">DC</div>
-                     <div class="fw-semibold">NYC</div>
-                  </div>
-               </div>
-               <div class="mt-3">
-                  <div class="fw-bold text-primary-color">$40</div>
-                  <div class="d-flex align-items-center mt-1">
-                     <i class="bi bi-clock me-1 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">4h 15m</span>
-                  </div>
-               </div>
-            </a>
-            <a href="bus-listing.html" class="scroll-item">
-               <div class="route-visual">
-                  <div class="route-point start"></div>
-                  <div class="route-line"></div>
-                  <div class="route-point end"></div>
-                  <div class="route-cities">
-                     <div class="fw-semibold">Philly</div>
-                     <div class="fw-semibold">NYC</div>
-                  </div>
-               </div>
-               <div class="mt-3">
-                  <div class="fw-bold text-primary-color">$25</div>
-                  <div class="d-flex align-items-center mt-1">
-                     <i class="bi bi-clock me-1 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">2h 00m</span>
-                  </div>
-               </div>
-            </a>
-            <a href="bus-listing.html" class="scroll-item">
-               <div class="route-visual">
-                  <div class="route-point start"></div>
-                  <div class="route-line"></div>
-                  <div class="route-point end"></div>
-                  <div class="route-cities">
-                     <div class="fw-semibold">Boston</div>
-                     <div class="fw-semibold">DC</div>
-                  </div>
-               </div>
-               <div class="mt-3">
-                  <div class="fw-bold text-primary-color">$65</div>
-                  <div class="d-flex align-items-center mt-1">
-                     <i class="bi bi-clock me-1 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">8h 15m</span>
-                  </div>
-               </div>
-            </a>
-         </div>
+
          <!-- Recent Searches -->
-         <h6 class="section-header">Recent Searches</h6>
+         <h6 class="section-header">Popular bookings</h6>
          <a href="bus-listing.html" class="route-card d-block">
             <div class="d-flex justify-content-between align-items-center">
                <div>
                   <div class="d-flex align-items-center">
-                     <span class="fw-semibold text-primary-color">NYC</span>
+                     <span class="fw-semibold text-primary-color">Kitulo National park</span>
                      <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                     <span class="fw-semibold text-primary-color">Boston</span>
+                     <span class="fw-semibold text-primary-color">Njombe, Tanzania</span>
                   </div>
                   <div class="d-flex align-items-center mt-2">
                      <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">Apr 15, 2025</span>
+                     <span class="text-muted small"> Last tour - Apr 15, 2025</span>
                   </div>
                </div>
-               <div class="btn btn-light-2">
-                  <i class="bi bi-search"></i>
+               <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                  <i class="bi bi-search"></i> Check availability
                </div>
             </div>
          </a>
@@ -371,23 +302,23 @@
             <div class="d-flex justify-content-between align-items-center">
                <div>
                   <div class="d-flex align-items-center">
-                     <span class="fw-semibold text-primary-color">DC</span>
+                     <span class="fw-semibold text-primary-color">Mpanga Kipengele</span>
                      <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                     <span class="fw-semibold text-primary-color">Philly</span>
+                     <span class="fw-semibold text-primary-color">Makambako, Njombe</span>
                   </div>
                   <div class="d-flex align-items-center mt-2">
                      <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">Apr 10, 2025</span>
+                     <span class="text-muted small">Last tour - Apr 10, 2025</span>
                   </div>
                </div>
-               <div class="btn btn-light-2">
-                  <i class="bi bi-search"></i>
+               <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                  <i class="bi bi-search"></i> Check availability
                </div>
             </div>
          </a>
          <!-- Special Offers -->
          <h6 class="section-header">Special Offers</h6>
-         <a href="offers-rewards.html" class="offer-card d-block">
+         <a href="offers-rewards.html" class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
             <span class="offer-badge">20% OFF</span>
             <div class="d-flex align-items-center">
                <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-1">
@@ -402,7 +333,7 @@
                </div>
             </div>
          </a>
-         <a href="offers-rewards.html" class="offer-card d-block mb-4">
+         <a href="offers-rewards.html" class="offer-card d-block mb-4"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
             <span class="offer-badge">$10 OFF</span>
             <div class="d-flex align-items-center">
                <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-2">
@@ -417,6 +348,45 @@
                </div>
             </div>
          </a>
+           <!-- Upcoming Trips -->
+            <h6 class="section-header mt-0">Upcoming Tours</h6>
+         <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
+               <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                     <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-primary-color">Mpanga Kipengere</span>
+                        <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                        <span class="fw-semibold text-primary-color">Makambako, Tanzania</span>
+                     </div>
+                  </div>
+                  <span class="status-badge confirmed">Confirmed</span>
+               </div>
+               <div class="d-flex justify-content-between mb-3">
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">Dec 15, 2025</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">From 10:30 AM</span>
+                  </div>
+               </div>
+               <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                     <div class="fw-semibold">Booking #BG78945</div>
+                     <div class="small text-muted">Login to check goings</div>
+                  </div>
+                  <a href="my-tickets.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
+                  View Ticket
+                  </a>
+               </div>
+            </div> 
+
+
+
+
+
+
       </div>
       <!-- Bottom Navigation Bar (App-style) -->
       <div class="bottom-nav">
