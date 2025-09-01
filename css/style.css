@@ -321,7 +321,7 @@ a {
   margin: 10px 15px;
   padding: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-left: 4px solid var(--secondary-color);
+  border: 1px solid rgba(206, 201, 201, 0.603);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
