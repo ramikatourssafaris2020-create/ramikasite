@@ -22,7 +22,7 @@ import {
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCeCjerHDeNeskBzVMMcz82UDy4v7-gHCM",
-  authDomain: "ramikasafaris.com",
+  authDomain: "ramika-safaris.firebase.com",
   projectId: "ramika-safaris",
   storageBucket: "ramika-safaris.firebasestorage.app",
   messagingSenderId: "684999593043",
@@ -285,4 +285,5 @@ export async function initLanding() {
 
 // Expose for debugging
 window.__firebaseAuth = { signInWithGoogle, signUpWithEmail, signInWithEmailAddr };
+
 
