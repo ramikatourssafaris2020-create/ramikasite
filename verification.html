@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>BusGo - Bus Booking HTML Mobile App Template</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+          <link rel="stylesheet" href="font/bootstrap-icons.css">
+      <!-- Custom css -->
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+   </head>
+   <body>
+
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- App Header -->
+      <div class="app-header d-flex justify-content-between align-items-center">
+         <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center">
+               <a href="select-seat.html" class="back-link text-black">
+               <i class="bi bi-file-plus me-3 app-header-icon"></i>
+               </a>
+               <span class="app-header-title">Booking Verification</span>
+            </div>
+         </div>
+         <div>
+            <a href="search.html" class="btn header-btn me-2">
+            <i class="bi bi-search icon-md"></i>
+            </a>
+            <a href="notifications.html" class="btn header-btn me-2">
+            <i class="bi bi-bell icon-md"></i>
+            </a>
+            <a href="settings.html" class="btn header-btn">
+            <i class="bi bi-person-circle icon-md"></i>
+            </a>
+         </div>
+      </div>
+      <!-- Content Container -->
+      <div class="p-3">
+         <!-- Booking Progress -->
+         <div class="booking-progress d-flex justify-content-between mb-4">
+            <div class="progress-step active">
+               <div class="step-dot"></div>
+               <div class="step-label small">Preview</div>
+            </div>
+            <div class="progress-connector"></div>
+            <div class="progress-step">
+               <div class="step-dot"></div>
+               <div class="step-label small">Payment</div>
+            </div>
+            <div class="progress-connector"></div>
+            <div class="progress-step">
+               <div class="step-dot"></div>
+               <div class="step-label small">Ticket</div>
+            </div>
+         </div>
+         <!-- Trip Summary -->
+         <div class="trip-summary mb-4">
+            <h6 class="fw-bold mb-3">Ticket Preview</h6>
+            <div class="summary-card p-3 rounded-3 bg-primary-light">
+               <!-- Bus Info -->
+               <div class="d-flex align-items-center mb-3">
+                  <div class="bus-icon me-3">
+                     <i class="bi bi-geo-alt"></i>
+                  </div>
+                  <div>
+                     <h6 class="fw-bold mb-0">Mpanga Kipengere</h6>
+                     <div class="text-muted small">Makambako, Tanzania</div>
+                  </div>
+               </div>
+               <!-- Journey Details -->
+               <div class="journey-details mb-3">
+                  <div class="d-flex mb-3">
+                     <div class="journey-stops me-3">
+                        <div class="departure-stop"></div>
+                        <div class="journey-line"></div>
+                        <div class="arrival-stop"></div>
+                     </div>
+                     <div class="journey-info flex-grow-1">
+                        <div class="mb-3">
+                           <div class="fw-bold">Njombe old bus station</div>
+                           <div class="text-muted small">Dec 15, 07:00 AM</div>
+                        </div>
+                        <div>
+                           <div class="fw-bold">Mpanga Reserve</div>
+                           <div class="text-muted small">Dec 15, 11:30 AM</div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <!-- Seat Details -->
+               <div class="seat-details mb-3">
+                  <div class="text-muted small mb-1">Selected Seats</div>
+                  <div class="d-flex flex-wrap gap-2">
+                     <span class="seat-tag">B1</span>
+                     <span class="seat-tag">B2</span>
+                  </div>
+               </div>
+               <!-- Fare Details -->
+               <div class="fare-details">
+                  <div class="fare-item d-flex justify-content-between mb-1">
+                     <div class="text-muted small">Base Fare (2 seats)</div>
+                     <div class="small">$90.00</div>
+                  </div>
+                  <div class="fare-item d-flex justify-content-between mb-1">
+                     <div class="text-muted small">Service Fee</div>
+                     <div class="small">$5.00</div>
+                  </div>
+                  <div class="fare-item d-flex justify-content-between mb-1">
+                     <div class="text-muted small">Discount</div>
+                     <div class="small text-success">-$4.50</div>
+                  </div>
+                  <hr class="my-2">
+                  <div class="fare-item d-flex justify-content-between">
+                     <div class="fw-bold">Total Amount</div>
+                     <div class="fw-bold text-primary-color">$90.50</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- Passenger Details Form -->
+         <div class="passenger-details mb-4">
+            <h6 class="fw-bold mb-3">My Details</h6>
+            <div class="mb-3">
+               <label for="passName" class="form-label">Full Name</label>
+               <input type="text" class="form-control" id="passName" placeholder="Enter your full name">
+            </div>
+            <div class="mb-3">
+               <label for="passEmail" class="form-label">Email Address</label>
+               <input type="email" class="form-control" id="passEmail" placeholder="Enter your email">
+            </div>
+            <div class="mb-2">
+               <label for="passPhone" class="form-label">Phone Number</label>
+               <input type="number" class="form-control" id="passPhone" placeholder="Enter your phone number">
+            </div>
+            <div class="form-check mb-3">
+               <input class="form-check-input" type="checkbox" id="bookForOthers">
+               <label class="form-check-label" for="bookForOthers">
+               Booking for someone else?
+               </label>
+            </div>
+         </div>
+         <!-- Booking Conditions -->
+         <div class="booking-conditions mb-4">
+            <div class="form-check mb-1">
+               <input class="form-check-input" type="checkbox" id="termsCheck">
+               <label class="form-check-label small" for="termsCheck">
+               I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+               </label>
+            </div>
+         </div>
+         <!-- Promo Code -->
+         <div class="promo-code mb-4">
+            <div class="d-flex gap-2">
+               <input type="text" class="form-control" placeholder="Enter promo code">
+               <button class="btn btn-app px-3 w-auto rounded-3">Apply</button>
+            </div>
+         </div>
+      </div>
+      <!-- Bottom Fixed Bar for Continue -->
+      <div class="bottom-fixed-bar p-3">
+         <div class="d-flex justify-content-between align-items-center gap-3">
+            <div class="lh-sm">
+               <div class="fw-bold fs-5 text-primary-color">$90.50</div>
+               <div class="text-muted small">Total</div>
+            </div>
+            <a href="checkout-payment.html" class="btn btn-app py-2 fw-bold">Proceed to Payment</a>
+         </div>
+      </div>
+      <!-- Bootstrap bundle js -->
+      <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="ee501bf6d0a3161db16be660-text/javascript"></script>
+      <!-- Script js -->
+      <script src="js/script.js" type="ee501bf6d0a3161db16be660-text/javascript"></script> 
+   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="ee501bf6d0a3161db16be660-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

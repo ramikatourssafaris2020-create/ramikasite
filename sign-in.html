@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>BusGo - Bus Booking HTML Mobile App Template</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+       <link rel="stylesheet" href="font/bootstrap-icons.css">
+      <!-- Custom css -->
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+   </head>
+   <body>
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- Auth Container -->
+      <div class="auth-container">
+         <div class="mb-4">
+            <a href="sign-in.html" class="btn back-btn">
+            <i class="bi bi-arrow-left"></i>
+            </a>
+         </div>
+         <!-- Logo and Header -->
+         <div class="text-center mb-4">
+            <h4 class="fw-bold text-primary-color mb-0">Welcome back!</h4>
+            <p class="text-muted">Sign in to your account</p>
+         </div>
+         <!-- Sign In Form -->
+         <div class="auth-form">
+            <div class="mb-3">
+               <label for="email" class="form-label">Email</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-envelope text-muted"></i>
+                  </span>
+                  <input type="email" class="form-control border-start-0" id="email" placeholder="Enter your email">
+               </div>
+            </div>
+            <div class="mb-3">
+               <div class="d-flex justify-content-between align-items-center">
+                  <label for="password" class="form-label">Password</label>
+                  <a href="forgot-password.html" class="small text-primary-color text-decoration-none">Forgot Password?</a>
+               </div>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-lock text-muted"></i>
+                  </span>
+                  <input type="password" class="form-control border-start-0 border-end-0" id="password" placeholder="Enter your password">
+                  <button class="input-group-text bg-transparent border-start-0" id="togglePassword">
+                  <i class="bi bi-eye text-muted"></i>
+                  </button>
+               </div>
+            </div>
+            <div class="mb-3 form-check">
+               <input type="checkbox" class="form-check-input" id="rememberMe">
+               <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <div class="d-grid gap-2 mb-4">
+               <button id="signInBtn" class="btn btn-app">Sign In</button>
+            </div>
+            <!-- Social Sign In -->
+            <div class="text-center mb-4">
+               <p class="text-muted mb-3">Or sign in with</p>
+               <div class="d-flex justify-content-center gap-3">
+                  <button id="googleSignInBtn" class="btn social-btn" type="button">
+                  <i class="bi bi-google"></i>
+                  </button>
+                  <button class="btn social-btn" type="button">
+                  <i class="bi bi-facebook"></i>
+                  </button>
+                  <button class="btn social-btn" type="button">
+                  <i class="bi bi-apple"></i>
+                  </button>
+               </div>
+            </div>
+            <!-- Sign Up Link -->
+            <div class="text-center">
+               <p class="mb-0">Don't have an account? <a href="sign-up.html" class="text-primary-color text-decoration-none">Sign Up</a></p>
+            </div>
+         </div>
+      </div>
+   <!-- Bootstrap bundle js -->
+   <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="49edb481187a21f003701270-text/javascript"></script>
+   <!-- Script js -->
+   <script src="js/script.js" type="49edb481187a21f003701270-text/javascript"></script>
+   <!-- Firebase auth module -->
+   <script type="module" src="js/firebase-auth.js"></script>
+   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="49edb481187a21f003701270-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

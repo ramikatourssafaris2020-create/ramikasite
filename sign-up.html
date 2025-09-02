@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>BusGo - Bus Booking HTML Mobile App Template</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+   <link rel="stylesheet" href="font/bootstrap-icons.css">
+      <!-- Custom css -->
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+   </head>
+   <body>
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- Auth Container -->
+      <div class="auth-container">
+         <!-- Back Button -->
+         <div class="mb-4">
+            <a href="sign-in.html" class="btn back-btn">
+            <i class="bi bi-arrow-left"></i>
+            </a>
+         </div>
+         <!-- Logo and Header -->
+         <div class="text-center mb-4">
+            
+            <h4 class="fw-bold text-primary-color mb-0">Create Account</h4>
+            <p class="text-muted">Sign up to get started</p>
+         </div>
+         <!-- Sign Up Form -->
+         <div class="auth-form">
+            <div class="mb-3">
+               <label for="fullName" class="form-label">Full Name</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-person text-muted"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0" id="fullName" placeholder="Enter your full name">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Email</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-envelope text-muted"></i>
+                  </span>
+                  <input type="email" class="form-control border-start-0" id="email" placeholder="Enter your email">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="phone" class="form-label">Phone Number</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-telephone text-muted"></i>
+                  </span>
+                  <input type="tel" class="form-control border-start-0" id="phone" placeholder="Enter your phone number">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="password" class="form-label">Password</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                  <i class="bi bi-lock text-muted"></i>
+                  </span>
+                  <input type="password" class="form-control border-start-0 border-end-0" id="password" placeholder="Create a password">
+                  <button class="input-group-text bg-transparent border-start-0" id="togglePassword">
+                  <i class="bi bi-eye text-muted"></i>
+                  </button>
+               </div>
+               <div class="password-strength mt-2">
+                  <div class="d-flex gap-2 mb-1">
+                     <div class="strength-bar active"></div>
+                     <div class="strength-bar active"></div>
+                     <div class="strength-bar"></div>
+                     <div class="strength-bar"></div>
+                  </div>
+                  <small class="text-muted">Password strength: Medium</small>
+               </div>
+            </div>
+            <div class="mb-3 form-check">
+               <input type="checkbox" class="form-check-input" id="termsAgree">
+               <label class="form-check-label" for="termsAgree">
+               I agree to the <a href="#" class="text-primary-color text-decoration-none">Terms of Service</a> and <a href="#" class="text-primary-color text-decoration-none">Privacy Policy</a>
+               </label>
+            </div>
+            <div class="d-grid gap-2 mb-4">
+               <button id="signUpBtn" class="btn btn-app">Create Account</button>
+            </div>
+            <!-- Social Sign Up -->
+            <div class="text-center mb-4">
+               <p class="text-muted mb-3">Or sign up with</p>
+               <div class="d-flex justify-content-center gap-3">
+                  <button id="googleSignUpBtn" class="btn social-btn" type="button">
+                  <i class="bi bi-google"></i>
+                  </button>
+                  <button class="btn social-btn" type="button">
+                  <i class="bi bi-facebook"></i>
+                  </button>
+                  <button class="btn social-btn" type="button">
+                  <i class="bi bi-apple"></i>
+                  </button>
+               </div>
+            </div>
+            <!-- Sign In Link -->
+            <div class="text-center">
+               <p class="mb-0">Already have an account? <a href="sign-in.html" class="text-primary-color text-decoration-none">Sign In</a></p>
+            </div>
+         </div>
+      </div>
+   <!-- Bootstrap bundle js -->
+   <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="135996db82e021347d2d77af-text/javascript"></script>
+   <!-- Script js -->
+   <script src="js/script.js" type="135996db82e021347d2d77af-text/javascript"></script>
+   <!-- Firebase auth module -->
+   <script type="module" src="js/firebase-auth.js"></script>
+   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="135996db82e021347d2d77af-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
