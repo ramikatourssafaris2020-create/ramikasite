@@ -134,7 +134,7 @@ a {
   background: white;
   padding: 15px;
   color: rgb(0, 0, 0);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(206, 201, 201, 0.603);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -163,6 +163,7 @@ a {
 
 .menu-icon {
   font-size: 24px;
+  font-weight: 500;
 }
 
 /* Sidebar */
