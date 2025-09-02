@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { isCurrentUserAdmin } from './firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCeCjerHDeNeskBzVMMcz82UDy4v7-gHCM",
@@ -14,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-const usersRef = ref(db, 'users');
+let usersRef = ref(db, 'users');
 const usersList = document.getElementById('usersList');
 const status = document.getElementById('status');
 const filterInput = document.getElementById('filter');
@@ -50,10 +51,23 @@ function renderList(filter) {
   }
 }
 
-onValue(usersRef, (snap) => {
-  allUsers = snap.val() || {};
-  renderList(filterInput.value);
-});
+// Only subscribe to users if current user is admin according to DB rules
+async function trySubscribeUsers() {
+  const admin = await isCurrentUserAdmin();
+  if (!admin) {
+    status.innerHTML = '<span class="text-danger">Access denied: admin only.</span>';
+    usersList.innerHTML = '<div class="list-group-item">Admin access required</div>';
+    return;
+  }
+  status.innerHTML = '<span class="text-success">Admin access granted</span>';
+  usersRef = ref(db, 'users');
+  onValue(usersRef, (snap) => {
+    allUsers = snap.val() || {};
+    renderList(filterInput.value);
+  });
+}
+
+trySubscribeUsers();
 
 filterInput.addEventListener('input', (e) => renderList(e.target.value));
 
