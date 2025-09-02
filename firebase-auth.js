@@ -169,22 +169,39 @@ onAuthStateChanged(auth, (user) => {
 });
 
 // Initialize landing page: populate user name and enforce auth
+// Wait for the first auth state change (or timeout) and return the user (or null)
+function waitForAuthState(timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    let resolved = false;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!resolved) {
+        resolved = true;
+        unsubscribe();
+        resolve(user);
+      }
+    });
+    // timeout fallback
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        try { unsubscribe(); } catch (e) {}
+        // resolve with current sync value (may be null)
+        resolve(auth.currentUser || null);
+      }
+    }, timeoutMs);
+  });
+}
+
 export async function initLanding() {
-  // Wait briefly for auth state to settle
-  if (typeof currentUser === 'undefined' || currentUser === null) {
-    // If no user yet, check auth.currentUser
-    const user = auth.currentUser;
-    if (!user) {
-      // not signed in -> redirect to sign-in
-      window.location.href = 'sign-in.html';
-      return;
-    }
-  }
-  const user = auth.currentUser || currentUser || window.__currentUser;
+  // Wait for auth state to settle (up to 3s). This avoids redirecting when Firebase
+  // hasn't rehydrated the persisted user yet after navigation.
+  const user = await waitForAuthState(3000);
   if (!user) {
+    // truly not signed in -> redirect to sign-in
     window.location.href = 'sign-in.html';
     return;
   }
+
   // populate UI
   const nameEls = document.querySelectorAll('#userName');
   const displayName = user.displayName || user.email || 'User';
