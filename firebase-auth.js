@@ -15,9 +15,7 @@ import {
   ref,
   set,
   update,
-  remove,
-  get,
-  onValue
+  get
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 // Your web app's Firebase configuration
@@ -46,13 +44,17 @@ export async function signInWithGoogle() {
   // let errors bubble to caller so caller can update UI
   const result = await signInWithPopup(auth, provider);
   const user = result.user;
-  // update DB record (merge)
   if (user) {
-    await update(ref(db, `users/${user.uid}`), {
-      fullName: user.displayName || null,
-      email: user.email || null,
-      lastLogin: Date.now()
-    });
+    // merge DB record
+    try {
+      await update(ref(db, `users/${user.uid}`), {
+        fullName: user.displayName || null,
+        email: user.email || null,
+        lastLogin: Date.now()
+      });
+    } catch (e) {
+      console.warn('failed to update user record', e);
+    }
   }
   // If successful, redirect
   redirectToLanding();
@@ -63,13 +65,13 @@ export async function signInWithGoogle() {
 export async function signUpWithEmail(fullName, email, password) {
   const userCred = await createUserWithEmailAndPassword(auth, email, password);
   const user = userCred.user;
-  // set displayName on auth profile for the created user
+  // set displayName on profile
   try {
     await updateProfile(user, { displayName: fullName });
   } catch (e) {
     console.warn('updateProfile failed', e);
   }
-  // write user record to Realtime Database
+  // create DB record (isAdmin must be set server-side)
   try {
     await set(ref(db, `users/${user.uid}`), {
       fullName: fullName,
@@ -89,22 +91,33 @@ export async function signUpWithEmail(fullName, email, password) {
 export async function signInWithEmailAddr(email, password) {
   const userCred = await signInWithEmailAndPassword(auth, email, password);
   const user = userCred.user;
-  // update last login in DB
   try {
-    if (user) await update(ref(db, `users/${user.uid}`), { lastLogin: Date.now() });
+    if (user) await update(ref(db, `users/${user.uid}`), { lastLogin: Date.now(), email: user.email || email });
   } catch (e) {
-    console.error('Failed to update lastLogin', e);
+    console.warn('Failed to update lastLogin', e);
   }
   redirectToLanding();
   return userCred;
 }
 
 // Sign out
-import { signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 export async function signOutUser() {
   await signOut(auth);
   // After sign out, go to sign-in
   window.location.href = 'sign-in.html';
+}
+
+// Helper to check if current user is admin (reads /users/{uid}/isAdmin)
+export async function isCurrentUserAdmin() {
+  const user = auth.currentUser;
+  if (!user) return false;
+  try {
+    const snap = await get(ref(db, `users/${user.uid}/isAdmin`));
+    return snap.exists() && snap.val() === true;
+  } catch (e) {
+    console.warn('isCurrentUserAdmin check failed', e);
+    return false;
+  }
 }
 
 // Wire DOM buttons if present
