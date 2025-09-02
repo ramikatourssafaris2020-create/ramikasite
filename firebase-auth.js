@@ -6,8 +6,19 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged
+  onAuthStateChanged,
+  updateProfile,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  remove,
+  get,
+  onValue
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -23,6 +34,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+const db = getDatabase(app);
 
 // Helper: redirect on successful auth
 function redirectToLanding() {
@@ -33,14 +45,42 @@ function redirectToLanding() {
 export async function signInWithGoogle() {
   // let errors bubble to caller so caller can update UI
   const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+  // update DB record (merge)
+  if (user) {
+    await update(ref(db, `users/${user.uid}`), {
+      fullName: user.displayName || null,
+      email: user.email || null,
+      lastLogin: Date.now()
+    });
+  }
   // If successful, redirect
   redirectToLanding();
   return result;
 }
 
 // Email/password sign up
-export async function signUpWithEmail(email, password) {
+export async function signUpWithEmail(fullName, email, password) {
   const userCred = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCred.user;
+  // set displayName on auth profile for the created user
+  try {
+    await updateProfile(user, { displayName: fullName });
+  } catch (e) {
+    console.warn('updateProfile failed', e);
+  }
+  // write user record to Realtime Database
+  try {
+    await set(ref(db, `users/${user.uid}`), {
+      fullName: fullName,
+      email: email,
+      createdAt: Date.now(),
+      lastLogin: Date.now(),
+      isAdmin: false
+    });
+  } catch (e) {
+    console.error('Failed to write user to database', e);
+  }
   redirectToLanding();
   return userCred;
 }
@@ -48,6 +88,13 @@ export async function signUpWithEmail(email, password) {
 // Email/password sign in
 export async function signInWithEmailAddr(email, password) {
   const userCred = await signInWithEmailAndPassword(auth, email, password);
+  const user = userCred.user;
+  // update last login in DB
+  try {
+    if (user) await update(ref(db, `users/${user.uid}`), { lastLogin: Date.now() });
+  } catch (e) {
+    console.error('Failed to update lastLogin', e);
+  }
   redirectToLanding();
   return userCred;
 }
@@ -223,4 +270,3 @@ export async function initLanding() {
 
 // Expose for debugging
 window.__firebaseAuth = { signInWithGoogle, signUpWithEmail, signInWithEmailAddr };
-
