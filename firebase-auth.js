@@ -26,41 +26,38 @@ const provider = new GoogleAuthProvider();
 
 // Helper: redirect on successful auth
 function redirectToLanding() {
-  // Use relative redirect
   window.location.href = 'landing.html';
 }
 
 // Sign in with Google (popup)
 export async function signInWithGoogle() {
-  try {
-    await signInWithPopup(auth, provider);
-    redirectToLanding();
-  } catch (err) {
-    console.error('Google sign-in failed', err);
-    alert('Google sign-in failed: ' + (err.message || err));
-  }
+  // let errors bubble to caller so caller can update UI
+  const result = await signInWithPopup(auth, provider);
+  // If successful, redirect
+  redirectToLanding();
+  return result;
 }
 
 // Email/password sign up
 export async function signUpWithEmail(email, password) {
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    redirectToLanding();
-  } catch (err) {
-    console.error('Sign up failed', err);
-    alert('Sign up failed: ' + (err.message || err));
-  }
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
+  redirectToLanding();
+  return userCred;
 }
 
 // Email/password sign in
 export async function signInWithEmailAddr(email, password) {
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    redirectToLanding();
-  } catch (err) {
-    console.error('Sign in failed', err);
-    alert('Sign in failed: ' + (err.message || err));
-  }
+  const userCred = await signInWithEmailAndPassword(auth, email, password);
+  redirectToLanding();
+  return userCred;
+}
+
+// Sign out
+import { signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+export async function signOutUser() {
+  await signOut(auth);
+  // After sign out, go to sign-in
+  window.location.href = 'sign-in.html';
 }
 
 // Wire DOM buttons if present
@@ -68,7 +65,7 @@ function wireUp() {
   // Sign-in page
   const signInBtn = document.getElementById('signInBtn');
   if (signInBtn) {
-    signInBtn.addEventListener('click', (e) => {
+    signInBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email')?.value?.trim();
       const password = document.getElementById('password')?.value;
@@ -76,22 +73,37 @@ function wireUp() {
         alert('Please enter email and password');
         return;
       }
-      signInWithEmailAddr(email, password);
+      setProcessing(signInBtn, true, 'Signing in...');
+      try {
+        await signInWithEmailAddr(email, password);
+        // successful — redirect handled in function
+      } catch (err) {
+        console.error(err);
+        alert(err.message || err);
+        setProcessing(signInBtn, false);
+      }
     });
   }
 
   const googleSignInBtn = document.getElementById('googleSignInBtn');
   if (googleSignInBtn) {
-    googleSignInBtn.addEventListener('click', (e) => {
+    googleSignInBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      signInWithGoogle();
+      setProcessing(googleSignInBtn, true, 'Opening Google...');
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        console.error(err);
+        alert(err.message || err);
+        setProcessing(googleSignInBtn, false);
+      }
     });
   }
 
   // Sign-up page
   const signUpBtn = document.getElementById('signUpBtn');
   if (signUpBtn) {
-    signUpBtn.addEventListener('click', (e) => {
+    signUpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       const fullName = document.getElementById('fullName')?.value?.trim();
       const email = document.getElementById('email')?.value?.trim();
@@ -100,33 +112,97 @@ function wireUp() {
         alert('Please complete name, email and password');
         return;
       }
-      // optionally save fullName to profile later
-      signUpWithEmail(email, password);
+      setProcessing(signUpBtn, true, 'Creating account...');
+      try {
+        await signUpWithEmail(email, password);
+      } catch (err) {
+        console.error(err);
+        alert(err.message || err);
+        setProcessing(signUpBtn, false);
+      }
     });
   }
 
   const googleSignUpBtn = document.getElementById('googleSignUpBtn');
   if (googleSignUpBtn) {
-    googleSignUpBtn.addEventListener('click', (e) => {
+    googleSignUpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      signInWithGoogle();
+      setProcessing(googleSignUpBtn, true, 'Opening Google...');
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        console.error(err);
+        alert(err.message || err);
+        setProcessing(googleSignUpBtn, false);
+      }
     });
   }
 }
 
-// If user already signed in, redirect immediately
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    redirectToLanding();
+// UI helper to set processing state on a button
+function setProcessing(btn, isProcessing, text) {
+  if (!btn) return;
+  if (isProcessing) {
+    btn.dataset.origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>${text || 'Processing...'} `;
+    btn.classList.add('opacity-75');
   } else {
-    // wire buttons when auth state is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', wireUp);
-    } else {
-      wireUp();
-    }
+    btn.disabled = false;
+    if (btn.dataset.origHtml) btn.innerHTML = btn.dataset.origHtml;
+    btn.classList.remove('opacity-75');
+  }
+}
+
+// If user already signed in, redirect immediately
+// Keep current user in global for other pages to use
+let currentUser = null;
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  window.__currentUser = user;
+  // wire buttons when auth state is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireUp);
+  } else {
+    wireUp();
   }
 });
+
+// Initialize landing page: populate user name and enforce auth
+export async function initLanding() {
+  // Wait briefly for auth state to settle
+  if (typeof currentUser === 'undefined' || currentUser === null) {
+    // If no user yet, check auth.currentUser
+    const user = auth.currentUser;
+    if (!user) {
+      // not signed in -> redirect to sign-in
+      window.location.href = 'sign-in.html';
+      return;
+    }
+  }
+  const user = auth.currentUser || currentUser || window.__currentUser;
+  if (!user) {
+    window.location.href = 'sign-in.html';
+    return;
+  }
+  // populate UI
+  const nameEls = document.querySelectorAll('#userName');
+  const displayName = user.displayName || user.email || 'User';
+  nameEls.forEach(el => el.textContent = displayName);
+  // wire logout button
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await signOutUser();
+      } catch (err) {
+        console.error('Sign out failed', err);
+        alert('Sign out failed: ' + (err.message || err));
+      }
+    });
+  }
+}
 
 // Expose for debugging
 window.__firebaseAuth = { signInWithGoogle, signUpWithEmail, signInWithEmailAddr };
