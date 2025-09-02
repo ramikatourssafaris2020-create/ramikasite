@@ -8,7 +8,8 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
-  signOut
+  signOut,
+  getIdTokenResult
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import {
   getDatabase,
@@ -78,7 +79,7 @@ export async function signUpWithEmail(fullName, email, password) {
       email: email,
       createdAt: Date.now(),
       lastLogin: Date.now(),
-      isAdmin: false
+  // do not set isAdmin here; use custom claims for admin checks
     });
   } catch (e) {
     console.error('Failed to write user to database', e);
@@ -112,8 +113,9 @@ export async function isCurrentUserAdmin() {
   const user = auth.currentUser;
   if (!user) return false;
   try {
-    const snap = await get(ref(db, `users/${user.uid}/isAdmin`));
-    return snap.exists() && snap.val() === true;
+  // use custom claims (admin) as per rules: auth.token.admin === true
+  const idTokenResult = await getIdTokenResult(user, /* forceRefresh */ false);
+  return !!(idTokenResult && idTokenResult.claims && idTokenResult.claims.admin === true);
   } catch (e) {
     console.warn('isCurrentUserAdmin check failed', e);
     return false;
