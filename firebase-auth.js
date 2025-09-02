@@ -151,7 +151,7 @@ function wireUp() {
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      setProcessing(googleSignInBtn, true, 'Opening Google...');
+      setProcessing(googleSignInBtn, true, '...');
       try {
         await signInWithGoogle();
       } catch (err) {
@@ -189,7 +189,7 @@ function wireUp() {
   if (googleSignUpBtn) {
     googleSignUpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      setProcessing(googleSignUpBtn, true, 'Opening Google...');
+      setProcessing(googleSignUpBtn, true, ' Google...');
       try {
         await signInWithGoogle();
       } catch (err) {
@@ -285,6 +285,3 @@ export async function initLanding() {
 
 // Expose for debugging
 window.__firebaseAuth = { signInWithGoogle, signUpWithEmail, signInWithEmailAddr };
-
-
-
