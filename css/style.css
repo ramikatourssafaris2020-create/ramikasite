@@ -70,7 +70,7 @@ Version: 0.1
 }
 
 body {
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Oswald', sans-serif;
   font-size: 13px;
   background-color: var(--background);
   margin: 0 auto;
