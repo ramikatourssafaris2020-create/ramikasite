@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>BusGo - Bus Booking HTML Mobile App Template</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="font/bootstrap-icons.css">
+   <!-- Custom css -->
+   <link rel="stylesheet" href="css/style.css">
+   <!-- Slider css -->
+   <link rel="stylesheet" href="css/slider.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+   
+   </head>
+   <body>
+      <!-- Status Bar -->
+      <div class="status-bar" style=" border: 1px solid #68676786; color: black;background: white;">
+         <div>Total of 45 people booked this tour</div>
+         <div>
+            <i class="bi bi-arrow-right ms-2"></i>
+         </div>
+      </div>
+
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- App Header -->
+      <div class="app-header d-flex justify-content-between align-items-center">
+         <div class="d-flex align-items-center">
+            <button id="menuBtn" class="btn menu-btn">
+            <i class="bi bi-three-dots-vertical menu-icon"></i>
+            </button>
+              <div class="d-flex align-items-center">
+               <img src="logo.png" height="50">              
+            </div>
+         </div>
+         <div class="d-flex align-items-center">
+             <a href="notifications.html" class="btn header-btn me-2">
+            <i class="bi bi-bell icon-md"></i>
+            </a>&nbsp;
+            <a id="logoutBtn"  class="btn header-btn me-2" style="border: 1px solid #00000049;border-radius: 50%;padding: 1px 0">
+            <img src="logo.png" height="30">
+            </a>&nbsp;
+            <a id="logoutBtn" class="btn header-btn me-2">
+            <i class="bi bi-box-arrow-right icon-md"></i>
+            </a>&nbsp;
+         </div>
+      </div>
+      <!-- Content Container -->
+      <div class="p-3">
+         <!-- Bus Image with Back and Share Button -->
+         <div class="bus-header position-relative hero"
+            style="
+  background-image: linear-gradient(to top,rgb(255, 255, 255), rgba(0, 0, 0, 0)), url('mpanga.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 40vh;">
+  <div class="content-2">
+    <h1 style=" font-weight: 800;">Mpanga Kipengere</h1>
+    <p>in the southern highlands of Tanzania.</p>
+  </div>
+             <div class="overlay"></div>
+           
+         </div>
+         <!-- Bus Details -->
+         <div class="bus-details mt-3">
+            <div style="padding: 0 20px;" class="d-flex justify-content-between align-items-start mb-3">
+               <div>
+                  <h5 class="fw-bold mb-1">Mpanga Kipengere </h5>
+                  <div class="text-muted">Makambako, Tanzania</div>
+               </div>
+               <div class="rating-badge">
+                  <i class="bi bi-star-fill text-warning me-1"></i>
+                  <span>4.8</span>
+               </div>
+            </div>
+            <!-- Journey Details -->
+            <div class="journey-details bg-primary-light p-3 rounded-3 mb-3">
+               <div class="d-flex">
+                  <div class="journey-stops me-3">
+                     <div class="departure-stop"></div>
+                     <div class="journey-line"></div>
+                     <div class="arrival-stop"></div>
+                  </div>
+                  <div class="journey-info flex-grow-1">
+                     <div class="mb-3">
+                        <div class="fw-bold">Njombe old stand</div>
+                        <div class="text-muted small">Dec 15, 07:00 AM</div>
+                     </div>
+                     <div>
+                        <div class="fw-bold">Mpanga kipengere entrance gate</div>
+                        <div class="text-muted small">Dec 15, 16:00 PM</div>
+                     </div>
+                  </div>
+                  <div class="journey-duration text-center">
+                     <div class="small text-muted">Estimated Duration</div>
+                     <div class="fw-bold">6h 30m</div>
+                  </div>
+               </div>
+            </div>
+            <!-- Amenities -->
+            <div class="mb-3">
+               <h6 class="fw-bold mb-2">Amenities</h6>
+               <div class="d-flex flex-wrap gap-2">
+                  <div class="amenity-item">
+                     <i class="bi bi-wifi"></i>
+                     <span>WiFi</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-plug"></i>
+                     <span>Power Outlet</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-tv"></i>
+                     <span>TV</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-cup-hot"></i>
+                     <span>Snacks</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-snow2"></i>
+                     <span>AC</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-water"></i>
+                     <span>Toilet</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-bag-check"></i>
+                     <span>Luggage</span>
+                  </div>
+                  <div class="amenity-item">
+                     <i class="bi bi-recycle"></i>
+                     <span>USB</span>
+                  </div>
+               </div>
+            </div>
+            <!-- Bus Photos -->
+            <div class="mb-3">
+               <h6 class="fw-bold mb-2">Other photos</h6>
+               <div class="bus-photos d-flex gap-2 overflow-auto pb-2">
+                  <img src="IMG_4396.JPG" class="bus-photo-thumb rounded-3" alt="Bus Interior">
+                  <img src="logo.png" class="bus-photo-thumb rounded-3" alt="Bus Seat">
+                  <img src="mpanga.jpg" class="bus-photo-thumb rounded-3" alt="Luxury Bus">
+               </div>
+            </div>
+            <!-- Pickup Points -->
+            <div class="mb-3">
+               <h6 class="fw-bold mb-2">Pickup Points</h6>
+               <div class="pickup-points">
+                  <div class="pickup-point d-flex align-items-center mb-2">
+                     <div class="pickup-radio me-2">
+                        <input type="radio" class="form-check-input" name="pickupPoint" id="pickup1" checked="">
+                     </div>
+                     <div class="flex-grow-1">
+                        <label for="pickup1" class="form-check-label fw-medium mb-0 d-block">Njombe old bus station</label>
+                        <div class="text-muted small">Gate Entrance Point</div>
+                     </div>
+                     <div class="text-end">
+                        <div class="text-muted small">07:00 AM</div>
+                     </div>
+                  </div>
+                  <div class="pickup-point d-flex align-items-center">
+                     <div class="pickup-radio me-2">
+                        <input type="radio" class="form-check-input" name="pickupPoint" id="pickup2">
+                     </div>
+                     <div class="flex-grow-1">
+                        <label for="pickup2" class="form-check-label fw-medium mb-0 d-block">Ramika Office Near NBC bank</label>
+                        <div class="text-muted small">At the office</div>
+                     </div>
+                     <div class="text-end">
+                        <div class="text-muted small">07:15 AM</div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Drop-off Points -->
+            <div class="mb-3">
+               <h6 class="fw-bold mb-2">Drop-off Points</h6>
+               <div class="dropoff-points">
+                  <div class="dropoff-point d-flex align-items-center mb-2">
+                     <div class="dropoff-radio me-2">
+                        <input type="radio" class="form-check-input" name="dropoffPoint" id="dropoff1" checked="">
+                     </div>
+                     <div class="flex-grow-1">
+                        <label for="dropoff1" class="form-check-label fw-medium mb-0 d-block">Mpanga Kipengere Entrance</label>
+                        <div class="text-muted small">Inside reserve</div>
+                     </div>
+                     <div class="text-end">
+                        <div class="text-muted small">11:30 AM</div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Cancellation Policy -->
+            <div class="mb-3">
+               <h6 class="fw-bold mb-2">Cancellation Policy</h6>
+               <div class="cancellation-policy">
+                  <div class="d-flex align-items-center mb-2">
+                     <div class="cancellation-dot bg-success me-2"></div>
+                     <div class="text-muted small">Free cancellation until 24 hours before departure</div>
+                  </div>
+                  <div class="d-flex align-items-center mb-2">
+                     <div class="cancellation-dot bg-warning me-2"></div>
+                     <div class="text-muted small">70% refund between 24 and 12 hours before departure</div>
+                  </div>
+                  <div class="d-flex align-items-center">
+                     <div class="cancellation-dot bg-danger me-2"></div>
+                     <div class="text-muted small">No refund within 12 hours of departure</div>
+                  </div>
+               </div>
+            </div>
+         
+         </div>
+      </div>
+      <!-- Bottom Fixed Bar for Price and Book -->
+      <div class="bottom-fixed-bar p-3">
+         <div class="d-flex justify-content-between align-items-center gap-3">
+            <div class="lh-sm">
+               <div class="fw-bold fs-5 text-primary-color">$45.00</div>
+               <div class="text-muted small">per person</div>
+            </div>
+            <a href="select-seat.html" class="btn btn-app py-2 fw-bold">Book Now</a>
+         </div>
+      </div>
+      <!-- Bootstrap bundle js -->
+      <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="ad21f07bb07096a435ab4d49-text/javascript"></script>
+      <!-- Script js -->
+      <script src="js/script.js" type="ad21f07bb07096a435ab4d49-text/javascript"></script> 
+   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="ad21f07bb07096a435ab4d49-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
