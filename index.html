@@ -1,55 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Book a Tour</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tour Booking</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+.tour-card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+.tour-card h3 { margin: 0; }
+.tour-card button { margin-top: 10px; padding: 5px 10px; }
+</style>
 </head>
 <body>
-  <h2>Book Your Tour</h2>
-  <form id="bookingForm">
-    <input type="text" id="full_name" placeholder="Full Name" required><br>
-    <input type="email" id="email" placeholder="Email"><br>
-    <input type="tel" id="phone" placeholder="Phone"><br>
-    <input type="text" id="tour_name" placeholder="Tour Name" required><br>
-    <input type="date" id="tour_date" required><br>
-    <textarea id="notes" placeholder="Special requests..."></textarea><br>
-    <button type="submit">Book Now</button>
-  </form>
+<h2>Book a Tour</h2>
 
-  <p id="status"></p>
+<form id="userForm">
+  <input type="text" id="full_name" placeholder="Full Name" required><br>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="tel" id="phone" placeholder="Phone"><br>
+  <input type="date" id="tour_date" required><br>
+</form>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+<div id="toursContainer"></div>
 
-    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; // use anon key
-    const supabase = createClient(supabaseUrl, supabaseKey);
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
+const toursContainer = document.getElementById("toursContainer");
+const emailInput = document.getElementById("email");
+
+async function loadTours() {
+  // Fetch all tours
+  const { data: tours } = await supabase.from("activities").select("*").order("created_at");
+
+  // Fetch all bookings
+  const { data: bookings } = await supabase.from("bookings").select("*");
+
+  toursContainer.innerHTML = "";
+
+  tours.forEach(tour => {
+    const currentCount = bookings.filter(b => b.tour_name === tour.name).length;
+    const userBooked = bookings.filter(b => 
+      b.tour_name === tour.name && b.email === emailInput.value
+    ).length;
+
+    const card = document.createElement("div");
+    card.className = "tour-card";
+    card.innerHTML = `
+      <h3>${tour.name}</h3>
+      <p>${tour.description || ""}</p>
+      <p>Price: $${tour.price || 0}</p>
+      <p>Current bookings: ${currentCount}</p>
+      <p>${userBooked ? "✅ You already booked this tour" : ""}</p>
+      <button ${userBooked ? "disabled" : ""} data-tour="${tour.name}">${userBooked ? "Booked" : "Book This Tour"}</button>
+    `;
+    toursContainer.appendChild(card);
+
+    // Booking action
+    card.querySelector("button")?.addEventListener("click", async () => {
       const booking = {
         full_name: document.getElementById("full_name").value,
-        email: document.getElementById("email").value,
+        email: emailInput.value,
         phone: document.getElementById("phone").value,
-        tour_name: document.getElementById("tour_name").value,
+        tour_name: tour.name,
         tour_date: document.getElementById("tour_date").value,
-        notes: document.getElementById("notes").value
+        notes: ""
       };
-
-      const { data, error } = await supabase
-        .from("bookings")
-        .insert([booking]);
-
-      if (error) {
-        document.getElementById("status").innerText = "❌ Error: " + error.message;
-      } else {
-        document.getElementById("status").innerText = "✅ Booking successful!";
-        document.getElementById("bookingForm").reset();
-      }
+      const { error } = await supabase.from("bookings").insert([booking]);
+      if (error) return alert("Booking failed: " + error.message);
+      alert("Booking successful!");
+      loadTours(); // refresh counts and user booked tours
     });
-  </script>
+  });
+}
+
+// Reload tours when user enters email (to show already booked tours)
+emailInput.addEventListener("blur", loadTours);
+
+// Initial load
+loadTours();
+</script>
 </body>
 </html>
-
