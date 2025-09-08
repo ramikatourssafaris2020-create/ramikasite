@@ -5,25 +5,100 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tour Booking</title>
 <style>
-  body { font-family: Arial; padding: 20px; }
-  .tour-card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
-  .tour-card h3 { margin: 0; }
-  .tour-card button { margin-top: 10px; padding: 5px 10px; }
-  #notificationsContainer { margin-top: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px; }
+  /* Reset & body */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; }
+
+  h2, h3 { color: #333; margin-bottom: 15px; }
+
+  /* Booking form styling */
+  form#bookingForm {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 450px;
+    margin-bottom: 30px;
+  }
+
+  form input, form select, form button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  form button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  form button:hover {
+    background: #0056b3;
+  }
+
+  /* Notifications */
+  #notificationsContainer {
+    max-width: 450px;
+    background: #fff8c4;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  #notificationsContainer p {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  /* Already booked tours */
+  #bookedTours {
+    max-width: 450px;
+    margin-top: 20px;
+  }
+
+  #bookedTours h3 { margin-bottom: 10px; }
+
+  .booked-tour {
+    background: #d1f7d6;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .booked-tour span { font-weight: bold; color: #0f5132; }
+
 </style>
 </head>
 <body>
 
 <h2>Book a Tour</h2>
 
-<form id="userForm">
-  <input type="text" id="full_name" placeholder="Full Name" required><br>
-  <input type="email" id="email" placeholder="Email" required><br>
-  <input type="tel" id="phone" placeholder="Phone"><br>
-  <input type="date" id="tour_date" required><br>
+<form id="bookingForm">
+  <input type="text" id="full_name" placeholder="Full Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="tel" id="phone" placeholder="Phone">
+  <select id="tourSelect" required>
+    <option value="">Select a Tour</option>
+  </select>
+  <input type="date" id="tour_date" required>
+  <button type="submit">Book Tour</button>
 </form>
 
-<div id="toursContainer"></div>
+<div id="bookedTours">
+  <h3>Your Booked Tours</h3>
+  <div id="userBookings">No booked tours yet.</div>
+</div>
 
 <h3>Your Notifications</h3>
 <div id="notificationsContainer">No notifications yet.</div>
@@ -32,60 +107,59 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; // make sure this is the anon key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Y"; // replace with your anon key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const toursContainer = document.getElementById("toursContainer");
+const tourSelect = document.getElementById("tourSelect");
+const bookingForm = document.getElementById("bookingForm");
 const emailInput = document.getElementById("email");
 const notificationsContainer = document.getElementById("notificationsContainer");
+const userBookingsDiv = document.getElementById("userBookings");
 
-// Load tours and bookings
+// Load tours into dropdown
 async function loadTours() {
-  const { data: tours } = await supabase.from("activities").select("*").order("created_at");
-  const { data: bookings } = await supabase.from("bookings").select("*");
+  const { data: tours, error } = await supabase.from("activities").select("*").order("created_at");
+  if (error) return console.error(error);
 
-  toursContainer.innerHTML = "";
-
+  tourSelect.innerHTML = '<option value="">Select a Tour</option>';
   tours.forEach(tour => {
-    const currentCount = bookings.filter(b => b.tour_name === tour.name).length;
-    const userBooked = bookings.filter(b => 
-      b.tour_name === tour.name && b.email === emailInput.value
-    ).length;
-
-    const card = document.createElement("div");
-    card.className = "tour-card";
-    card.innerHTML = `
-      <h3>${tour.name}</h3>
-      <p>${tour.description || ""}</p>
-      <p>Price: $${tour.price || 0}</p>
-      <p>Current bookings: ${currentCount}</p>
-      <p>${userBooked ? "✅ You already booked this tour" : ""}</p>
-      <button ${userBooked ? "disabled" : ""} data-tour="${tour.name}">
-        ${userBooked ? "Booked" : "Book This Tour"}
-      </button>
-    `;
-    toursContainer.appendChild(card);
-
-    // Book button
-    card.querySelector("button")?.addEventListener("click", async () => {
-      const booking = {
-        full_name: document.getElementById("full_name").value,
-        email: emailInput.value,
-        phone: document.getElementById("phone").value,
-        tour_name: tour.name,
-        tour_date: document.getElementById("tour_date").value,
-        notes: ""
-      };
-      const { error } = await supabase.from("bookings").insert([booking]);
-      if (error) return alert("Booking failed: " + error.message);
-      alert("Booking successful!");
-      loadTours();
-      loadNotifications();
-    });
+    const option = document.createElement("option");
+    option.value = tour.name;
+    option.textContent = `${tour.name} (${tour.price ? '$'+tour.price : 'Free'})`;
+    tourSelect.appendChild(option);
   });
 }
 
-// Load notifications for current user
+// Load user bookings
+async function loadUserBookings() {
+  const email = emailInput.value;
+  if (!email) {
+    userBookingsDiv.innerHTML = "No booked tours yet.";
+    return;
+  }
+
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("email", email)
+    .order("created_at", { ascending: false });
+
+  if (error) return console.error(error);
+
+  if (bookings.length === 0) {
+    userBookingsDiv.innerHTML = "No booked tours yet.";
+    return;
+  }
+
+  userBookingsDiv.innerHTML = bookings.map(b => `
+    <div class="booked-tour">
+      <span>${b.tour_name}</span>
+      <small>${b.tour_date}</small>
+    </div>
+  `).join('');
+}
+
+// Load notifications
 async function loadNotifications() {
   const email = emailInput.value;
   if (!email) {
@@ -106,9 +180,42 @@ async function loadNotifications() {
     : "No notifications yet.";
 }
 
-// Reload tours and notifications when email is entered
+// Booking form submit
+bookingForm.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const booking = {
+    full_name: document.getElementById("full_name").value,
+    email: emailInput.value,
+    phone: document.getElementById("phone").value,
+    tour_name: tourSelect.value,
+    tour_date: document.getElementById("tour_date").value,
+    notes: ""
+  };
+
+  if (!booking.tour_name) return alert("Please select a tour");
+
+  // Check if already booked
+  const { data: existing } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("email", booking.email)
+    .eq("tour_name", booking.tour_name);
+
+  if (existing.length > 0) return alert("You already booked this tour!");
+
+  const { error } = await supabase.from("bookings").insert([booking]);
+  if (error) return alert("Booking failed: " + error.message);
+
+  alert("Booking successful!");
+  bookingForm.reset();
+  loadUserBookings();
+  loadNotifications();
+});
+
+// Reload bookings & notifications when email changes
 emailInput.addEventListener("blur", () => {
-  loadTours();
+  loadUserBookings();
   loadNotifications();
 });
 
