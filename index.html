@@ -21,7 +21,7 @@ form input, form select, form button { display: block; margin: 10px 0; padding: 
 
   <!-- Tour dropdown -->
   <select id="tour_name" required>
-    <option value="">Select a Tour</option>
+    <option value="">Loading tours...</option>
   </select>
 
   <button type="submit">Book Now</button>
@@ -33,24 +33,40 @@ form input, form select, form button { display: block; margin: 10px 0; padding: 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; // replace with your anon key
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; // make sure RLS allows anon select
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const tourSelect = document.getElementById("tour_name");
 const toursContainer = document.getElementById("toursContainer");
 
-// Load tours into dropdown and display with counts
+// Load tours and populate dropdown
 async function loadTours() {
-  const { data: tours } = await supabase.from("activities").select("*").order("created_at");
+  const { data: tours, error: tourError } = await supabase
+    .from("activities")
+    .select("name, description, price")
+    .order("created_at");
+
+  if (tourError) {
+    console.error("Error fetching tours:", tourError);
+    tourSelect.innerHTML = `<option value="">Failed to load tours</option>`;
+    return;
+  }
+
+  if (!tours || tours.length === 0) {
+    tourSelect.innerHTML = `<option value="">No tours available</option>`;
+  } else {
+    tourSelect.innerHTML = `<option value="">Select a Tour</option>`;
+    tours.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.name;
+      opt.textContent = t.name;
+      tourSelect.appendChild(opt);
+    });
+  }
+
+  // Display tours as cards with current bookings
   const { data: bookings } = await supabase.from("bookings").select("*");
 
-  // Populate dropdown
-  tourSelect.innerHTML = `<option value="">Select a Tour</option>`;
-  tours.forEach(t => {
-    tourSelect.innerHTML += `<option value="${t.name}">${t.name}</option>`;
-  });
-
-  // Display tours with current bookings
   toursContainer.innerHTML = "";
   tours.forEach(tour => {
     const currentCount = bookings.filter(b => b.tour_name === tour.name).length;
@@ -70,23 +86,20 @@ async function loadTours() {
 document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const booking = {
-    full_name: document.getElementById("full_name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    tour_name: tourSelect.value,
-    tour_date: document.getElementById("tour_date").value,
-    notes: ""
-  };
+  const full_name = document.getElementById("full_name").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  const tour_name = document.getElementById("tour_name").value;
+  const tour_date = document.getElementById("tour_date").value;
 
-  if (!booking.tour_name) return alert("Please select a tour!");
+  if (!tour_name) return alert("Please select a tour!");
 
-  const { error } = await supabase.from("bookings").insert([booking]);
+  const { error } = await supabase.from("bookings").insert([{ full_name, email, phone, tour_name, tour_date, notes: "" }]);
   if (error) return alert("Booking failed: " + error.message);
 
   alert("Booking successful!");
-  loadTours();
   document.getElementById("bookingForm").reset();
+  loadTours();
 });
 
 // Initial load
