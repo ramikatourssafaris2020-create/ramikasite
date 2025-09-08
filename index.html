@@ -36,7 +36,8 @@
 }
 
 #tourCards::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: auto; /* Chrome, Safari */
+  background-color: blue;
 }
 
 .tour-card {
@@ -520,10 +521,6 @@ function createTourCards(tours) {
     const card = document.createElement('div');
     card.className = 'tour-card';
     card.innerHTML = `
-      <div class="tour-card-image">
-        <img src="https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}" 
-             alt="${tour.name}">
-      </div>
       <div class="tour-card-content">
         <h3 class="tour-title">${tour.name}</h3>
         <p class="tour-description">Experience an amazing ${tour.name.toLowerCase()} adventure! Book now for an unforgettable experience.</p>
