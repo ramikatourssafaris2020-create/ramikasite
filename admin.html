@@ -3,15 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+    button { margin: 2px; }
+    form { margin-top: 20px; }
+    input, select, textarea { margin: 4px 0; padding: 6px; width: 200px; }
+  </style>
 </head>
 <body>
-  <h2>Bookings Dashboard</h2>
+  <h2>Admin Dashboard</h2>
   <button id="logout">Logout</button>
-  <table border="1" id="bookingsTable">
+
+  <!-- Filters -->
+  <h3>Filters</h3>
+  <select id="tourFilter">
+    <option value="">All Tours</option>
+  </select>
+  <input type="date" id="dateFilter">
+  <button id="applyFilter">Apply Filter</button>
+  <button id="clearFilter">Clear Filter</button>
+
+  <!-- Add new activity/tour -->
+  <h3>Add New Activity/Tour</h3>
+  <form id="addActivityForm">
+    <input type="text" id="activityName" placeholder="Tour Name" required><br>
+    <textarea id="activityDesc" placeholder="Description"></textarea><br>
+    <input type="number" id="activityPrice" placeholder="Price"><br>
+    <button type="submit">Add Activity</button>
+  </form>
+
+  <!-- Bookings Table -->
+  <h3>Bookings</h3>
+  <table id="bookingsTable">
     <thead>
       <tr>
         <th>Name</th><th>Email</th><th>Phone</th>
         <th>Tour</th><th>Date</th><th>Notes</th><th>Created At</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -21,46 +52,130 @@
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
     const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
+    const supabaseKey = "YOUR_ANON_KEY"; 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check if logged in
+    // --- Check if admin is logged in ---
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.href = "admin-login.html";
-    }
+    if (!session) window.location.href = "admin-login.html";
 
-    // Fetch bookings
-    async function loadBookings() {
-      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      const tbody = document.querySelector("#bookingsTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(b => {
-        const row = `<tr>
-          <td>${b.full_name}</td>
-          <td>${b.email || ""}</td>
-          <td>${b.phone || ""}</td>
-          <td>${b.tour_name}</td>
-          <td>${b.tour_date}</td>
-          <td>${b.notes || ""}</td>
-          <td>${b.created_at}</td>
-        </tr>`;
-        tbody.innerHTML += row;
-      });
-    }
-    loadBookings();
-
-    // Logout
+    // --- Logout ---
     document.getElementById("logout").addEventListener("click", async () => {
       await supabase.auth.signOut();
-      window.location.href = "admin-login.html";
+      window.location.href = "sign-in.html";
     });
+
+    // --- Load Activities for filter and booking table ---
+    let activities = [];
+    async function loadActivities() {
+      const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
+      if (error) return console.error(error);
+      activities = data;
+      const tourFilter = document.getElementById("tourFilter");
+      tourFilter.innerHTML = '<option value="">All Tours</option>';
+      data.forEach(a => {
+        const option = document.createElement("option");
+        option.value = a.name;
+        option.textContent = a.name;
+        tourFilter.appendChild(option);
+      });
+    }
+    await loadActivities();
+
+    // --- Add New Activity ---
+    document.getElementById("addActivityForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const newActivity = {
+        name: document.getElementById("activityName").value,
+        description: document.getElementById("activityDesc").value,
+        price: parseFloat(document.getElementById("activityPrice").value || 0)
+      };
+      const { data, error } = await supabase.from("activities").insert([newActivity]);
+      if (error) return alert("Error adding activity: " + error.message);
+      alert("Activity added!");
+      document.getElementById("addActivityForm").reset();
+      await loadActivities();
+      await loadBookings();
+    });
+
+    // --- Load Bookings ---
+    let allBookings = [];
+    async function loadBookings() {
+      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+      if (error) return console.error(error);
+      allBookings = data;
+      renderBookings();
+    }
+
+    // --- Render Bookings ---
+    function renderBookings(filterTour = "", filterDate = "") {
+      const tbody = document.querySelector("#bookingsTable tbody");
+      tbody.innerHTML = "";
+      allBookings
+        .filter(b => (filterTour ? b.tour_name === filterTour : true))
+        .filter(b => (filterDate ? b.tour_date === filterDate : true))
+        .forEach(b => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><input type="text" value="${b.full_name}" data-id="${b.id}" class="editField" data-field="full_name"></td>
+            <td><input type="email" value="${b.email || ''}" data-id="${b.id}" class="editField" data-field="email"></td>
+            <td><input type="text" value="${b.phone || ''}" data-id="${b.id}" class="editField" data-field="phone"></td>
+            <td>
+              <select data-id="${b.id}" class="editField" data-field="tour_name">
+                ${activities.map(a => `<option value="${a.name}" ${a.name===b.tour_name?'selected':''}>${a.name}</option>`).join('')}
+              </select>
+            </td>
+            <td><input type="date" value="${b.tour_date}" data-id="${b.id}" class="editField" data-field="tour_date"></td>
+            <td><input type="text" value="${b.notes || ''}" data-id="${b.id}" class="editField" data-field="notes"></td>
+            <td>${b.created_at}</td>
+            <td><button class="deleteBtn" data-id="${b.id}">Delete</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+    }
+
+    await loadBookings();
+
+    // --- Apply Filter ---
+    document.getElementById("applyFilter").addEventListener("click", () => {
+      const tour = document.getElementById("tourFilter").value;
+      const date = document.getElementById("dateFilter").value;
+      renderBookings(tour, date);
+    });
+
+    document.getElementById("clearFilter").addEventListener("click", () => {
+      document.getElementById("tourFilter").value = "";
+      document.getElementById("dateFilter").value = "";
+      renderBookings();
+    });
+
+    // --- Real-time bookings alert ---
+    supabase.from('bookings').on('INSERT', payload => {
+      alert(`New booking: ${payload.new.full_name} booked ${payload.new.tour_name}`);
+      loadBookings();
+    }).subscribe();
+
+    // --- Delete Booking ---
+    document.addEventListener("click", async e => {
+      if (e.target.classList.contains("deleteBtn")) {
+        const id = e.target.dataset.id;
+        if (!confirm("Delete this booking?")) return;
+        const { error } = await supabase.from("bookings").delete().eq("id", id);
+        if (error) return alert(error.message);
+        loadBookings();
+      }
+    });
+
+    // --- Edit Booking (auto-update on input change) ---
+    document.addEventListener("change", async e => {
+      if (e.target.classList.contains("editField")) {
+        const id = e.target.dataset.id;
+        const field = e.target.dataset.field;
+        const value = e.target.value;
+        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
+      }
+    });
+
   </script>
 </body>
 </html>
-s
