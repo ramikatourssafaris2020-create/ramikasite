@@ -1,320 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="icon" href="img/logo.png" type="image/png">
-      <title>Ramika Safaris & Tours</title>
-      <!-- Bootstrap css -->
-      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
-      <link rel="stylesheet" href="font/bootstrap-icons.css">
-   <!-- Custom css -->
-   <link rel="stylesheet" href="css/style.css">
-   <!-- Slider css -->
-    <STYLE>
-      .lazy-bg {
-  filter: blur(10px);
-  transition: filter 0.6s ease-out;
-}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Tour</title>
+</head>
+<body>
+  <h2>Book Your Tour</h2>
+  <form id="bookingForm">
+    <input type="text" id="full_name" placeholder="Full Name" required><br>
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="tel" id="phone" placeholder="Phone"><br>
+    <input type="text" id="tour_name" placeholder="Tour Name" required><br>
+    <input type="date" id="tour_date" required><br>
+    <textarea id="notes" placeholder="Special requests..."></textarea><br>
+    <button type="submit">Book Now</button>
+  </form>
 
-.lazy-bg.loaded {
-  filter: blur(0);
-}
+  <p id="status"></p>
 
-    </STYLE>
-   <link rel="stylesheet" href="css/slider.css">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
-   </head>
-   <body>
-      <!-- Status Bar (mimics mobile device status bar) -->
-      <div class="status-bar">
-         <div><a href="admin.html" style="color: white;">Catch up the upcoming tour [Mpanga Kipengele on 15/12/25]</a></div>
-         <div>
-            <i class="bi bi-arrow-right ms-2"></i>
-         </div>
-      </div>
-   
-      <!-- Overlay -->
-      <div class="overlay" id="overlay"></div>
-      <!-- App Header -->
-      <div class="app-header d-flex justify-content-between align-items-center">
-         <div class="d-flex align-items-center">
-            <button id="menuBtn" class="btn menu-btn">
-            <i class="bi bi-three-dots-vertical menu-icon"></i>
-            </button>
-            <div class="d-flex align-items-center">
-               <img src="logo.png" height="50">              
-            </div>
-         </div>
-         <div class="d-flex align-items-center">
-            <a href="search.html" class="btn header-btn me-2">
-            <i class="bi bi-search icon-md"></i>
-            </a>&nbsp;
-            <a href="notifications.html" class="btn header-btn me-2">
-            <i class="bi bi-bell icon-md"></i>
-            </a>&nbsp;
-            <a id="logoutBtn"  class="btn header-btn me-2" style="border: 1px solid #00000049;border-radius: 50%;padding: 1px 0">
-            <img src="logo.png" height="30">
-            </a>&nbsp;
-            <a id="logoutBtn" class="btn header-btn me-2">
-            <i class="bi bi-box-arrow-right icon-md"></i>
-            </a>&nbsp;
-         </div>
-      </div>
-      <!-- Main Content Area -->
-      <div class="content-area">
-<div class="hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.349), rgba(0,0,0,0.45)), url('maua.JPG');">
-  <div class="content">
-    <h1>Welcome to Ramika Safaris</h1>
-    <p>A local tour super agent company discovering your next safari <br> in the southern highlands of Tanzania.</p>
-  </div>
-</div>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-         <!-- Search Section -->
-         <div class="search-card">
-            <h6 class="text-primary-color mb-3 fw-semibold">
-               <i class="bi bi-search me-2"></i>Check tour availability
-            </h6>
-            <form action="bus-listing.html">
-               <div class="mb-3">
-                  <label for="fromLocation" class="form-label">
-                  <i class="bi bi-geo-alt me-1 text-primary-color"></i>Location
-                  </label>
-                  <select class="form-select" id="fromLocation">
-                     <option selected="">Select location to visit</option>
-                     <option>Njombe region</option>
-                     <option>Iringa region</option>
-                     <option>Morogoro region</option>
-                     <option>Mbeya region</option>
-                  </select>
-               </div>
-               <div class="mb-3">
-                  <label for="toLocation" class="form-label">
-                  <i class="bi bi-geo-alt-fill me-1 text-secondary-color"></i>National Park / game reserve
-                  </label>
-                  <select class="form-select" id="toLocation">
-                     <option selected="">Select national park / game reserve</option>
-                     <option>Kitulo National Park</option>
-                     <option>Mpanga kipengere</option>
-                     <option>Mikumi national park</option>
-                     <option>Udzungwa National Park</option>
-                     <option>Lake Ngosi</option>
-                  </select>
-               </div>
-               <div class="mb-3">
-                  <label for="travelDate" class="form-label">
-                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of Visit
-                  </label>
-                  <input type="date" class="form-control" id="travelDate">
-               </div>
-               <button type="submit" class="btn-app p-2 fw-bold btn">
-               <i class="bi bi-search me-2"></i>Search Available Tours
-               </button>
-            </form>
-         </div>
-<div class="wrapper-hero">         
-<div class="hero-2 lazy-bg" 
-     data-bg="mpanga.jpg"
-     style="
-       background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('tiny-blur.jpg');
-       background-size: cover;
-       background-position: center;
-       background-repeat: no-repeat;
-       height: 30vh;">
-  <div class="content">
-    <h1>Visit Mpanga Kipengere</h1>
-    <p>Discovering your next safari WITHIN Mpanga kipengere <br> inside Makambako Tanzania</p>
-    <a href="mpanga.html">
-      <span class="btn btn-light btn-sm" style="font-weight: 600; border: none; background-color: #fff;">
-        Check full details
-      </span>
-    </a>  
-  </div>
-</div>
+    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+    const supabaseKey = "eyJhbGciOi...YOUR_ANON_KEY..."; // use anon key
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-</div>
-<div class="wrapper-hero"> 
-<div class="hero-2 lazy-bg" 
-     data-bg="kitulo.JPG"
-     style="
-       background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('tiny-blur.jpg');
-       background-size: cover;
-       background-position: center;
-       background-repeat: no-repeat;
-       height: 30vh;">
-  <div class="content">
-    <h1>Visit Kitulo National Park
-    </h1>
-    <p>View a beautiful land of with flowers located in <br> Njombe Tanzania</p>
-<a href="mpanga.html"><span class="btn btn-light btn-sm" style="font-weight: 600; border: none;background-color: rgb(255, 255, 255);">
-                Check full details 
-             </span></a>  
-   </div>
-</div>
-</div>
-         <!-- Recent Searches -->
-         <h6 class="section-header">Popular bookings</h6>
-         <a href="tour-details.html" class="route-card d-block">
-            <div class="d-flex justify-content-between align-items-center">
-               <div>
-                  <div class="d-flex align-items-center">
-                     <span class="fw-semibold text-primary-color">Kitulo National park</span>
-                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                     <span class="fw-semibold text-primary-color">Njombe, Tanzania</span>
-                  </div>
-                  <div class="d-flex align-items-center mt-2">
-                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small"> Last tour - Apr 15, 2025</span>
-                  </div>
-               </div>
-               <span class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
-                   <i class="bi bi-search"></i> Check availability
-             </span>
-            </div>
-         </a>
-         <a href="tour-details.html" class="route-card d-block">
-            <div class="d-flex justify-content-between align-items-center">
-               <div>
-                  <div class="d-flex align-items-center">
-                     <span class="fw-semibold text-primary-color">Mpanga Kipengele</span>
-                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                     <span class="fw-semibold text-primary-color">Makambako, Njombe</span>
-                  </div>
-                  <div class="d-flex align-items-center mt-2">
-                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
-                     <span class="text-muted small">Last tour - Apr 10, 2025</span>
-                  </div>
-               </div>
-               <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
-                  <i class="bi bi-search"></i> Check availability
-               </div>
-            </div>
-         </a>
-         <!-- Special Offers -->
-         <h6 class="section-header">Special Offers</h6>
-         <a href="offers-rewards.html" class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
-            <span class="offer-badge">20% OFF</span>
-            <div class="d-flex align-items-center">
-               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-1">
-                  <i class="bi bi-ticket-perforated text-white fs-24"></i>
-               </div>
-               <div class="ms-3">
-                  <div class="fw-semibold text-primary-color">Weekend Special</div>
-                  <div class="text-muted small">20% off on all weekend trips</div>
-                  <div class="mt-1 text-accent-color fs-11">
-                     <i class="bi bi-clock-history me-1"></i>Valid until Apr 30
-                  </div>
-               </div>
-            </div>
-         </a>
-         <a href="offers-rewards.html" class="offer-card d-block mb-4"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
-            <span class="offer-badge">$10 OFF</span>
-            <div class="d-flex align-items-center">
-               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-2">
-                  <i class="bi bi-gift text-white fs-24"></i>
-               </div>
-               <div class="ms-3">
-                  <div class="fw-semibold text-primary-color">First Trip Discount</div>
-                  <div class="text-muted small">$10 off on your first booking</div>
-                  <div class="mt-1 text-accent-color fs-11">
-                     <i class="bi bi-person-plus me-1"></i>New users only
-                  </div>
-               </div>
-            </div>
-         </a>
-           <!-- Upcoming Trips -->
-            <h6 class="section-header mt-0">Upcoming Tours</h6>
-         <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
-               <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                     <div class="d-flex align-items-center">
-                        <span class="fw-semibold text-primary-color">Mpanga Kipengere</span>
-                        <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                        <span class="fw-semibold text-primary-color">Makambako, Tanzania</span>
-                     </div>
-                  </div>
-                  <span class="status-badge confirmed">Confirmed</span>
-               </div>
-               <div class="d-flex justify-content-between mb-3">
-                  <div class="d-flex align-items-center">
-                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
-                     <span class="text-muted">Dec 15, 2025</span>
-                  </div>
-                  <div class="d-flex align-items-center">
-                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
-                     <span class="text-muted">From 10:30 AM</span>
-                  </div>
-               </div>
-               <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                     <div class="fw-semibold">Booking #BG78945</div>
-                     <div class="small text-muted">Login to check goings</div>
-                  </div>
-                  <a href="my-tickets.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
-                  View Ticket
-                  </a>
-               </div>
-            </div> 
+    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
+      const booking = {
+        full_name: document.getElementById("full_name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        tour_name: document.getElementById("tour_name").value,
+        tour_date: document.getElementById("tour_date").value,
+        notes: document.getElementById("notes").value
+      };
 
+      const { data, error } = await supabase
+        .from("bookings")
+        .insert([booking]);
 
-
-
-
-      </div>
-      <!-- Bottom Navigation Bar (App-style) -->
-      <div class="bottom-nav">
-         <a href="index.html" class="nav-item active">
-         <i class="bi bi-house-door-fill"></i>
-         <span>Home</span>
-         </a>
-         <a href="search.html" class="nav-item">
-         <i class="bi bi-search"></i>
-         <span>Search</span>
-         </a>
-         <a href="tour-details.html" class="nav-item btn rounded-4" style="color: white;background-color: black;">
-         <i class="bi bi-ticket-perforated"></i>
-          <span>Bookings</span>
-         </a>
-         <a href="offers-rewards.html" class="nav-item">
-         <i class="bi bi-gift"></i>
-         <span>Offers</span>
-         </a>
-         <a href="settings.html" class="nav-item">
-         <i class="bi bi-person"></i>
-         <span>Profile</span>
-         </a>
-      </div>
-      <!-- Bootstrap bundle js -->
-         <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
-         <!-- Script js -->
-         <script src="js/script.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
-         <script src="js/slider.js"></script>
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const lazySections = document.querySelectorAll(".lazy-bg");
-
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const section = entry.target;
-        const bgUrl = section.dataset.bg;
-
-        // Apply the real background image on top of gradient
-        section.style.backgroundImage = `
-          linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)),
-          url('${bgUrl}')
-        `;
-
-        section.classList.add("loaded");
-        observer.unobserve(section);
+      if (error) {
+        document.getElementById("status").innerText = "❌ Error: " + error.message;
+      } else {
+        document.getElementById("status").innerText = "✅ Booking successful!";
+        document.getElementById("bookingForm").reset();
       }
     });
-  });
-
-  lazySections.forEach(section => observer.observe(section));
-});
-</script>
+  </script>
 </body>
 </html>
