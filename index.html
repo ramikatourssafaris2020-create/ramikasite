@@ -338,10 +338,10 @@ const tourCardsContainer = document.getElementById("tourCards"); // Add this con
 let lastEmail = '';
 let toursData = []; // Store tours data globally
 
-// Load tours
+// Load tours - only using existing columns
 async function loadTours() {
   const { data, error } = await supabase.from('activities')
-    .select('id, name, price, description, duration, location, image_url')
+    .select('id, name, price') // Only selecting columns that exist
     .order('created_at', { ascending: true });
   
   if (error) return console.error('Load tours error:', error);
@@ -375,16 +375,14 @@ function createTourCards(tours) {
     card.className = 'tour-card';
     card.innerHTML = `
       <div class="tour-card-image">
-        <img src="${tour.image_url || 'https://via.placeholder.com/300x200?text=Tour+Image'}" 
-             alt="${tour.name}" 
-             onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+        <img src="https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}" 
+             alt="${tour.name}">
       </div>
       <div class="tour-card-content">
         <h3 class="tour-title">${tour.name}</h3>
-        <p class="tour-description">${tour.description || 'Experience an amazing adventure!'}</p>
+        <p class="tour-description">Experience an amazing ${tour.name.toLowerCase()} adventure! Book now for an unforgettable experience.</p>
         <div class="tour-details">
-          ${tour.duration ? `<span class="tour-duration">⏱️ ${tour.duration}</span>` : ''}
-          ${tour.location ? `<span class="tour-location">📍 ${tour.location}</span>` : ''}
+          <span class="tour-id">🎫 Tour ID: ${tour.id}</span>
         </div>
         <div class="tour-footer">
           <span class="tour-price">${tour.price ? '$' + tour.price : 'Free'}</span>
@@ -573,8 +571,7 @@ loadTours();
   margin: 15px 0;
 }
 
-.tour-duration,
-.tour-location {
+.tour-id {
   background: #f8f9fa;
   padding: 5px 10px;
   border-radius: 20px;
@@ -636,6 +633,7 @@ loadTours();
   }
 }
 </style>
+
 
 
   <script>
