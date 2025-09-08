@@ -40,6 +40,10 @@
   </button>
 </td>
 
+<h3>Send Notification</h3>
+<input type="email" id="notifyEmail" placeholder="User Email">
+<textarea id="notifyMessage" placeholder="Message"></textarea>
+<button id="sendNotify">Send</button>
 
   <!-- Bookings Table -->
   <h3>Bookings</h3>
@@ -161,6 +165,20 @@ document.addEventListener("click", async e => {
     loadBookings(); // refresh table
   }
 });
+document.getElementById("sendNotify").addEventListener("click", async () => {
+  const email = document.getElementById("notifyEmail").value;
+  const message = document.getElementById("notifyMessage").value;
+  if (!email || !message) return alert("Enter email and message");
+
+  const { error } = await supabase.from("notifications").insert([
+    { user_email: email, message }
+  ]);
+  if (error) return alert(error.message);
+
+  alert("Notification added!");
+  document.getElementById("notifyEmail").value = "";
+  document.getElementById("notifyMessage").value = "";
+});
 
     // --- Apply Filter ---
     document.getElementById("applyFilter").addEventListener("click", () => {
@@ -205,4 +223,3 @@ document.addEventListener("click", async e => {
   </script>
 </body>
 </html>
-
