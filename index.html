@@ -319,7 +319,7 @@
          <!-- Script js -->
          <script src="js/script.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
          <script src="js/slider.js"></script>
-         <script type="module">
+<script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
@@ -332,10 +332,15 @@ const emailInput = document.getElementById("email");
 const userBookingsDiv = document.getElementById("userBookings");
 const notificationsDiv = document.getElementById("notifications");
 
+let lastEmail = '';
+
 // Load tours
 async function loadTours() {
-  const { data, error } = await supabase.from('activities').select('*').order('created_at');
+  const { data, error } = await supabase.from('activities')
+    .select('id, name, price')
+    .order('created_at', { ascending: true });
   if (error) return console.error('Load tours error:', error);
+
   tourSelect.innerHTML = '<option value="">Select a Tour</option>';
   data.forEach(t => {
     const option = document.createElement('option');
@@ -345,23 +350,39 @@ async function loadTours() {
   });
 }
 
-// Load user bookings
-async function loadBookings() {
-  const email = emailInput.value;
-  if (!email) { userBookingsDiv.innerHTML = "No booked tours yet."; return; }
-  const { data, error } = await supabase.from('bookings').select('*').eq('email', email).order('created_at', { ascending: false });
-  if (error) return console.error('Load bookings error:', error);
-  if (!data.length) { userBookingsDiv.innerHTML = "No booked tours yet."; return; }
-  userBookingsDiv.innerHTML = data.map(b => `<div class="booked-tour"><span>${b.tour_name}</span><small>${b.tour_date}</small></div>`).join('');
-}
+// Load user bookings and notifications in parallel
+async function loadUserData(email) {
+  if (!email) {
+    userBookingsDiv.innerHTML = "No booked tours yet.";
+    notificationsDiv.innerHTML = "No notifications yet.";
+    return;
+  }
 
-// Load notifications
-async function loadNotifications() {
-  const email = emailInput.value;
-  if (!email) { notificationsDiv.innerHTML = "No notifications yet."; return; }
-  const { data, error } = await supabase.from('notifications').select('*').eq('user_email', email).order('created_at', { ascending: false });
-  if (error) return console.error('Load notifications error:', error);
-  notificationsDiv.innerHTML = data.length ? data.map(n => `<p>📣 ${n.message}</p>`).join('') : "No notifications yet.";
+  const [bookingsRes, notificationsRes] = await Promise.all([
+    supabase.from('bookings')
+      .select('tour_name, tour_date')
+      .eq('email', email)
+      .order('created_at', { ascending: false })
+      .limit(20),
+
+    supabase.from('notifications')
+      .select('message')
+      .eq('user_email', email)
+      .order('created_at', { ascending: false })
+      .limit(20)
+  ]);
+
+  // Render bookings
+  const bookings = bookingsRes.data || [];
+  userBookingsDiv.innerHTML = bookings.length
+    ? bookings.map(b => `<div class="booked-tour"><span>${b.tour_name}</span><small>${b.tour_date}</small></div>`).join('')
+    : "No booked tours yet.";
+
+  // Render notifications
+  const notifications = notificationsRes.data || [];
+  notificationsDiv.innerHTML = notifications.length
+    ? notifications.map(n => `<p>📣 ${n.message}</p>`).join('')
+    : "No notifications yet.";
 }
 
 // Booking submit
@@ -369,16 +390,22 @@ bookingForm.addEventListener('submit', async e => {
   e.preventDefault();
   const booking = {
     full_name: document.getElementById("full_name").value,
-    email: emailInput.value,
+    email: emailInput.value.trim(),
     phone: document.getElementById("phone").value,
     tour_name: tourSelect.value,
     tour_date: document.getElementById("tour_date").value,
     notes: ""
   };
+
   if (!booking.tour_name) return alert('Select a tour');
 
-  // Check duplicate
-  const { data: existing } = await supabase.from('bookings').select('*').eq('email', booking.email).eq('tour_name', booking.tour_name);
+  // Check duplicate booking
+  const { data: existing } = await supabase.from('bookings')
+    .select('id')
+    .eq('email', booking.email)
+    .eq('tour_name', booking.tour_name)
+    .limit(1);
+
   if (existing.length) return alert('You already booked this tour!');
 
   const { error } = await supabase.from('bookings').insert([booking]);
@@ -386,19 +413,22 @@ bookingForm.addEventListener('submit', async e => {
 
   alert('Booking successful!');
   bookingForm.reset();
-  loadBookings();
-  loadNotifications();
+  loadUserData(booking.email);
 });
 
-// Reload on email blur
+// Reload bookings/notifications only if email changed
 emailInput.addEventListener('blur', () => {
-  loadBookings();
-  loadNotifications();
+  const email = emailInput.value.trim();
+  if (email && email !== lastEmail) {
+    lastEmail = email;
+    loadUserData(email);
+  }
 });
 
 // Initial load
 loadTours();
 </script>
+
   <script>
 document.addEventListener("DOMContentLoaded", () => {
   const lazySections = document.querySelectorAll(".lazy-bg");
