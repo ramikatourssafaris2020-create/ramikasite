@@ -26,14 +26,14 @@
   <button id="applyFilter">Apply Filter</button>
   <button id="clearFilter">Clear Filter</button>
 
-  <!-- Add new activity/tour -->
-  <h3>Add New Activity/Tour</h3>
   <form id="addActivityForm">
-    <input type="text" id="activityName" placeholder="Tour Name" required><br>
-    <textarea id="activityDesc" placeholder="Description"></textarea><br>
-    <input type="number" id="activityPrice" placeholder="Price"><br>
-    <button type="submit">Add Activity</button>
-  </form>
+  <input type="text" id="activityName" placeholder="Tour Name" required><br>
+  <textarea id="activityDesc" placeholder="Description"></textarea><br>
+  <input type="number" id="activityPrice" placeholder="Price"><br>
+  <button type="submit">Add Activity</button>
+</form>
+
+
 
   <!-- Bookings Table -->
   <h3>Bookings</h3>
@@ -82,21 +82,28 @@
     }
     await loadActivities();
 
-    // --- Add New Activity ---
-    document.getElementById("addActivityForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const newActivity = {
-        name: document.getElementById("activityName").value,
-        description: document.getElementById("activityDesc").value,
-        price: parseFloat(document.getElementById("activityPrice").value || 0)
-      };
-      const { data, error } = await supabase.from("activities").insert([newActivity]);
-      if (error) return alert("Error adding activity: " + error.message);
-      alert("Activity added!");
-      document.getElementById("addActivityForm").reset();
-      await loadActivities();
-      await loadBookings();
-    });
+  document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const activity = {
+    name: document.getElementById("activityName").value,
+    description: document.getElementById("activityDesc").value,
+    price: parseFloat(document.getElementById("activityPrice").value || 0)
+  };
+
+  // Use session auth to insert activity (works with RLS)
+  const { data, error } = await supabase
+    .from("activities")
+    .insert([activity]);
+
+  if (error) {
+    alert("Error adding activity: " + error.message);
+  } else {
+    alert("Activity added successfully!");
+    document.getElementById("addActivityForm").reset();
+    loadActivities(); // reload the activity list
+  }
+});
 
     // --- Load Bookings ---
     let allBookings = [];
@@ -179,3 +186,4 @@
   </script>
 </body>
 </html>
+
