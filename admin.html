@@ -26,10 +26,11 @@
   <button id="applyFilter">Apply Filter</button>
   <button id="clearFilter">Clear Filter</button>
 
-  <form id="addActivityForm">
-  <input type="text" id="activityName" placeholder="Tour Name" required><br>
-  <textarea id="activityDesc" placeholder="Description"></textarea><br>
-  <input type="number" id="activityPrice" placeholder="Price"><br>
+<form id="addActivityForm">
+  <input type="text" id="activityName" placeholder="Activity Name" required>
+  <textarea id="activityDesc" placeholder="Description"></textarea>
+  <input type="number" id="activityPrice" placeholder="Price">
+  <input type="file" id="activityImage" accept="image/*" required>
   <button type="submit">Add Activity</button>
 </form>
 
@@ -92,26 +93,48 @@
     }
     await loadActivities();
 
-  document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
+document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const activity = {
-    name: document.getElementById("activityName").value,
-    description: document.getElementById("activityDesc").value,
-    price: parseFloat(document.getElementById("activityPrice").value || 0)
-  };
+  const name = document.getElementById("activityName").value;
+  const description = document.getElementById("activityDesc").value;
+  const price = parseFloat(document.getElementById("activityPrice").value || 0);
+  const file = document.getElementById("activityImage").files[0];
 
-  // Use session auth to insert activity (works with RLS)
-  const { data, error } = await supabase
+  if (!file) {
+    return alert("Please select an image.");
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `activities/${fileName}`;
+
+  // Upload to Supabase Storage
+  const { error: uploadError } = await supabase.storage
+    .from("tour-images")
+    .upload(filePath, file);
+
+  if (uploadError) {
+    return alert("Image upload failed: " + uploadError.message);
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from("tour-images")
+    .getPublicUrl(filePath);
+
+  // Save activity with image_url
+  const { error } = await supabase
     .from("activities")
-    .insert([activity]);
+    .insert([{ name, description, price, image_url: publicUrl }]);
 
   if (error) {
     alert("Error adding activity: " + error.message);
   } else {
     alert("Activity added successfully!");
     document.getElementById("addActivityForm").reset();
-    loadActivities(); // reload the activity list
+    loadActivities();
   }
 });
 
