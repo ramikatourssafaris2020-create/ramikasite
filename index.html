@@ -12,6 +12,17 @@
    <!-- Custom css -->
    <link rel="stylesheet" href="css/style.css">
    <!-- Slider css -->
+    <STYLE>
+      .lazy-bg {
+  filter: blur(20px);
+  transition: filter 0.6s ease-out;
+}
+
+.lazy-bg.loaded {
+  filter: blur(0);
+}
+
+    </STYLE>
    <link rel="stylesheet" href="css/slider.css">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
    </head>
@@ -103,20 +114,25 @@
             </form>
          </div>
 <div class="wrapper-hero">         
-<div class="hero-2" style="
-  background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('mpanga.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 30vh;">
+<div class="hero-2 lazy-bg" 
+     data-bg="mpanga.jpg"
+     style="
+       background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('tiny-blur.jpg');
+       background-size: cover;
+       background-position: center;
+       background-repeat: no-repeat;
+       height: 30vh;">
   <div class="content">
     <h1>Visit Mpanga Kipengere</h1>
     <p>Discovering your next safari WITHIN Mpanga kipengere <br> inside Makambako Tanzania</p>
-<a href="mpanga.html"><span class="btn btn-light btn-sm" style="font-weight: 600; border: none;background-color: rgb(255, 255, 255);">
-                Check full details 
-             </span></a>  
-   </div>
+    <a href="mpanga.html">
+      <span class="btn btn-light btn-sm" style="font-weight: 600; border: none; background-color: #fff;">
+        Check full details
+      </span>
+    </a>  
+  </div>
 </div>
+
 </div>
 <div class="wrapper-hero"> 
 <div class="hero-2" style="
@@ -273,15 +289,30 @@
          <!-- Script js -->
          <script src="js/script.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
          <script src="js/slider.js"></script>
-         <!-- Firebase auth module (landing init) -->
-         <script type="module">
-            import { initLanding } from './firebase-auth.js';
-            if (document.readyState === 'loading') {
-               document.addEventListener('DOMContentLoaded', () => initLanding());
-            } else {
-               initLanding();
-            }
-         </script>
-   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="d3207339c2170cba09c6aadb-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const lazySections = document.querySelectorAll(".lazy-bg");
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const section = entry.target;
+        const bgUrl = section.dataset.bg;
+
+        // Apply the real background image on top of gradient
+        section.style.backgroundImage = `
+          linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)),
+          url('${bgUrl}')
+        `;
+
+        section.classList.add("loaded");
+        observer.unobserve(section);
+      }
+    });
+  });
+
+  lazySections.forEach(section => observer.observe(section));
+});
+</script>
 </body>
 </html>
