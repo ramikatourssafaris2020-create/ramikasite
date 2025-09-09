@@ -700,33 +700,101 @@
         
         if (bookings && bookings.length > 0) {
           const bookingCount = bookings.length;
-          const recentBookings = bookings.slice(0, 3).map(b => `${b.full_name} (${b.tour_date})`).join('\n');
+          const recentBookings = bookings.slice(0, 5).map(b => `• ${b.full_name} (${b.tour_date})`).join('\n');
           
-          const action = confirm(
-            `Cannot delete "${activityName}" because it has ${bookingCount} existing booking(s):\n\n` +
-            `${recentBookings}${bookingCount > 3 ? '\n...and more' : ''}\n\n` +
-            `Click OK to transfer these bookings to another activity, or Cancel to keep the activity.`
+          // Show options for handling bookings
+          const deleteChoice = confirm(
+            `"${activityName}" has ${bookingCount} existing booking(s):\n\n` +
+            `${recentBookings}${bookingCount > 5 ? '\n• ...and ' + (bookingCount - 5) + ' more' : ''}\n\n` +
+            `⚠️ WARNING: Choose your action carefully ⚠️\n\n` +
+            `Click OK to DELETE ACTIVITY + ALL BOOKINGS\n` +
+            `Click Cancel to choose a different option`
           );
           
-          if (!action) return;
+          if (deleteChoice) {
+            // User chose to delete everything
+            const finalConfirm = confirm(
+              `🚨 FINAL CONFIRMATION 🚨\n\n` +
+              `This will PERMANENTLY DELETE:\n` +
+              `• "${activityName}" activity\n` +
+              `• All ${bookingCount} associated bookings\n` +
+              `• Customer booking records\n\n` +
+              `This action CANNOT be undone!\n\n` +
+              `Type the activity name to confirm deletion:`
+            );
+            
+            if (finalConfirm) {
+              const typedName = prompt(`Type "${activityName}" exactly to confirm:`);
+              if (typedName !== activityName) {
+                alert("Activity name doesn't match. Deletion cancelled for safety.");
+                return;
+              }
+              
+              // Delete all bookings for this activity first
+              const { error: deleteBookingsError } = await supabase
+                .from("bookings")
+                .delete()
+                .eq("tour_name", activityName);
+                
+              if (deleteBookingsError) {
+                alert("Error deleting bookings: " + deleteBookingsError.message);
+                return;
+              }
+              
+              // Now delete the activity
+              const { error: deleteActivityError } = await supabase
+                .from("activities")
+                .delete()
+                .eq("id", id);
+                
+              if (deleteActivityError) {
+                alert("Error deleting activity: " + deleteActivityError.message);
+                return;
+              }
+              
+              alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
+              loadActivities();
+              loadBookings();
+              return;
+            } else {
+              alert("Deletion cancelled.");
+              return;
+            }
+          }
+          
+          // User cancelled, offer transfer option
+          const transferChoice = confirm(
+            `Would you like to transfer the ${bookingCount} booking(s) to another activity instead?\n\n` +
+            `Click OK to transfer bookings\n` +
+            `Click Cancel to keep everything as is`
+          );
+          
+          if (!transferChoice) {
+            return; // User doesn't want to do anything
+          }
           
           // Show dialog to select replacement activity
           const otherActivities = activities.filter(a => a.id !== parseInt(id));
           if (otherActivities.length === 0) {
-            alert("Cannot delete the only activity. Please add another activity first.");
+            alert("Cannot transfer bookings - no other activities exist. Please add another activity first.");
             return;
           }
           
           let replacementOptions = "Choose a replacement activity:\n\n";
           otherActivities.forEach((a, index) => {
-            replacementOptions += `${index + 1}. ${a.name}\n`;
+            replacementOptions += `${index + 1}. ${a.name} (${a.price})\n`;
           });
           
-          const choice = prompt(replacementOptions + "\nEnter the number of your choice:");
+          const choice = prompt(replacementOptions + "\nEnter the number of your choice (or 0 to cancel):");
           const choiceIndex = parseInt(choice) - 1;
           
+          if (choice === "0") {
+            alert("Transfer cancelled.");
+            return;
+          }
+          
           if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
-            alert("Invalid choice. Deletion cancelled.");
+            alert("Invalid choice. Transfer cancelled.");
             return;
           }
           
@@ -743,24 +811,37 @@
             return;
           }
           
-          alert(`Updated ${bookingCount} booking(s) to "${replacementActivity.name}"`);
+          // Now delete the activity
+          const { error: deleteActivityError } = await supabase
+            .from("activities")
+            .delete()
+            .eq("id", id);
+            
+          if (deleteActivityError) {
+            alert("Error deleting activity: " + deleteActivityError.message);
+            return;
+          }
+          
+          alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
+          loadActivities();
+          loadBookings();
+          
         } else {
           // No bookings, safe to delete - ask for confirmation
           if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
-        }
-        
-        // Now delete the activity
-        const { error } = await supabase
-          .from("activities")
-          .delete()
-          .eq("id", id);
           
-        if (error) {
-          alert("Error deleting activity: " + error.message);
-        } else {
-          alert("Activity deleted successfully!");
-          loadActivities();
-          loadBookings(); // Refresh bookings table to show updated tour names
+          // Delete the activity
+          const { error } = await supabase
+            .from("activities")
+            .delete()
+            .eq("id", id);
+            
+          if (error) {
+            alert("Error deleting activity: " + error.message);
+          } else {
+            alert("Activity deleted successfully!");
+            loadActivities();
+          }
         }
       }
     });
