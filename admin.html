@@ -687,8 +687,69 @@
         const id = e.target.dataset.id;
         const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
         
-        if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+        // First, check if there are any bookings for this activity
+        const { data: bookings, error: checkError } = await supabase
+          .from("bookings")
+          .select("id, full_name, tour_date")
+          .eq("tour_name", activityName);
+          
+        if (checkError) {
+          alert("Error checking bookings: " + checkError.message);
+          return;
+        }
         
+        if (bookings && bookings.length > 0) {
+          const bookingCount = bookings.length;
+          const recentBookings = bookings.slice(0, 3).map(b => `${b.full_name} (${b.tour_date})`).join('\n');
+          
+          const action = confirm(
+            `Cannot delete "${activityName}" because it has ${bookingCount} existing booking(s):\n\n` +
+            `${recentBookings}${bookingCount > 3 ? '\n...and more' : ''}\n\n` +
+            `Click OK to transfer these bookings to another activity, or Cancel to keep the activity.`
+          );
+          
+          if (!action) return;
+          
+          // Show dialog to select replacement activity
+          const otherActivities = activities.filter(a => a.id !== parseInt(id));
+          if (otherActivities.length === 0) {
+            alert("Cannot delete the only activity. Please add another activity first.");
+            return;
+          }
+          
+          let replacementOptions = "Choose a replacement activity:\n\n";
+          otherActivities.forEach((a, index) => {
+            replacementOptions += `${index + 1}. ${a.name}\n`;
+          });
+          
+          const choice = prompt(replacementOptions + "\nEnter the number of your choice:");
+          const choiceIndex = parseInt(choice) - 1;
+          
+          if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
+            alert("Invalid choice. Deletion cancelled.");
+            return;
+          }
+          
+          const replacementActivity = otherActivities[choiceIndex];
+          
+          // Update all bookings to use the replacement activity
+          const { error: updateError } = await supabase
+            .from("bookings")
+            .update({ tour_name: replacementActivity.name })
+            .eq("tour_name", activityName);
+            
+          if (updateError) {
+            alert("Error updating bookings: " + updateError.message);
+            return;
+          }
+          
+          alert(`Updated ${bookingCount} booking(s) to "${replacementActivity.name}"`);
+        } else {
+          // No bookings, safe to delete - ask for confirmation
+          if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+        }
+        
+        // Now delete the activity
         const { error } = await supabase
           .from("activities")
           .delete()
@@ -699,6 +760,7 @@
         } else {
           alert("Activity deleted successfully!");
           loadActivities();
+          loadBookings(); // Refresh bookings table to show updated tour names
         }
       }
     });
