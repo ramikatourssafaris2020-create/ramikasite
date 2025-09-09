@@ -411,7 +411,66 @@
     </div>
   </div>
 
- <script type="module">
+<!-- Add this section to your admin page HTML -->
+<div class="activities-section" style="margin-bottom: 30px;">
+  <h2>Manage Activities</h2>
+  
+  <div style="overflow-x: auto;">
+    <table id="activitiesTable" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr style="background-color: #f8f9fa;">
+          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Image</th>
+          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Name</th>
+          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Description</th>
+          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Price ($)</th>
+          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Activities will be loaded here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .activities-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  #activitiesTable td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+  }
+  
+  .updateImageBtn:hover {
+    background: #0056b3 !important;
+  }
+  
+  .deleteActivityBtn:hover {
+    background: #c82333 !important;
+  }
+  
+  @media (max-width: 768px) {
+    #activitiesTable {
+      font-size: 14px;
+    }
+    
+    #activitiesTable td {
+      padding: 8px;
+    }
+    
+    #activitiesTable img {
+      width: 60px !important;
+      height: 45px !important;
+    }
+  }
+</style>
+<script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
     const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
@@ -428,12 +487,14 @@
       window.location.href = "sign-in.html";
     });
 
-    // --- Load Activities for filter and booking table ---
+    // --- Load Activities for filter, booking table, and activities preview ---
     let activities = [];
     async function loadActivities() {
       const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
       if (error) return console.error(error);
       activities = data;
+      
+      // Update tour filter dropdown
       const tourFilter = document.getElementById("tourFilter");
       tourFilter.innerHTML = '<option value="">All Tours</option>';
       data.forEach(a => {
@@ -442,53 +503,205 @@
         option.textContent = a.name;
         tourFilter.appendChild(option);
       });
+      
+      // Render activities preview table
+      renderActivitiesTable();
     }
+
+    // --- Render Activities Table ---
+    function renderActivitiesTable() {
+      const tbody = document.querySelector("#activitiesTable tbody");
+      if (!tbody) return; // Table might not exist on page
+      
+      tbody.innerHTML = "";
+      activities.forEach(activity => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>
+            <img src="${activity.image_url}" alt="${activity.name}" 
+                 style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
+          </td>
+          <td>
+            <input type="text" value="${activity.name}" 
+                   data-id="${activity.id}" class="editActivityField" data-field="name"
+                   style="width: 100%; padding: 4px; border: 1px solid #ccc;">
+          </td>
+          <td>
+            <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
+                      style="width: 100%; padding: 4px; border: 1px solid #ccc; min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
+          </td>
+          <td>
+            <input type="number" value="${activity.price}" 
+                   data-id="${activity.id}" class="editActivityField" data-field="price"
+                   style="width: 100%; padding: 4px; border: 1px solid #ccc;" step="0.01" min="0">
+          </td>
+          <td>
+            <button class="updateImageBtn" data-id="${activity.id}" 
+                    style="background: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 5px;">
+              Update Image
+            </button>
+            <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
+            <br>
+            <button class="deleteActivityBtn" data-id="${activity.id}"
+                    style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">
+              Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
     await loadActivities();
 
-document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    // --- Add Activity Form Handler ---
+    document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  const name = document.getElementById("activityName").value;
-  const description = document.getElementById("activityDesc").value;
-  const price = parseFloat(document.getElementById("activityPrice").value || 0);
-  const file = document.getElementById("activityImage").files[0];
+      const name = document.getElementById("activityName").value;
+      const description = document.getElementById("activityDesc").value;
+      const price = parseFloat(document.getElementById("activityPrice").value || 0);
+      const file = document.getElementById("activityImage").files[0];
 
-  if (!file) {
-    return alert("Please select an image.");
-  }
+      if (!file) {
+        return alert("Please select an image.");
+      }
 
-  // Generate unique filename
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-  const filePath = `activities/${fileName}`;
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `activities/${fileName}`;
 
-  // Upload to Supabase Storage
-  const { error: uploadError } = await supabase.storage
-    .from("tour-images")
-    .upload(filePath, file);
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("tour-images")
+        .upload(filePath, file);
 
-  if (uploadError) {
-    return alert("Image upload failed: " + uploadError.message);
-  }
+      if (uploadError) {
+        return alert("Image upload failed: " + uploadError.message);
+      }
 
-  // Get public URL
-  const { data: { publicUrl } } = supabase.storage
-    .from("tour-images")
-    .getPublicUrl(filePath);
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("tour-images")
+        .getPublicUrl(filePath);
 
-  // Save activity with image_url
-  const { error } = await supabase
-    .from("activities")
-    .insert([{ name, description, price, image_url: publicUrl }]);
+      // Save activity with image_url
+      const { error } = await supabase
+        .from("activities")
+        .insert([{ name, description, price, image_url: publicUrl }]);
 
-  if (error) {
-    alert("Error adding activity: " + error.message);
-  } else {
-    alert("Activity added successfully!");
-    document.getElementById("addActivityForm").reset();
-    loadActivities();
-  }
-});
+      if (error) {
+        alert("Error adding activity: " + error.message);
+      } else {
+        alert("Activity added successfully!");
+        document.getElementById("addActivityForm").reset();
+        loadActivities();
+      }
+    });
+
+    // --- Edit Activity Fields (auto-update on change) ---
+    document.addEventListener("change", async e => {
+      if (e.target.classList.contains("editActivityField")) {
+        const id = e.target.dataset.id;
+        const field = e.target.dataset.field;
+        let value = e.target.value;
+        
+        // Convert price to number
+        if (field === "price") {
+          value = parseFloat(value) || 0;
+        }
+        
+        const { error } = await supabase
+          .from("activities")
+          .update({ [field]: value })
+          .eq("id", id);
+          
+        if (error) {
+          alert("Error updating activity: " + error.message);
+        } else {
+          // Update local activities array
+          const activityIndex = activities.findIndex(a => a.id === parseInt(id));
+          if (activityIndex !== -1) {
+            activities[activityIndex][field] = value;
+          }
+        }
+      }
+      
+      // Handle booking field edits
+      if (e.target.classList.contains("editField")) {
+        const id = e.target.dataset.id;
+        const field = e.target.dataset.field;
+        const value = e.target.value;
+        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
+      }
+    });
+
+    // --- Update Activity Image ---
+    document.addEventListener("click", async e => {
+      if (e.target.classList.contains("updateImageBtn")) {
+        const activityId = e.target.dataset.id;
+        const fileInput = document.getElementById(`imageFile_${activityId}`);
+        fileInput.click();
+        
+        fileInput.onchange = async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          
+          // Generate unique filename
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}.${fileExt}`;
+          const filePath = `activities/${fileName}`;
+          
+          // Upload new image
+          const { error: uploadError } = await supabase.storage
+            .from("tour-images")
+            .upload(filePath, file);
+            
+          if (uploadError) {
+            return alert("Image upload failed: " + uploadError.message);
+          }
+          
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from("tour-images")
+            .getPublicUrl(filePath);
+            
+          // Update activity with new image URL
+          const { error } = await supabase
+            .from("activities")
+            .update({ image_url: publicUrl })
+            .eq("id", activityId);
+            
+          if (error) {
+            alert("Error updating image: " + error.message);
+          } else {
+            alert("Image updated successfully!");
+            loadActivities(); // Refresh the table
+          }
+        };
+      }
+      
+      // Delete Activity
+      if (e.target.classList.contains("deleteActivityBtn")) {
+        const id = e.target.dataset.id;
+        const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
+        
+        if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+        
+        const { error } = await supabase
+          .from("activities")
+          .delete()
+          .eq("id", id);
+          
+        if (error) {
+          alert("Error deleting activity: " + error.message);
+        } else {
+          alert("Activity deleted successfully!");
+          loadActivities();
+        }
+      }
+    });
 
     // --- Load Bookings ---
     let allBookings = [];
@@ -502,6 +715,8 @@ document.getElementById("addActivityForm").addEventListener("submit", async (e) 
     // --- Render Bookings ---
     function renderBookings(filterTour = "", filterDate = "") {
       const tbody = document.querySelector("#bookingsTable tbody");
+      if (!tbody) return; // Table might not exist on page
+      
       tbody.innerHTML = "";
       allBookings
         .filter(b => (filterTour ? b.tour_name === filterTour : true))
@@ -528,41 +743,44 @@ document.getElementById("addActivityForm").addEventListener("submit", async (e) 
 
     await loadBookings();
     
-document.addEventListener("click", async e => {
-  if (e.target.classList.contains("cancelBtn")) {
-    const id = e.target.dataset.id;
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
-    const { error } = await supabase
-      .from("bookings")
-      .update({ cancelled: true })
-      .eq("id", id);
-    if (error) return alert(error.message);
-    loadBookings(); // refresh table
-  }
-});
-document.getElementById("sendNotify").addEventListener("click", async () => {
-  const email = document.getElementById("notifyEmail").value;
-  const message = document.getElementById("notifyMessage").value;
-  if (!email || !message) return alert("Enter email and message");
+    // --- Cancel Booking ---
+    document.addEventListener("click", async e => {
+      if (e.target.classList.contains("cancelBtn")) {
+        const id = e.target.dataset.id;
+        if (!confirm("Are you sure you want to cancel this booking?")) return;
+        const { error } = await supabase
+          .from("bookings")
+          .update({ cancelled: true })
+          .eq("id", id);
+        if (error) return alert(error.message);
+        loadBookings(); // refresh table
+      }
+    });
 
-  const { error } = await supabase.from("notifications").insert([
-    { user_email: email, message }
-  ]);
-  if (error) return alert(error.message);
+    // --- Send Notification ---
+    document.getElementById("sendNotify")?.addEventListener("click", async () => {
+      const email = document.getElementById("notifyEmail").value;
+      const message = document.getElementById("notifyMessage").value;
+      if (!email || !message) return alert("Enter email and message");
 
-  alert("Notification added!");
-  document.getElementById("notifyEmail").value = "";
-  document.getElementById("notifyMessage").value = "";
-});
+      const { error } = await supabase.from("notifications").insert([
+        { user_email: email, message }
+      ]);
+      if (error) return alert(error.message);
+
+      alert("Notification added!");
+      document.getElementById("notifyEmail").value = "";
+      document.getElementById("notifyMessage").value = "";
+    });
 
     // --- Apply Filter ---
-    document.getElementById("applyFilter").addEventListener("click", () => {
+    document.getElementById("applyFilter")?.addEventListener("click", () => {
       const tour = document.getElementById("tourFilter").value;
       const date = document.getElementById("dateFilter").value;
       renderBookings(tour, date);
     });
 
-    document.getElementById("clearFilter").addEventListener("click", () => {
+    document.getElementById("clearFilter")?.addEventListener("click", () => {
       document.getElementById("tourFilter").value = "";
       document.getElementById("dateFilter").value = "";
       renderBookings();
@@ -585,16 +803,6 @@ document.getElementById("sendNotify").addEventListener("click", async () => {
       }
     });
 
-    // --- Edit Booking (auto-update on input change) ---
-    document.addEventListener("change", async e => {
-      if (e.target.classList.contains("editField")) {
-        const id = e.target.dataset.id;
-        const field = e.target.dataset.field;
-        const value = e.target.value;
-        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
-      }
-    });
-
-  </script>
+</script>
 </body>
 </html>
