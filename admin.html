@@ -1,600 +1,848 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="img/logo.png" type="image/png">
+      <title>Ramika Safaris & Tours</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+      <link rel="stylesheet" href="font/bootstrap-icons.css">
+   <!-- Custom css -->
+   <link rel="stylesheet" href="css/style.css">
+   <!-- Slider css -->
+    <STYLE>
+      .lazy-bg {
+  filter: blur(10px);
+  transition: filter 0.6s ease-out;
+}
 
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      color: #333;
-    }
+.lazy-bg.loaded {
+  filter: blur(0);
+}
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+    </STYLE>
+    <STYLE>
+      /* Tour Cards Horizontal Slider */
+#tourCards {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 10px;
+}
 
-    .header {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
 
-    .header h2 {
-      color: #2c3e50;
-      font-size: 2.2em;
-      font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+.tour-card {
+  flex: 0 0 auto;
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  scroll-snap-align: start;
+}
 
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-    }
+.tour-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
 
-    .card h3 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      font-size: 1.4em;
-      font-weight: 600;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #e8ecf3;
-    }
+.tour-card.selected {
+  border-color: #007bff;
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+}
 
-    .btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
+.tour-card-image {
+  height: 200px;
+  overflow: hidden;
+}
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
+.tour-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
 
-    .btn-danger {
-      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    }
+.tour-card:hover .tour-card-image img {
+  transform: scale(1.05);
+}
 
-    .btn-danger:hover {
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-    }
+.tour-card-content {
+  padding: 20px;
+}
 
-    .btn-secondary {
-      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-      box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
-    }
+.tour-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  color: #333;
+}
 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+.tour-description {
+  color: #666;
+  line-height: 1.5;
+  margin: 0 0 15px 0;
+}
 
-    .filter-section {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+.tour-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+.tour-id {
+  background: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  color: #555;
+}
 
-    .form-row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+.tour-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
 
-    input, select, textarea {
-      padding: 12px 16px;
-      border: 2px solid #e8ecf3;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background: white;
-      min-width: 200px;
-    }
+.tour-price {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #28a745;
+}
 
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
+.select-tour-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
 
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-      font-family: inherit;
-    }
+.select-tour-btn:hover {
+  background: #0056b3;
+}
 
-    .table-container {
-      overflow-x: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
+.tour-card.selected .select-tour-btn {
+  background: #28a745;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-    }
+.tour-card.selected .select-tour-btn:hover {
+  background: #1e7e34;
+}
 
-    th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 16px 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+/* Mobile tweak: make slider full width */
+@media (max-width: 768px) {
+  #tourCards {
+    gap: 15px;
+    padding: 10px;
+  }
 
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #e8ecf3;
-      vertical-align: middle;
-    }
+  .tour-card {
+    width: 85%; /* card fills most of screen */
+  }
 
-    tr:hover {
-      background-color: #f8f9ff;
-    }
+  .tour-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+  .select-tour-btn {
+    width: 100%;
+  }
+}
 
-    .table-input {
-      border: 1px solid #e8ecf3;
-      padding: 8px 12px;
-      border-radius: 6px;
-      width: 100%;
-      min-width: 120px;
-      font-size: 13px;
-    }
-
-    .table-input:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 6px;
-    }
-
-    .notification-form {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 25px;
-    }
-
-    .notification-form h3 {
-      color: white;
-      border-bottom-color: rgba(255,255,255,0.3);
-    }
-
-    .notification-form input,
-    .notification-form textarea {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .notification-form .btn {
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    .notification-form .btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .stat-number {
-      font-size: 2em;
-      font-weight: bold;
-      color: #667eea;
-      margin-bottom: 5px;
-    }
-
-    .stat-label {
-      color: #7f8c8d;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      
-      .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-      }
-      
-      .filter-section {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .form-row {
-        flex-direction: column;
-      }
-      
-      input, select, textarea {
-        min-width: unset;
-      }
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #c3e6cb;
-      margin-bottom: 20px;
-    }
-
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #f5c6cb;
-      margin-bottom: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h2>Admin Dashboard</h2>
-      <button id="logout" class="btn btn-danger">Logout</button>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number" id="totalBookings">0</div>
-        <div class="stat-label">Total Bookings</div>
+    </STYLE>
+   <link rel="stylesheet" href="css/slider.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+   </head>
+   <body>
+      <!-- Status Bar (mimics mobile device status bar) -->
+      <div class="status-bar">
+         <div><a href="admin.html" style="color: white;">Catch up the upcoming tour [Mpanga Kipengele on 15/12/25]</a></div>
+         <div>
+            <i class="bi bi-arrow-right ms-2"></i>
+         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalActivities">0</div>
-        <div class="stat-label">Total Activities</div>
+   
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- App Header -->
+      <div class="app-header d-flex justify-content-between align-items-center">
+         <div class="d-flex align-items-center">
+            <button id="menuBtn" class="btn menu-btn">
+            <i class="bi bi-three-dots-vertical menu-icon"></i>
+            </button>
+            <div class="d-flex align-items-center">
+               <img src="logo.png" height="50">              
+            </div>
+         </div>
+         <div class="d-flex align-items-center">
+            <a href="search.html" class="btn header-btn me-2">
+            <i class="bi bi-search icon-md"></i>
+            </a>&nbsp;
+            <a href="notifications.html" class="btn header-btn me-2">
+            <i class="bi bi-bell icon-md"></i>
+            </a>&nbsp;
+            <a id="logoutBtn"  class="btn header-btn me-2" style="border: 1px solid #00000049;border-radius: 50%;padding: 1px 0">
+            <img src="logo.png" height="30">
+            </a>&nbsp;
+            <a id="logoutBtn" class="btn header-btn me-2">
+            <i class="bi bi-box-arrow-right icon-md"></i>
+            </a>&nbsp;
+         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="todayBookings">0</div>
-        <div class="stat-label">Today's Bookings</div>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card">
-      <h3>🔍 Filters</h3>
-      <div class="filter-section">
-        <select id="tourFilter">
-          <option value="">All Tours</option>
-        </select>
-        <input type="date" id="dateFilter">
-        <button id="applyFilter" class="btn">Apply Filter</button>
-        <button id="clearFilter" class="btn btn-secondary">Clear Filter</button>
-      </div>
-    </div>
-
-    <!-- Add Activity Form -->
-    <div class="card">
-      <h3>➕ Add New Activity</h3>
-      <form id="addActivityForm">
-        <div class="form-group">
-          <div class="form-row">
-            <input type="text" id="activityName" placeholder="Activity Name" required>
-            <input type="number" id="activityPrice" placeholder="Price ($)" step="0.01">
-          </div>
-          <textarea id="activityDesc" placeholder="Activity Description"></textarea>
-          <input type="file" id="activityImage" accept="image/*" required>
-          <button type="submit" class="btn">Add Activity</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Send Notification -->
-    <div class="card notification-form">
-      <h3>📧 Send Notification</h3>
-      <div class="form-group">
-        <input type="email" id="notifyEmail" placeholder="User Email">
-        <textarea id="notifyMessage" placeholder="Notification Message"></textarea>
-        <button id="sendNotify" class="btn">Send Notification</button>
-      </div>
-    </div>
-
-    <!-- Bookings Table -->
-    <div class="card">
-      <h3>📋 Bookings Management</h3>
-      <div class="table-container">
-        <table id="bookingsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Tour</th>
-              <th>Date</th>
-              <th>Notes</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Main Content Area -->
+      <div class="content-area">
+<div class="hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.349), rgba(0,0,0,0.45)), url('maua.JPG');">
+  <div class="content">
+    <h1>Welcome to Ramika Safaris</h1>
+    <p>A local tour super agent company discovering your next safari <br> in the southern highlands of Tanzania.</p>
   </div>
+</div>
 
- <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+         <!-- Search Section -->
+         <div class="search-card">
+            <h6 class="text-primary-color mb-3 fw-semibold">
+               <i class="bi bi-bookmark-fill me-2"></i>Book available tours
+            </h6>
+            <form id="bookingForm">
+            <div class="mb-3">
+               <label for="email" class="form-label">Name</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-primary border-end-0">
+                  <i class="bi bi-person text-white"></i>
+                  </span>
+                  <input type="text" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="full_name" placeholder="Enter your name">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Email</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-primary border-end-0">
+                  <i class="bi bi-envelope text-white"></i>
+                  </span>
+                  <input type="email" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="email" placeholder="Enter your email">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Phone number</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-primary border-end-0">
+                  <i class="bi bi-phone text-white"></i>
+                  </span>
+                  <input type="number" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="phone" placeholder="Enter active phone number">
+               </div>
+            </div>
+            <div class="form-check mb-3">
+                <label class="form-check-label" for="bookForOthers" style="color: rgb(7, 98, 151);">
+               This will be your next default informations
+               </label>
+            </div>
+   
+               <div class="mb-3">
+                  <label for="fromLocation" class="form-label">
+                  <i class="bi bi-geo-alt me-1 text-primary-color"></i>Available tours
+                  </label>
+                  <select class="form-select" id="tourSelect">
+                  <option value="selected">Select a Tour</option>
+                  </select>
+               </div>
+               <div class="mb-3">
+                  <label for="travelDate" class="form-label">
+                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of Visit
+                  </label>
+                  <input type="date" class="form-control" id="tour_date">
+               </div>
+               <button type="submit" class="btn-app p-2  btn">
+               Submit 
+               </button>
+            </form>
+         </div>
 
-    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+<!-- Add this div where you want the tour cards to display -->
+<div id="tourCards"></div>
 
-    // --- Check if admin is logged in ---
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) window.location.href = "admin-login.html";
+         
+<div id="bookedTours">
+  <h3>Your Booked Tours</h3>
+  <div id="userBookings">No booked tours yet.</div>
+</div>
 
-    // --- Logout ---
-    document.getElementById("logout").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "sign-in.html";
-    });
+<div id="notificationsContainer">
+  <h3>Your Notifications</h3>
+  <div id="notifications">No notifications yet.</div>
+</div>
+<div class="wrapper-hero">         
+<div class="hero-2 lazy-bg" 
+     data-bg="mpanga.jpg"
+     style="
+       background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('tiny-blur.jpg');
+       background-size: cover;
+       background-position: center;
+       background-repeat: no-repeat;
+       height: 30vh;">
+  <div class="content">
+    <h1>Visit Mpanga Kipengere</h1>
+    <p>Discovering your next safari WITHIN Mpanga kipengere <br> inside Makambako Tanzania</p>
+    <a href="mpanga.html">
+      <span class="btn btn-light btn-sm" style="font-weight: 600; border: none; background-color: #fff;">
+        Check full details
+      </span>
+    </a>  
+  </div>
+</div>
 
-    // --- Load Activities for filter and booking table ---
-    let activities = [];
-    async function loadActivities() {
-      const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      activities = data;
-      const tourFilter = document.getElementById("tourFilter");
-      tourFilter.innerHTML = '<option value="">All Tours</option>';
-      data.forEach(a => {
-        const option = document.createElement("option");
-        option.value = a.name;
-        option.textContent = a.name;
-        tourFilter.appendChild(option);
-      });
-    }
-    await loadActivities();
+</div>
+<div class="wrapper-hero"> 
+<div class="hero-2 lazy-bg" 
+     data-bg="kitulo.JPG"
+     style="
+       background-image: linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)), url('tiny-blur.jpg');
+       background-size: cover;
+       background-position: center;
+       background-repeat: no-repeat;
+       height: 30vh;">
+  <div class="content">
+    <h1>Visit Kitulo National Park
+    </h1>
+    <p>View a beautiful land of with flowers located in <br> Njombe Tanzania</p>
+<a href="mpanga.html"><span class="btn btn-light btn-sm" style="font-weight: 600; border: none;background-color: rgb(255, 255, 255);">
+                Check full details 
+             </span></a>  
+   </div>
+</div>
+</div>
+         <!-- Recent Searches -->
+         <h6 class="section-header">Popular bookings</h6>
+         <a href="tour-details.html" class="route-card d-block">
+            <div class="d-flex justify-content-between align-items-center">
+               <div>
+                  <div class="d-flex align-items-center">
+                     <span class="fw-semibold text-primary-color">Kitulo National park</span>
+                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                     <span class="fw-semibold text-primary-color">Njombe, Tanzania</span>
+                  </div>
+                  <div class="d-flex align-items-center mt-2">
+                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
+                     <span class="text-muted small"> Last tour - Apr 15, 2025</span>
+                  </div>
+               </div>
+               <span class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                   <i class="bi bi-search"></i> Check availability
+             </span>
+            </div>
+         </a>
+         <a href="tour-details.html" class="route-card d-block">
+            <div class="d-flex justify-content-between align-items-center">
+               <div>
+                  <div class="d-flex align-items-center">
+                     <span class="fw-semibold text-primary-color">Mpanga Kipengele</span>
+                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                     <span class="fw-semibold text-primary-color">Makambako, Njombe</span>
+                  </div>
+                  <div class="d-flex align-items-center mt-2">
+                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
+                     <span class="text-muted small">Last tour - Apr 10, 2025</span>
+                  </div>
+               </div>
+               <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                  <i class="bi bi-search"></i> Check availability
+               </div>
+            </div>
+         </a>
+         <!-- Special Offers -->
+         <h6 class="section-header">Special Offers</h6>
+         <a href="offers-rewards.html" class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
+            <span class="offer-badge">20% OFF</span>
+            <div class="d-flex align-items-center">
+               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-1">
+                  <i class="bi bi-ticket-perforated text-white fs-24"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="fw-semibold text-primary-color">Weekend Special</div>
+                  <div class="text-muted small">20% off on all weekend trips</div>
+                  <div class="mt-1 text-accent-color fs-11">
+                     <i class="bi bi-clock-history me-1"></i>Valid until Apr 30
+                  </div>
+               </div>
+            </div>
+         </a>
+         <a href="offers-rewards.html" class="offer-card d-block mb-4"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
+            <span class="offer-badge">$10 OFF</span>
+            <div class="d-flex align-items-center">
+               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-2">
+                  <i class="bi bi-gift text-white fs-24"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="fw-semibold text-primary-color">First Trip Discount</div>
+                  <div class="text-muted small">$10 off on your first booking</div>
+                  <div class="mt-1 text-accent-color fs-11">
+                     <i class="bi bi-person-plus me-1"></i>New users only
+                  </div>
+               </div>
+            </div>
+         </a>
+           <!-- Upcoming Trips -->
+            <h6 class="section-header mt-0">Upcoming Tours</h6>
+         <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
+               <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                     <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-primary-color">Mpanga Kipengere</span>
+                        <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                        <span class="fw-semibold text-primary-color">Makambako, Tanzania</span>
+                     </div>
+                  </div>
+                  <span class="status-badge confirmed">Confirmed</span>
+               </div>
+               <div class="d-flex justify-content-between mb-3">
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">Dec 15, 2025</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">From 10:30 AM</span>
+                  </div>
+               </div>
+               <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                     <div class="fw-semibold">Booking #BG78945</div>
+                     <div class="small text-muted">Login to check goings</div>
+                  </div>
+                  <a href="my-tickets.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
+                  View Ticket
+                  </a>
+               </div>
+            </div> 
 
-document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
 
-  const name = document.getElementById("activityName").value;
-  const description = document.getElementById("activityDesc").value;
-  const price = parseFloat(document.getElementById("activityPrice").value || 0);
-  const file = document.getElementById("activityImage").files[0];
 
-  if (!file) {
-    return alert("Please select an image.");
+
+
+      </div>
+      <!-- Bottom Navigation Bar (App-style) -->
+      <div class="bottom-nav">
+         <a href="index.html" class="nav-item active">
+         <i class="bi bi-house-door-fill"></i>
+         <span>Home</span>
+         </a>
+         <a href="search.html" class="nav-item">
+         <i class="bi bi-search"></i>
+         <span>Search</span>
+         </a>
+         <a href="tour-details.html" class="nav-item btn rounded-4" style="color: white;background-color: black;">
+         <i class="bi bi-ticket-perforated"></i>
+          <span>Bookings</span>
+         </a>
+         <a href="offers-rewards.html" class="nav-item">
+         <i class="bi bi-gift"></i>
+         <span>Offers</span>
+         </a>
+         <a href="settings.html" class="nav-item">
+         <i class="bi bi-person"></i>
+         <span>Profile</span>
+         </a>
+      </div>
+      <!-- Bootstrap bundle js -->
+         <script src="vender/bootstrap/js/bootstrap.bundle.min.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
+         <!-- Script js -->
+         <script src="js/script.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
+         <script src="js/slider.js"></script>
+
+         <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const tourSelect = document.getElementById("tourSelect");
+const bookingForm = document.getElementById("bookingForm");
+const emailInput = document.getElementById("email");
+const fullNameInput = document.getElementById("full_name");
+const phoneInput = document.getElementById("phone");
+const userBookingsDiv = document.getElementById("userBookings");
+const notificationsDiv = document.getElementById("notifications");
+const tourCardsContainer = document.getElementById("tourCards");
+
+let lastEmail = '';
+let toursData = [];
+
+// ============ LOCAL STORAGE FUNCTIONS ============
+const USER_DATA_KEY = 'ramika_user_data';
+
+// Save user data to localStorage
+function saveUserData(userData) {
+  try {
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+    console.log('User data saved to localStorage');
+  } catch (error) {
+    console.error('Error saving user data:', error);
   }
+}
 
-  // Generate unique filename
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-  const filePath = `activities/${fileName}`;
-
-  // Upload to Supabase Storage
-  const { error: uploadError } = await supabase.storage
-    .from("tour-images")
-    .upload(filePath, file);
-
-  if (uploadError) {
-    return alert("Image upload failed: " + uploadError.message);
+// Load user data from localStorage
+function loadUserDataFromStorage() {
+  try {
+    const savedData = localStorage.getItem(USER_DATA_KEY);
+    return savedData ? JSON.parse(savedData) : null;
+  } catch (error) {
+    console.error('Error loading user data:', error);
+    return null;
   }
+}
 
-  // Get public URL
-  const { data: { publicUrl } } = supabase.storage
-    .from("tour-images")
-    .getPublicUrl(filePath);
-
-  // Save activity with image_url
-  const { error } = await supabase
-    .from("activities")
-    .insert([{ name, description, price, image_url: publicUrl }]);
-
-  if (error) {
-    alert("Error adding activity: " + error.message);
-  } else {
-    alert("Activity added successfully!");
-    document.getElementById("addActivityForm").reset();
-    loadActivities();
+// Clear user data from localStorage
+function clearUserData() {
+  try {
+    localStorage.removeItem(USER_DATA_KEY);
+    console.log('User data cleared from localStorage');
+  } catch (error) {
+    console.error('Error clearing user data:', error);
   }
-});
+}
 
-    // --- Load Bookings ---
-    let allBookings = [];
-    async function loadBookings() {
-      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      allBookings = data;
-      renderBookings();
-    }
-
-    // --- Render Bookings ---
-    function renderBookings(filterTour = "", filterDate = "") {
-      const tbody = document.querySelector("#bookingsTable tbody");
-      tbody.innerHTML = "";
-      allBookings
-        .filter(b => (filterTour ? b.tour_name === filterTour : true))
-        .filter(b => (filterDate ? b.tour_date === filterDate : true))
-        .forEach(b => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td><input type="text" value="${b.full_name}" data-id="${b.id}" class="editField" data-field="full_name"></td>
-            <td><input type="email" value="${b.email || ''}" data-id="${b.id}" class="editField" data-field="email"></td>
-            <td><input type="text" value="${b.phone || ''}" data-id="${b.id}" class="editField" data-field="phone"></td>
-            <td>
-              <select data-id="${b.id}" class="editField" data-field="tour_name">
-                ${activities.map(a => `<option value="${a.name}" ${a.name===b.tour_name?'selected':''}>${a.name}</option>`).join('')}
-              </select>
-            </td>
-            <td><input type="date" value="${b.tour_date}" data-id="${b.id}" class="editField" data-field="tour_date"></td>
-            <td><input type="text" value="${b.notes || ''}" data-id="${b.id}" class="editField" data-field="notes"></td>
-            <td>${b.created_at}</td>
-            <td><button class="deleteBtn" data-id="${b.id}">Delete</button></td>
-          `;
-          tbody.appendChild(row);
-        });
-    }
-
-    await loadBookings();
+// Auto-fill form with saved user data
+function autoFillForm() {
+  const savedData = loadUserDataFromStorage();
+  if (savedData) {
+    fullNameInput.value = savedData.full_name || '';
+    emailInput.value = savedData.email || '';
+    phoneInput.value = savedData.phone || '';
     
-document.addEventListener("click", async e => {
-  if (e.target.classList.contains("cancelBtn")) {
-    const id = e.target.dataset.id;
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
-    const { error } = await supabase
-      .from("bookings")
-      .update({ cancelled: true })
-      .eq("id", id);
-    if (error) return alert(error.message);
-    loadBookings(); // refresh table
+    // Load user activities if email exists
+    if (savedData.email) {
+      lastEmail = savedData.email;
+      loadUserData(savedData.email);
+    }
+    
+    console.log('Form auto-filled with saved data');
+  }
+}
+
+// Update user data in localStorage when form fields change
+function setupAutoSave() {
+  const inputs = [fullNameInput, emailInput, phoneInput];
+  
+  inputs.forEach(input => {
+    input.addEventListener('blur', () => {
+      const userData = {
+        full_name: fullNameInput.value.trim(),
+        email: emailInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        last_updated: new Date().toISOString()
+      };
+      
+      // Only save if at least email is provided
+      if (userData.email) {
+        saveUserData(userData);
+      }
+    });
+  });
+}
+
+// ============ EXISTING FUNCTIONS (Updated) ============
+
+// Complete solution
+async function loadTours() {
+  const { data, error } = await supabase.from('activities')
+    .select('id, name, price, image_url, description')
+    .order('created_at', { ascending: true });
+  
+  if (error) {
+    console.error('Load tours error:', error);
+    return;
+  }
+
+  toursData = data;
+  
+  // Populate dropdown
+  tourSelect.innerHTML = '<option value="">Select a Tour</option>';
+  data.forEach(t => {
+    const option = document.createElement('option');
+    option.value = t.name;
+    option.textContent = `${t.name} (${t.price ? '$'+t.price : 'Free'})`;
+    tourSelect.appendChild(option);
+  });
+
+  // Create tour cards with proper image handling
+  createTourCards(data);
+}
+
+function createTourCards(tours) {
+  if (!tourCardsContainer) {
+    console.warn('Tour cards container not found');
+    return;
+  }
+
+  tourCardsContainer.innerHTML = '';
+  
+  tours.forEach(tour => {
+    const card = document.createElement('div');
+    card.className = 'tour-card';
+    
+    // Handle image URL properly
+    let imageUrl = tour.image_url;
+    
+    // If using Supabase storage, construct proper URL
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = `${supabaseUrl}/storage/v1/object/public/tour-images/${imageUrl}`;
+    }
+    
+    // Fallback to placeholder if no image
+    if (!imageUrl) {
+      imageUrl = `https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}`;
+    }
+    
+    card.innerHTML = `
+      <div class="tour-card-image">
+        <img src="${imageUrl}" 
+             alt="${tour.name}"
+             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/FF6B6B/white?text=Image+Not+Found';"
+             loading="lazy">
+      </div>
+      <div class="tour-card-content">
+        <h3 class="tour-title">${tour.name}</h3>
+        <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure!`}</p>
+        <div class="tour-details">
+          <span class="tour-id">Tour ID: ${tour.id}</span>
+        </div>
+        <div class="tour-footer">
+          <span class="tour-price">${tour.price ? 'TZS' + tour.price : 'Free'}</span>
+          <button class="select-tour-btn" onclick="selectTour('${tour.name}')">
+            Select Tour
+          </button>
+        </div>
+      </div>
+    `;
+    tourCardsContainer.appendChild(card);
+  });
+}
+
+// Function to select tour from card
+window.selectTour = function(tourName) {
+  tourSelect.value = tourName;
+  tourSelect.dispatchEvent(new Event('change'));
+  
+  // Scroll to booking form
+  bookingForm.scrollIntoView({ behavior: 'smooth' });
+  
+  // Highlight selected tour
+  document.querySelectorAll('.tour-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  // Find and highlight the selected card
+  const selectedCard = Array.from(document.querySelectorAll('.tour-card')).find(card => 
+    card.querySelector('.tour-title').textContent === tourName
+  );
+  if (selectedCard) {
+    selectedCard.classList.add('selected');
+  }
+}
+
+// Load user bookings and notifications in parallel
+async function loadUserData(email) {
+  if (!email) {
+    userBookingsDiv.innerHTML = "No booked tours yet.";
+    notificationsDiv.innerHTML = "No notifications yet.";
+    return;
+  }
+
+  const [bookingsRes, notificationsRes] = await Promise.all([
+    supabase.from('bookings')
+      .select('tour_name, tour_date, created_at')
+      .eq('email', email)
+      .order('created_at', { ascending: false })
+      .limit(20),
+
+    supabase.from('notifications')
+      .select('message, created_at')
+      .eq('user_email', email)
+      .order('created_at', { ascending: false })
+      .limit(20)
+  ]);
+
+  // Render bookings with better styling
+  const bookings = bookingsRes.data || [];
+  userBookingsDiv.innerHTML = bookings.length
+    ? bookings.map(b => `
+        <div class="booked-tour" style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+          <strong>${b.tour_name}</strong>
+          <br><small>📅 ${b.tour_date}</small>
+          <br><small style="color: #666;">Booked: ${new Date(b.created_at).toLocaleDateString()}</small>
+        </div>
+      `).join('')
+    : "<p>No booked tours yet.</p>";
+
+  // Render notifications with timestamps
+  const notifications = notificationsRes.data || [];
+  notificationsDiv.innerHTML = notifications.length
+    ? notifications.map(n => `
+        <div style="border-left: 3px solid #007bff; padding: 10px; margin: 5px 0; background: #f8f9fa;">
+          <p style="margin: 0;">📣 ${n.message}</p>
+          <small style="color: #666;">${new Date(n.created_at).toLocaleDateString()}</small>
+        </div>
+      `).join('')
+    : "<p>No notifications yet.</p>";
+}
+
+// Booking submit (Updated to save user data)
+bookingForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  
+  const booking = {
+    full_name: fullNameInput.value.trim(),
+    email: emailInput.value.trim(),
+    phone: phoneInput.value.trim(),
+    tour_name: tourSelect.value,
+    tour_date: document.getElementById("tour_date").value,
+    notes: ""
+  };
+
+  if (!booking.tour_name) return alert('Select a tour');
+  if (!booking.full_name) return alert('Enter your name');
+  if (!booking.email) return alert('Enter your email');
+
+  // Save user data to localStorage
+  saveUserData({
+    full_name: booking.full_name,
+    email: booking.email,
+    phone: booking.phone,
+    last_updated: new Date().toISOString()
+  });
+
+  // Check duplicate booking
+  const { data: existing } = await supabase.from('bookings')
+    .select('id')
+    .eq('email', booking.email)
+    .eq('tour_name', booking.tour_name)
+    .limit(1);
+
+  if (existing.length) return alert('You already booked this tour!');
+
+  const { error } = await supabase.from('bookings').insert([booking]);
+  if (error) return alert('Booking failed: ' + error.message);
+
+  alert('Booking successful! Your details have been saved for future bookings.');
+  
+  // Reset only tour-specific fields
+  tourSelect.value = '';
+  document.getElementById("tour_date").value = '';
+  
+  // Clear tour selection
+  document.querySelectorAll('.tour-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  // Reload user data
+  loadUserData(booking.email);
+});
+
+// Reload bookings/notifications only if email changed
+emailInput.addEventListener('blur', () => {
+  const email = emailInput.value.trim();
+  if (email && email !== lastEmail) {
+    lastEmail = email;
+    loadUserData(email);
   }
 });
-document.getElementById("sendNotify").addEventListener("click", async () => {
-  const email = document.getElementById("notifyEmail").value;
-  const message = document.getElementById("notifyMessage").value;
-  if (!email || !message) return alert("Enter email and message");
 
-  const { error } = await supabase.from("notifications").insert([
-    { user_email: email, message }
-  ]);
-  if (error) return alert(error.message);
+// ============ ADD CLEAR DATA FUNCTIONALITY ============
+// Add a button to clear saved data (optional)
+function addClearDataButton() {
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'btn btn-outline-secondary btn-sm mt-2';
+  clearBtn.innerHTML = '🗑️ Clear Saved Data';
+  clearBtn.onclick = () => {
+    if (confirm('Are you sure you want to clear your saved information?')) {
+      clearUserData();
+      fullNameInput.value = '';
+      emailInput.value = '';
+      phoneInput.value = '';
+      userBookingsDiv.innerHTML = "No booked tours yet.";
+      notificationsDiv.innerHTML = "No notifications yet.";
+      alert('Saved data cleared!');
+    }
+  };
+  
+  // Add button after the form
+  bookingForm.appendChild(clearBtn);
+}
 
-  alert("Notification added!");
-  document.getElementById("notifyEmail").value = "";
-  document.getElementById("notifyMessage").value = "";
+// ============ INITIALIZATION ============
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  // Load tours
+  loadTours();
+  
+  // Auto-fill form with saved data
+  autoFillForm();
+  
+  // Setup auto-save functionality
+  setupAutoSave();
+  
+  // Add clear data button (optional)
+  addClearDataButton();
+  
+  console.log('Ramika Safaris app initialized with localStorage support');
 });
 
-    // --- Apply Filter ---
-    document.getElementById("applyFilter").addEventListener("click", () => {
-      const tour = document.getElementById("tourFilter").value;
-      const date = document.getElementById("dateFilter").value;
-      renderBookings(tour, date);
-    });
+// Also run initialization immediately in case DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+  // DOM is still loading, wait for DOMContentLoaded
+} else {
+  // DOM is already loaded
+  loadTours();
+  autoFillForm();
+  setupAutoSave();
+  addClearDataButton();
+}
+</script>
 
-    document.getElementById("clearFilter").addEventListener("click", () => {
-      document.getElementById("tourFilter").value = "";
-      document.getElementById("dateFilter").value = "";
-      renderBookings();
-    });
 
-    // --- Real-time bookings alert ---
-    supabase.from('bookings').on('INSERT', payload => {
-      alert(`New booking: ${payload.new.full_name} booked ${payload.new.tour_name}`);
-      loadBookings();
-    }).subscribe();
 
-    // --- Delete Booking ---
-    document.addEventListener("click", async e => {
-      if (e.target.classList.contains("deleteBtn")) {
-        const id = e.target.dataset.id;
-        if (!confirm("Delete this booking?")) return;
-        const { error } = await supabase.from("bookings").delete().eq("id", id);
-        if (error) return alert(error.message);
-        loadBookings();
+
+
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const lazySections = document.querySelectorAll(".lazy-bg");
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const section = entry.target;
+        const bgUrl = section.dataset.bg;
+
+        // Apply the real background image on top of gradient
+        section.style.backgroundImage = `
+          linear-gradient(rgba(0, 0, 0, 0.507), rgba(0, 0, 0, 0.616)),
+          url('${bgUrl}')
+        `;
+
+        section.classList.add("loaded");
+        observer.unobserve(section);
       }
     });
+  });
 
-    // --- Edit Booking (auto-update on input change) ---
-    document.addEventListener("change", async e => {
-      if (e.target.classList.contains("editField")) {
-        const id = e.target.dataset.id;
-        const field = e.target.dataset.field;
-        const value = e.target.value;
-        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
-      }
-    });
-
-  </script>
+  lazySections.forEach(section => observer.observe(section));
+});
+</script>
 </body>
 </html>
