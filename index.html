@@ -480,15 +480,18 @@ const tourCardsContainer = document.getElementById("tourCards"); // Add this con
 let lastEmail = '';
 let toursData = []; // Store tours data globally
 
-// Load tours - only using existing columns
+// Complete solution
 async function loadTours() {
   const { data, error } = await supabase.from('activities')
-    .select('id, name, price') // Only selecting columns that exist
+    .select('id, name, price, image_url, description') // Include all needed fields
     .order('created_at', { ascending: true });
   
-  if (error) return console.error('Load tours error:', error);
+  if (error) {
+    console.error('Load tours error:', error);
+    return;
+  }
 
-  toursData = data; // Store for global access
+  toursData = data;
   
   // Populate dropdown
   tourSelect.innerHTML = '<option value="">Select a Tour</option>';
@@ -499,14 +502,13 @@ async function loadTours() {
     tourSelect.appendChild(option);
   });
 
-  // Create tour cards
+  // Create tour cards with proper image handling
   createTourCards(data);
 }
 
-// Create tour cards
 function createTourCards(tours) {
   if (!tourCardsContainer) {
-    console.warn('Tour cards container not found. Add <div id="tourCards"></div> to your HTML');
+    console.warn('Tour cards container not found');
     return;
   }
 
@@ -515,14 +517,30 @@ function createTourCards(tours) {
   tours.forEach(tour => {
     const card = document.createElement('div');
     card.className = 'tour-card';
+    
+    // Handle image URL properly
+    let imageUrl = tour.image_url;
+    
+    // If using Supabase storage, construct proper URL
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = `${supabaseUrl}/storage/v1/object/public/tour-images/${imageUrl}`;
+    }
+    
+    // Fallback to placeholder if no image
+    if (!imageUrl) {
+      imageUrl = `https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}`;
+    }
+    
     card.innerHTML = `
       <div class="tour-card-image">
-        <img src="https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}" 
-             alt="${tour.name}">
+        <img src="${imageUrl}" 
+             alt="${tour.name}"
+             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/FF6B6B/white?text=Image+Not+Found';"
+             loading="lazy">
       </div>
       <div class="tour-card-content">
         <h3 class="tour-title">${tour.name}</h3>
-        <p class="tour-description">Experience an amazing ${tour.name.toLowerCase()} adventure! Book now for an unforgettable experience.</p>
+        <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure!`}</p>
         <div class="tour-details">
           <span class="tour-id">🎫 Tour ID: ${tour.id}</span>
         </div>
@@ -537,6 +555,7 @@ function createTourCards(tours) {
     tourCardsContainer.appendChild(card);
   });
 }
+
 
 // Function to select tour from card
 window.selectTour = function(tourName) {
