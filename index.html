@@ -190,6 +190,191 @@
 }
 
 </style>
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // --- Check if admin is logged in ---
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) window.location.href = "sign-in.html";
+
+    // --- Logout ---
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "sign-in.html";
+    });
+
+    // --- Load Activities for filter and booking table ---
+    let activities = [];
+    async function loadActivities() {
+      const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
+      if (error) return console.error(error);
+      activities = data;
+      const tourFilter = document.getElementById("tourFilter");
+      tourFilter.innerHTML = '<option value="">All Tours</option>';
+      data.forEach(a => {
+        const option = document.createElement("option");
+        option.value = a.name;
+        option.textContent = a.name;
+        tourFilter.appendChild(option);
+      });
+    }
+    await loadActivities();
+
+document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("activityName").value;
+  const description = document.getElementById("activityDesc").value;
+  const price = parseFloat(document.getElementById("activityPrice").value || 0);
+  const file = document.getElementById("activityImage").files[0];
+
+  if (!file) {
+    return alert("Please select an image.");
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `activities/${fileName}`;
+
+  // Upload to Supabase Storage
+  const { error: uploadError } = await supabase.storage
+    .from("tour-images")
+    .upload(filePath, file);
+
+  if (uploadError) {
+    return alert("Image upload failed: " + uploadError.message);
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from("tour-images")
+    .getPublicUrl(filePath);
+
+  // Save activity with image_url
+  const { error } = await supabase
+    .from("activities")
+    .insert([{ name, description, price, image_url: publicUrl }]);
+
+  if (error) {
+    alert("Error adding activity: " + error.message);
+  } else {
+    alert("Activity added successfully!");
+    document.getElementById("addActivityForm").reset();
+    loadActivities();
+  }
+});
+
+    // --- Load Bookings ---
+    let allBookings = [];
+    async function loadBookings() {
+      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+      if (error) return console.error(error);
+      allBookings = data;
+      renderBookings();
+    }
+
+    // --- Render Bookings ---
+    function renderBookings(filterTour = "", filterDate = "") {
+      const tbody = document.querySelector("#bookingsTable tbody");
+      tbody.innerHTML = "";
+      allBookings
+        .filter(b => (filterTour ? b.tour_name === filterTour : true))
+        .filter(b => (filterDate ? b.tour_date === filterDate : true))
+        .forEach(b => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><input type="text" value="${b.full_name}" data-id="${b.id}" class="editField" data-field="full_name"></td>
+            <td><input type="email" value="${b.email || ''}" data-id="${b.id}" class="editField" data-field="email"></td>
+            <td><input type="text" value="${b.phone || ''}" data-id="${b.id}" class="editField" data-field="phone"></td>
+            <td>
+              <select data-id="${b.id}" class="editField" data-field="tour_name">
+                ${activities.map(a => `<option value="${a.name}" ${a.name===b.tour_name?'selected':''}>${a.name}</option>`).join('')}
+              </select>
+            </td>
+            <td><input type="date" value="${b.tour_date}" data-id="${b.id}" class="editField" data-field="tour_date"></td>
+            <td><input type="text" value="${b.notes || ''}" data-id="${b.id}" class="editField" data-field="notes"></td>
+            <td>${b.created_at}</td>
+            <td><button class="deleteBtn" data-id="${b.id}">Delete</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+    }
+
+    await loadBookings();
+    
+document.addEventListener("click", async e => {
+  if (e.target.classList.contains("cancelBtn")) {
+    const id = e.target.dataset.id;
+    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    const { error } = await supabase
+      .from("bookings")
+      .update({ cancelled: true })
+      .eq("id", id);
+    if (error) return alert(error.message);
+    loadBookings(); // refresh table
+  }
+});
+document.getElementById("sendNotify").addEventListener("click", async () => {
+  const email = document.getElementById("notifyEmail").value;
+  const message = document.getElementById("notifyMessage").value;
+  if (!email || !message) return alert("Enter email and message");
+
+  const { error } = await supabase.from("notifications").insert([
+    { user_email: email, message }
+  ]);
+  if (error) return alert(error.message);
+
+  alert("Notification added!");
+  document.getElementById("notifyEmail").value = "";
+  document.getElementById("notifyMessage").value = "";
+});
+
+    // --- Apply Filter ---
+    document.getElementById("applyFilter").addEventListener("click", () => {
+      const tour = document.getElementById("tourFilter").value;
+      const date = document.getElementById("dateFilter").value;
+      renderBookings(tour, date);
+    });
+
+    document.getElementById("clearFilter").addEventListener("click", () => {
+      document.getElementById("tourFilter").value = "";
+      document.getElementById("dateFilter").value = "";
+      renderBookings();
+    });
+
+    // --- Real-time bookings alert ---
+    supabase.from('bookings').on('INSERT', payload => {
+      alert(`New booking: ${payload.new.full_name} booked ${payload.new.tour_name}`);
+      loadBookings();
+    }).subscribe();
+
+    // --- Delete Booking ---
+    document.addEventListener("click", async e => {
+      if (e.target.classList.contains("deleteBtn")) {
+        const id = e.target.dataset.id;
+        if (!confirm("Delete this booking?")) return;
+        const { error } = await supabase.from("bookings").delete().eq("id", id);
+        if (error) return alert(error.message);
+        loadBookings();
+      }
+    });
+
+    // --- Edit Booking (auto-update on input change) ---
+    document.addEventListener("change", async e => {
+      if (e.target.classList.contains("editField")) {
+        const id = e.target.dataset.id;
+        const field = e.target.dataset.field;
+        const value = e.target.value;
+        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
+      }
+    });
+
+  </script>
    <link rel="stylesheet" href="css/slider.css">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
    </head>
@@ -540,191 +725,7 @@
 <script src="js/script.js"></script>
 <script src="js/slider.js"></script>
 
-<script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // --- Check if admin is logged in ---
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) window.location.href = "sign-in.html";
-
-    // --- Logout ---
-    document.getElementById("logout").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "sign-in.html";
-    });
-
-    // --- Load Activities for filter and booking table ---
-    let activities = [];
-    async function loadActivities() {
-      const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      activities = data;
-      const tourFilter = document.getElementById("tourFilter");
-      tourFilter.innerHTML = '<option value="">All Tours</option>';
-      data.forEach(a => {
-        const option = document.createElement("option");
-        option.value = a.name;
-        option.textContent = a.name;
-        tourFilter.appendChild(option);
-      });
-    }
-    await loadActivities();
-
-document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById("activityName").value;
-  const description = document.getElementById("activityDesc").value;
-  const price = parseFloat(document.getElementById("activityPrice").value || 0);
-  const file = document.getElementById("activityImage").files[0];
-
-  if (!file) {
-    return alert("Please select an image.");
-  }
-
-  // Generate unique filename
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-  const filePath = `activities/${fileName}`;
-
-  // Upload to Supabase Storage
-  const { error: uploadError } = await supabase.storage
-    .from("tour-images")
-    .upload(filePath, file);
-
-  if (uploadError) {
-    return alert("Image upload failed: " + uploadError.message);
-  }
-
-  // Get public URL
-  const { data: { publicUrl } } = supabase.storage
-    .from("tour-images")
-    .getPublicUrl(filePath);
-
-  // Save activity with image_url
-  const { error } = await supabase
-    .from("activities")
-    .insert([{ name, description, price, image_url: publicUrl }]);
-
-  if (error) {
-    alert("Error adding activity: " + error.message);
-  } else {
-    alert("Activity added successfully!");
-    document.getElementById("addActivityForm").reset();
-    loadActivities();
-  }
-});
-
-    // --- Load Bookings ---
-    let allBookings = [];
-    async function loadBookings() {
-      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      allBookings = data;
-      renderBookings();
-    }
-
-    // --- Render Bookings ---
-    function renderBookings(filterTour = "", filterDate = "") {
-      const tbody = document.querySelector("#bookingsTable tbody");
-      tbody.innerHTML = "";
-      allBookings
-        .filter(b => (filterTour ? b.tour_name === filterTour : true))
-        .filter(b => (filterDate ? b.tour_date === filterDate : true))
-        .forEach(b => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td><input type="text" value="${b.full_name}" data-id="${b.id}" class="editField" data-field="full_name"></td>
-            <td><input type="email" value="${b.email || ''}" data-id="${b.id}" class="editField" data-field="email"></td>
-            <td><input type="text" value="${b.phone || ''}" data-id="${b.id}" class="editField" data-field="phone"></td>
-            <td>
-              <select data-id="${b.id}" class="editField" data-field="tour_name">
-                ${activities.map(a => `<option value="${a.name}" ${a.name===b.tour_name?'selected':''}>${a.name}</option>`).join('')}
-              </select>
-            </td>
-            <td><input type="date" value="${b.tour_date}" data-id="${b.id}" class="editField" data-field="tour_date"></td>
-            <td><input type="text" value="${b.notes || ''}" data-id="${b.id}" class="editField" data-field="notes"></td>
-            <td>${b.created_at}</td>
-            <td><button class="deleteBtn" data-id="${b.id}">Delete</button></td>
-          `;
-          tbody.appendChild(row);
-        });
-    }
-
-    await loadBookings();
-    
-document.addEventListener("click", async e => {
-  if (e.target.classList.contains("cancelBtn")) {
-    const id = e.target.dataset.id;
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
-    const { error } = await supabase
-      .from("bookings")
-      .update({ cancelled: true })
-      .eq("id", id);
-    if (error) return alert(error.message);
-    loadBookings(); // refresh table
-  }
-});
-document.getElementById("sendNotify").addEventListener("click", async () => {
-  const email = document.getElementById("notifyEmail").value;
-  const message = document.getElementById("notifyMessage").value;
-  if (!email || !message) return alert("Enter email and message");
-
-  const { error } = await supabase.from("notifications").insert([
-    { user_email: email, message }
-  ]);
-  if (error) return alert(error.message);
-
-  alert("Notification added!");
-  document.getElementById("notifyEmail").value = "";
-  document.getElementById("notifyMessage").value = "";
-});
-
-    // --- Apply Filter ---
-    document.getElementById("applyFilter").addEventListener("click", () => {
-      const tour = document.getElementById("tourFilter").value;
-      const date = document.getElementById("dateFilter").value;
-      renderBookings(tour, date);
-    });
-
-    document.getElementById("clearFilter").addEventListener("click", () => {
-      document.getElementById("tourFilter").value = "";
-      document.getElementById("dateFilter").value = "";
-      renderBookings();
-    });
-
-    // --- Real-time bookings alert ---
-    supabase.from('bookings').on('INSERT', payload => {
-      alert(`New booking: ${payload.new.full_name} booked ${payload.new.tour_name}`);
-      loadBookings();
-    }).subscribe();
-
-    // --- Delete Booking ---
-    document.addEventListener("click", async e => {
-      if (e.target.classList.contains("deleteBtn")) {
-        const id = e.target.dataset.id;
-        if (!confirm("Delete this booking?")) return;
-        const { error } = await supabase.from("bookings").delete().eq("id", id);
-        if (error) return alert(error.message);
-        loadBookings();
-      }
-    });
-
-    // --- Edit Booking (auto-update on input change) ---
-    document.addEventListener("change", async e => {
-      if (e.target.classList.contains("editField")) {
-        const id = e.target.dataset.id;
-        const field = e.target.dataset.field;
-        const value = e.target.value;
-        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
-      }
-    });
-
-  </script>
 
 
 
