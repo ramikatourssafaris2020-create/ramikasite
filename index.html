@@ -463,7 +463,7 @@
          <script src="js/script.js" type="d3207339c2170cba09c6aadb-text/javascript"></script>
          <script src="js/slider.js"></script>
 
-<script type="module">
+         <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
@@ -473,17 +473,94 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const tourSelect = document.getElementById("tourSelect");
 const bookingForm = document.getElementById("bookingForm");
 const emailInput = document.getElementById("email");
+const fullNameInput = document.getElementById("full_name");
+const phoneInput = document.getElementById("phone");
 const userBookingsDiv = document.getElementById("userBookings");
 const notificationsDiv = document.getElementById("notifications");
-const tourCardsContainer = document.getElementById("tourCards"); // Add this container to your HTML
+const tourCardsContainer = document.getElementById("tourCards");
 
 let lastEmail = '';
-let toursData = []; // Store tours data globally
+let toursData = [];
+
+// ============ LOCAL STORAGE FUNCTIONS ============
+const USER_DATA_KEY = 'ramika_user_data';
+
+// Save user data to localStorage
+function saveUserData(userData) {
+  try {
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+    console.log('User data saved to localStorage');
+  } catch (error) {
+    console.error('Error saving user data:', error);
+  }
+}
+
+// Load user data from localStorage
+function loadUserDataFromStorage() {
+  try {
+    const savedData = localStorage.getItem(USER_DATA_KEY);
+    return savedData ? JSON.parse(savedData) : null;
+  } catch (error) {
+    console.error('Error loading user data:', error);
+    return null;
+  }
+}
+
+// Clear user data from localStorage
+function clearUserData() {
+  try {
+    localStorage.removeItem(USER_DATA_KEY);
+    console.log('User data cleared from localStorage');
+  } catch (error) {
+    console.error('Error clearing user data:', error);
+  }
+}
+
+// Auto-fill form with saved user data
+function autoFillForm() {
+  const savedData = loadUserDataFromStorage();
+  if (savedData) {
+    fullNameInput.value = savedData.full_name || '';
+    emailInput.value = savedData.email || '';
+    phoneInput.value = savedData.phone || '';
+    
+    // Load user activities if email exists
+    if (savedData.email) {
+      lastEmail = savedData.email;
+      loadUserData(savedData.email);
+    }
+    
+    console.log('Form auto-filled with saved data');
+  }
+}
+
+// Update user data in localStorage when form fields change
+function setupAutoSave() {
+  const inputs = [fullNameInput, emailInput, phoneInput];
+  
+  inputs.forEach(input => {
+    input.addEventListener('blur', () => {
+      const userData = {
+        full_name: fullNameInput.value.trim(),
+        email: emailInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        last_updated: new Date().toISOString()
+      };
+      
+      // Only save if at least email is provided
+      if (userData.email) {
+        saveUserData(userData);
+      }
+    });
+  });
+}
+
+// ============ EXISTING FUNCTIONS (Updated) ============
 
 // Complete solution
 async function loadTours() {
   const { data, error } = await supabase.from('activities')
-    .select('id, name, price, image_url, description') // Include all needed fields
+    .select('id, name, price, image_url, description')
     .order('created_at', { ascending: true });
   
   if (error) {
@@ -556,7 +633,6 @@ function createTourCards(tours) {
   });
 }
 
-
 // Function to select tour from card
 window.selectTour = function(tourName) {
   tourSelect.value = tourName;
@@ -589,44 +665,66 @@ async function loadUserData(email) {
 
   const [bookingsRes, notificationsRes] = await Promise.all([
     supabase.from('bookings')
-      .select('tour_name, tour_date')
+      .select('tour_name, tour_date, created_at')
       .eq('email', email)
       .order('created_at', { ascending: false })
       .limit(20),
 
     supabase.from('notifications')
-      .select('message')
+      .select('message, created_at')
       .eq('user_email', email)
       .order('created_at', { ascending: false })
       .limit(20)
   ]);
 
-  // Render bookings
+  // Render bookings with better styling
   const bookings = bookingsRes.data || [];
   userBookingsDiv.innerHTML = bookings.length
-    ? bookings.map(b => `<div class="booked-tour"><span>${b.tour_name}</span><small>${b.tour_date}</small></div>`).join('')
-    : "No booked tours yet.";
+    ? bookings.map(b => `
+        <div class="booked-tour" style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+          <strong>${b.tour_name}</strong>
+          <br><small>📅 ${b.tour_date}</small>
+          <br><small style="color: #666;">Booked: ${new Date(b.created_at).toLocaleDateString()}</small>
+        </div>
+      `).join('')
+    : "<p>No booked tours yet.</p>";
 
-  // Render notifications
+  // Render notifications with timestamps
   const notifications = notificationsRes.data || [];
   notificationsDiv.innerHTML = notifications.length
-    ? notifications.map(n => `<p>📣 ${n.message}</p>`).join('')
-    : "No notifications yet.";
+    ? notifications.map(n => `
+        <div style="border-left: 3px solid #007bff; padding: 10px; margin: 5px 0; background: #f8f9fa;">
+          <p style="margin: 0;">📣 ${n.message}</p>
+          <small style="color: #666;">${new Date(n.created_at).toLocaleDateString()}</small>
+        </div>
+      `).join('')
+    : "<p>No notifications yet.</p>";
 }
 
-// Booking submit
+// Booking submit (Updated to save user data)
 bookingForm.addEventListener('submit', async e => {
   e.preventDefault();
+  
   const booking = {
-    full_name: document.getElementById("full_name").value,
+    full_name: fullNameInput.value.trim(),
     email: emailInput.value.trim(),
-    phone: document.getElementById("phone").value,
+    phone: phoneInput.value.trim(),
     tour_name: tourSelect.value,
     tour_date: document.getElementById("tour_date").value,
     notes: ""
   };
 
   if (!booking.tour_name) return alert('Select a tour');
+  if (!booking.full_name) return alert('Enter your name');
+  if (!booking.email) return alert('Enter your email');
+
+  // Save user data to localStorage
+  saveUserData({
+    full_name: booking.full_name,
+    email: booking.email,
+    phone: booking.phone,
+    last_updated: new Date().toISOString()
+  });
 
   // Check duplicate booking
   const { data: existing } = await supabase.from('bookings')
@@ -640,14 +738,18 @@ bookingForm.addEventListener('submit', async e => {
   const { error } = await supabase.from('bookings').insert([booking]);
   if (error) return alert('Booking failed: ' + error.message);
 
-  alert('Booking successful!');
-  bookingForm.reset();
+  alert('Booking successful! Your details have been saved for future bookings.');
+  
+  // Reset only tour-specific fields
+  tourSelect.value = '';
+  document.getElementById("tour_date").value = '';
   
   // Clear tour selection
   document.querySelectorAll('.tour-card').forEach(card => {
     card.classList.remove('selected');
   });
   
+  // Reload user data
   loadUserData(booking.email);
 });
 
@@ -660,8 +762,57 @@ emailInput.addEventListener('blur', () => {
   }
 });
 
-// Initial load
-loadTours();
+// ============ ADD CLEAR DATA FUNCTIONALITY ============
+// Add a button to clear saved data (optional)
+function addClearDataButton() {
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'btn btn-outline-secondary btn-sm mt-2';
+  clearBtn.innerHTML = '🗑️ Clear Saved Data';
+  clearBtn.onclick = () => {
+    if (confirm('Are you sure you want to clear your saved information?')) {
+      clearUserData();
+      fullNameInput.value = '';
+      emailInput.value = '';
+      phoneInput.value = '';
+      userBookingsDiv.innerHTML = "No booked tours yet.";
+      notificationsDiv.innerHTML = "No notifications yet.";
+      alert('Saved data cleared!');
+    }
+  };
+  
+  // Add button after the form
+  bookingForm.appendChild(clearBtn);
+}
+
+// ============ INITIALIZATION ============
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  // Load tours
+  loadTours();
+  
+  // Auto-fill form with saved data
+  autoFillForm();
+  
+  // Setup auto-save functionality
+  setupAutoSave();
+  
+  // Add clear data button (optional)
+  addClearDataButton();
+  
+  console.log('Ramika Safaris app initialized with localStorage support');
+});
+
+// Also run initialization immediately in case DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+  // DOM is still loading, wait for DOMContentLoaded
+} else {
+  // DOM is already loaded
+  loadTours();
+  autoFillForm();
+  setupAutoSave();
+  addClearDataButton();
+}
 </script>
 
 
