@@ -619,10 +619,10 @@ function createTourCards(tours) {
         <h3 class="tour-title">${tour.name}</h3>
         <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure!`}</p>
         <div class="tour-details">
-          <span class="tour-id">🎫 Tour ID: ${tour.id}</span>
+          <span class="tour-id">Tour ID: ${tour.id}</span>
         </div>
         <div class="tour-footer">
-          <span class="tour-price">${tour.price ? '$' + tour.price : 'Free'}</span>
+          <span class="tour-price">${tour.price ? 'TZS' + tour.price : 'Free'}</span>
           <button class="select-tour-btn" onclick="selectTour('${tour.name}')">
             Select Tour
           </button>
