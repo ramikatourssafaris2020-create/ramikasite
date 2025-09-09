@@ -867,69 +867,75 @@
           document.getElementById("todayBookings").textContent = todayBookings;
         }
 
-        // --- Render Bookings ---
-        function renderBookings(filterTour = "", filterDate = "") {
-          const tbody = document.querySelector("#bookingsTable tbody");
-          if (!tbody) return;
-          
-          const filteredBookings = allBookings
-            .filter(b => (filterTour ? b.tour_name === filterTour : true))
-            .filter(b => (filterDate ? b.tour_date === filterDate : true));
-            
-          tbody.innerHTML = "";
-          
-          if (filteredBookings.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #6c757d; padding: 40px;">No bookings found.</td></tr>';
-            return;
-          }
-          
-          // helper to safely escape HTML
-          function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            return String(str)
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
-          }
+// --- Render Bookings (safe version) ---
+function renderBookings(filterTour = "", filterDate = "") {
+  const tbody = document.querySelector("#bookingsTable tbody");
+  if (!tbody) return;
 
-          filteredBookings.forEach(b => {
-            const row = document.createElement('tr');
-            const tourOptions = activities.map(a => `<option value="${escapeHtml(a.name)}" ${a.name === b.tour_name ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
+  const filteredBookings = allBookings
+    .filter(b => (filterTour ? b.tour_name === filterTour : true))
+    .filter(b => (filterDate ? b.tour_date === filterDate : true));
 
-            row.innerHTML = `
-              <td>
-                <input class="editField" data-id="${b.id}" data-field="full_name" value="${escapeHtml(b.full_name || '')}">
-              </td>
-              <td>
-                <input class="editField" data-id="${b.id}" data-field="email" value="${escapeHtml(b.email || '')}">
-              </td>
-              <td>
-                <input class="editField" data-id="${b.id}" data-field="phone" value="${escapeHtml(b.phone || '')}">
-              </td>
-              <td>
-                <select class="editField" data-id="${b.id}" data-field="tour_name">${tourOptions}</select>
-              </td>
-              <td>
-                <input type="date" class="editField" data-id="${b.id}" data-field="tour_date" value="${escapeHtml(b.tour_date || '')}">
-              </td>
-              <td>
-                <textarea class="editField" data-id="${b.id}" data-field="notes" style="min-height:60px; resize:vertical;">${escapeHtml(b.notes || '')}</textarea>
-              </td>
-              <td>
-                ${b.created_at ? new Date(b.created_at).toLocaleString() : ''}
-              </td>
-              <td>
-                <button class="deleteBookingBtn btn btn-danger" data-id="${b.id}" style="padding:5px 8px; font-size:12px;">Delete</button>
-                <button class="emailBookingBtn btn btn-success" data-email="${escapeHtml(b.email || '')}" data-name="${escapeHtml(b.full_name || '')}" data-id="${b.id}" style="margin-left:6px; padding:5px 8px; font-size:12px;">Email</button>
-              </td>
-            `;
+  tbody.innerHTML = "";
 
-            tbody.appendChild(row);
-          });
+  if (filteredBookings.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #6c757d; padding: 40px;">No bookings found.</td></tr>';
+    return;
+  }
 
-        }
+  // helper to safely escape HTML
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  filteredBookings.forEach(b => {
+    const row = document.createElement('tr');
+
+    // Use activities array safely, fallback to empty array if not loaded
+    const availableActivities = Array.isArray(activities) ? activities : [];
+    const tourOptions = availableActivities.map(a => 
+      `<option value="${escapeHtml(a.name)}" ${a.name === b.tour_name ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+    ).join('');
+
+    row.innerHTML = `
+      <td>
+        <input class="editField" data-id="${b.id}" data-field="full_name" value="${escapeHtml(b.full_name || '')}">
+      </td>
+      <td>
+        <input class="editField" data-id="${b.id}" data-field="email" value="${escapeHtml(b.email || '')}">
+      </td>
+      <td>
+        <input class="editField" data-id="${b.id}" data-field="phone" value="${escapeHtml(b.phone || '')}">
+      </td>
+      <td>
+        <select class="editField" data-id="${b.id}" data-field="tour_name">
+          ${tourOptions || `<option value="${escapeHtml(b.tour_name || '')}" selected>${escapeHtml(b.tour_name || 'Unknown')}</option>`}
+        </select>
+      </td>
+      <td>
+        <input type="date" class="editField" data-id="${b.id}" data-field="tour_date" value="${escapeHtml(b.tour_date || '')}">
+      </td>
+      <td>
+        <textarea class="editField" data-id="${b.id}" data-field="notes" style="min-height:60px; resize:vertical;">${escapeHtml(b.notes || '')}</textarea>
+      </td>
+      <td>
+        ${b.created_at ? new Date(b.created_at).toLocaleString() : ''}
+      </td>
+      <td>
+        <button class="deleteBookingBtn btn btn-danger" data-id="${b.id}" style="padding:5px 8px; font-size:12px;">Delete</button>
+        <button class="emailBookingBtn btn btn-success" data-email="${escapeHtml(b.email || '')}" data-name="${escapeHtml(b.full_name || '')}" data-id="${b.id}" style="margin-left:6px; padding:5px 8px; font-size:12px;">Email</button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
 
         // --- Ensure bookings load after activities ---
         // (loadBookings was called earlier; but call again when activities change)
