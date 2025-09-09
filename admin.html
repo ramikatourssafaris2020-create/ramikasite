@@ -555,7 +555,9 @@
           });
         }
 
-        await loadActivities();
+  await loadActivities();
+  // Ensure bookings are loaded immediately after activities
+  await loadBookings();
 
         // --- Add Activity Form Handler ---
         document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
