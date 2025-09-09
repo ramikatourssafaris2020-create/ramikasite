@@ -876,23 +876,38 @@ document.addEventListener('click', async (e) => {
     loadBookings();
   }
 
-  // Email booking - FIXED VERSION
-  if (e.target.classList.contains('emailBookingBtn')) {
-    const email = e.target.dataset.email;
-    const name = e.target.dataset.name || '';
-    const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
-    const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
-    if (!message) return;
+// Email booking handler
+if (e.target.classList.contains('emailBookingBtn')) {
+  const email = e.target.dataset.email?.trim();
+  const name = e.target.dataset.name?.trim() || '';
 
-    // Insert without booking_id
-    const { error } = await supabase.from('notifications').insert([{ 
-      email, 
-      message 
-    }]);
-    
-    if (error) return alert('Error queuing message: ' + error.message);
-    alert('Message queued successfully.');
+  if (!email) {
+    return alert('Error: No email found for this booking.');
   }
+
+  const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
+  const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
+
+  if (!message) return; // User cancelled
+
+  try {
+    const { error } = await supabase.from('notifications').insert([{
+      user_email: email, // must match your table column
+      message,
+      created_at: new Date() // optional, if your table has a timestamp
+    }]);
+
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return alert('Error queuing message: ' + error.message);
+    }
+
+    alert('Message queued successfully.');
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    alert('An unexpected error occurred while queuing the message.');
+  }
+}
 
   // Update Activity Image
   if (e.target.classList.contains("updateImageBtn")) {
