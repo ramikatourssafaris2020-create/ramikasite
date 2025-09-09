@@ -469,412 +469,123 @@
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+ <script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-        const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // --- Check if admin is logged in ---
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) window.location.href = "sign-in.html";
+// --- Check if admin is logged in ---
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) window.location.href = "sign-in.html";
 
-        // --- Logout ---
-        document.getElementById("logout").addEventListener("click", async () => {
-          await supabase.auth.signOut();
-          window.location.href = "sign-in.html";
-        });
+// --- Logout ---
+document.getElementById("logout").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.location.href = "sign-in.html";
+});
 
-        // --- Load Activities for filter, booking table, and activities preview ---
-        let activities = [];
-        async function loadActivities() {
-          const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
-          if (error) return console.error(error);
-          activities = data;
-          
-          // Update tour filter dropdown
-          const tourFilter = document.getElementById("tourFilter");
-          tourFilter.innerHTML = '<option value="">All Tours</option>';
-          data.forEach(a => {
-            const option = document.createElement("option");
-            option.value = a.name;
-            option.textContent = a.name;
-            tourFilter.appendChild(option);
-          });
-          
-          // Render activities preview table
-          renderActivitiesTable();
-          
-          // Update stats
-          document.getElementById("totalActivities").textContent = data.length;
-        }
+// --- Global variables ---
+let activities = [];
+let allBookings = [];
 
-        // --- Render Activities Table ---
-        function renderActivitiesTable() {
-          const tbody = document.querySelector("#activitiesTable tbody");
-          if (!tbody) return;
-          
-          tbody.innerHTML = "";
-          if (activities.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6c757d; padding: 40px;">No activities found. Add your first activity above.</td></tr>';
-            return;
-          }
-          
-          activities.forEach(activity => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td>
-                <img src="${activity.image_url}" alt="${activity.name}" class="activity-image">
-              </td>
-              <td>
-                <input type="text" value="${activity.name}" 
-                       data-id="${activity.id}" class="editActivityField" data-field="name">
-              </td>
-              <td>
-                <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
-                          style="min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
-              </td>
-              <td>
-                <input type="number" value="${activity.price}" 
-                       data-id="${activity.id}" class="editActivityField" data-field="price"
-                       step="0.01" min="0">
-              </td>
-              <td>
-                <button class="updateImageBtn btn btn-info" data-id="${activity.id}" style="margin-bottom: 5px; padding: 5px 10px; font-size: 12px;">
-                  Update Image
-                </button>
-                <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
-                <br>
-                <button class="deleteActivityBtn btn btn-danger" data-id="${activity.id}" style="padding: 5px 10px; font-size: 12px;">
-                  Delete
-                </button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          });
-        }
+// --- Load Activities ---
+async function loadActivities() {
+  try {
+    console.log("Loading activities...");
+    const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
+    
+    if (error) {
+      console.error("Error loading activities:", error);
+      return false;
+    }
+    
+    activities = data || [];
+    console.log("Activities loaded:", activities.length);
+    
+    // Update tour filter dropdown
+    const tourFilter = document.getElementById("tourFilter");
+    if (tourFilter) {
+      tourFilter.innerHTML = '<option value="">All Tours</option>';
+      activities.forEach(a => {
+        const option = document.createElement("option");
+        option.value = a.name;
+        option.textContent = a.name;
+        tourFilter.appendChild(option);
+      });
+    }
+    
+    // Render activities preview table
+    renderActivitiesTable();
+    
+    // Update stats
+    const totalActivitiesEl = document.getElementById("totalActivities");
+    if (totalActivitiesEl) {
+      totalActivitiesEl.textContent = activities.length;
+    }
+    
+    return true;
+  } catch (err) {
+    console.error("Exception loading activities:", err);
+    return false;
+  }
+}
 
-  await loadActivities();
-  // Ensure bookings are loaded immediately after activities
-  await loadBookings();
+// --- Load Bookings (FIXED VERSION) ---
+async function loadBookings() {
+  try {
+    console.log("Loading bookings...");
+    const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+    
+    if (error) {
+      console.error("Error loading bookings:", error);
+      alert("Failed to load bookings: " + error.message);
+      return false;
+    }
+    
+    allBookings = data || [];
+    console.log("Bookings loaded:", allBookings.length);
+    
+    // Render bookings
+    renderBookings();
+    
+    // Update stats
+    const totalBookingsEl = document.getElementById("totalBookings");
+    if (totalBookingsEl) {
+      totalBookingsEl.textContent = allBookings.length;
+    }
+    
+    const todayBookingsEl = document.getElementById("todayBookings");
+    if (todayBookingsEl) {
+      const today = new Date().toISOString().split('T')[0];
+      const todayBookings = allBookings.filter(b => b.tour_date === today).length;
+      todayBookingsEl.textContent = todayBookings;
+    }
+    
+    return true;
+  } catch (err) {
+    console.error("Exception loading bookings:", err);
+    alert("Failed to load bookings: " + err.message);
+    return false;
+  }
+}
 
-        // --- Add Activity Form Handler ---
-        document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const name = document.getElementById("activityName").value;
-          const description = document.getElementById("activityDesc").value;
-          const price = parseFloat(document.getElementById("activityPrice").value || 0);
-          const file = document.getElementById("activityImage").files[0];
-
-          if (!file) {
-            return alert("Please select an image.");
-          }
-
-          // Generate unique filename
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}.${fileExt}`;
-          const filePath = `activities/${fileName}`;
-
-          // Upload to Supabase Storage
-          const { error: uploadError } = await supabase.storage
-            .from("tour-images")
-            .upload(filePath, file);
-
-          if (uploadError) {
-            return alert("Image upload failed: " + uploadError.message);
-          }
-
-          // Get public URL
-          const { data: { publicUrl } } = supabase.storage
-            .from("tour-images")
-            .getPublicUrl(filePath);
-
-          // Save activity with image_url
-          const { error } = await supabase
-            .from("activities")
-            .insert([{ name, description, price, image_url: publicUrl }]);
-
-          if (error) {
-            alert("Error adding activity: " + error.message);
-          } else {
-            alert("Activity added successfully!");
-            document.getElementById("addActivityForm").reset();
-            loadActivities();
-          }
-        });
-
-        // --- Edit Activity Fields (auto-update on change) ---
-        document.addEventListener("change", async e => {
-          if (e.target.classList.contains("editActivityField")) {
-            const id = e.target.dataset.id;
-            const field = e.target.dataset.field;
-            let value = e.target.value;
-            
-            // Convert price to number
-            if (field === "price") {
-              value = parseFloat(value) || 0;
-            }
-            
-            const { error } = await supabase
-              .from("activities")
-              .update({ [field]: value })
-              .eq("id", id);
-              
-            if (error) {
-              alert("Error updating activity: " + error.message);
-            } else {
-              // Update local activities array
-              const activityIndex = activities.findIndex(a => a.id === parseInt(id));
-              if (activityIndex !== -1) {
-                activities[activityIndex][field] = value;
-              }
-            }
-          }
-          
-          // Handle booking field edits
-          if (e.target.classList.contains("editField")) {
-            const id = e.target.dataset.id;
-            const field = e.target.dataset.field;
-            const value = e.target.value;
-            await supabase.from("bookings").update({ [field]: value }).eq("id", id);
-          }
-        });
-
-        // --- Update Activity Image ---
-        document.addEventListener("click", async e => {
-          if (e.target.classList.contains("updateImageBtn")) {
-            const activityId = e.target.dataset.id;
-            const fileInput = document.getElementById(`imageFile_${activityId}`);
-            fileInput.click();
-            
-            fileInput.onchange = async () => {
-              const file = fileInput.files[0];
-              if (!file) return;
-              
-              // Generate unique filename
-              const fileExt = file.name.split('.').pop();
-              const fileName = `${Date.now()}.${fileExt}`;
-              const filePath = `activities/${fileName}`;
-              
-              // Upload new image
-              const { error: uploadError } = await supabase.storage
-                .from("tour-images")
-                .upload(filePath, file);
-                
-              if (uploadError) {
-                return alert("Image upload failed: " + uploadError.message);
-              }
-              
-              // Get public URL
-              const { data: { publicUrl } } = supabase.storage
-                .from("tour-images")
-                .getPublicUrl(filePath);
-                
-              // Update activity with new image URL
-              const { error } = await supabase
-                .from("activities")
-                .update({ image_url: publicUrl })
-                .eq("id", activityId);
-                
-              if (error) {
-                alert("Error updating image: " + error.message);
-              } else {
-                alert("Image updated successfully!");
-                loadActivities(); // Refresh the table
-              }
-            };
-          }
-          
-          // Delete Activity
-          if (e.target.classList.contains("deleteActivityBtn")) {
-            const id = e.target.dataset.id;
-            const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
-            
-            // First, check if there are any bookings for this activity
-            const { data: bookings, error: checkError } = await supabase
-              .from("bookings")
-              .select("id, full_name, tour_date")
-              .eq("tour_name", activityName);
-              
-            if (checkError) {
-              alert("Error checking bookings: " + checkError.message);
-              return;
-            }
-            
-            if (bookings && bookings.length > 0) {
-              const bookingCount = bookings.length;
-              const recentBookings = bookings.slice(0, 5).map(b => `• ${b.full_name} (${b.tour_date})`).join('\n');
-              
-              // Show options for handling bookings
-              const deleteChoice = confirm(
-                `"${activityName}" has ${bookingCount} existing booking(s):\n\n` +
-                `${recentBookings}${bookingCount > 5 ? '\n• ...and ' + (bookingCount - 5) + ' more' : ''}\n\n` +
-                `⚠️ WARNING: Choose your action carefully ⚠️\n\n` +
-                `Click OK to DELETE ACTIVITY + ALL BOOKINGS\n` +
-                `Click Cancel to choose a different option`
-              );
-              
-              if (deleteChoice) {
-                // User chose to delete everything
-                const finalConfirm = confirm(
-                  `🚨 FINAL CONFIRMATION 🚨\n\n` +
-                  `This will PERMANENTLY DELETE:\n` +
-                  `• "${activityName}" activity\n` +
-                  `• All ${bookingCount} associated bookings\n` +
-                  `• Customer booking records\n\n` +
-                  `This action CANNOT be undone!\n\n` +
-                  `Type the activity name to confirm deletion:`
-                );
-                
-                if (finalConfirm) {
-                  const typedName = prompt(`Type "${activityName}" exactly to confirm:`);
-                  if (typedName !== activityName) {
-                    alert("Activity name doesn't match. Deletion cancelled for safety.");
-                    return;
-                  }
-                  
-                  // Delete all bookings for this activity first
-                  const { error: deleteBookingsError } = await supabase
-                    .from("bookings")
-                    .delete()
-                    .eq("tour_name", activityName);
-                    
-                  if (deleteBookingsError) {
-                    alert("Error deleting bookings: " + deleteBookingsError.message);
-                    return;
-                  }
-                  
-                  // Now delete the activity
-                  const { error: deleteActivityError } = await supabase
-                    .from("activities")
-                    .delete()
-                    .eq("id", id);
-                    
-                  if (deleteActivityError) {
-                    alert("Error deleting activity: " + deleteActivityError.message);
-                    return;
-                  }
-                  
-                  alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
-                  loadActivities();
-                  loadBookings();
-                  return;
-                } else {
-                  alert("Deletion cancelled.");
-                  return;
-                }
-              }
-              
-              // User cancelled, offer transfer option
-              const transferChoice = confirm(
-                `Would you like to transfer the ${bookingCount} booking(s) to another activity instead?\n\n` +
-                `Click OK to transfer bookings\n` +
-                `Click Cancel to keep everything as is`
-              );
-              
-              if (!transferChoice) {
-                return; // User doesn't want to do anything
-              }
-              
-              // Show dialog to select replacement activity
-              const otherActivities = activities.filter(a => a.id !== parseInt(id));
-              if (otherActivities.length === 0) {
-                alert("Cannot transfer bookings - no other activities exist. Please add another activity first.");
-                return;
-              }
-              
-              let replacementOptions = "Choose a replacement activity:\n\n";
-              otherActivities.forEach((a, index) => {
-                replacementOptions += `${index + 1}. ${a.name} ($${a.price})\n`;
-              });
-              
-              const choice = prompt(replacementOptions + "\nEnter the number of your choice (or 0 to cancel):");
-              const choiceIndex = parseInt(choice) - 1;
-              
-              if (choice === "0") {
-                alert("Transfer cancelled.");
-                return;
-              }
-              
-              if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
-                alert("Invalid choice. Transfer cancelled.");
-                return;
-              }
-              
-              const replacementActivity = otherActivities[choiceIndex];
-              
-              // Update all bookings to use the replacement activity
-              const { error: updateError } = await supabase
-                .from("bookings")
-                .update({ tour_name: replacementActivity.name })
-                .eq("tour_name", activityName);
-                
-              if (updateError) {
-                alert("Error updating bookings: " + updateError.message);
-                return;
-              }
-              
-              // Now delete the activity
-              const { error: deleteActivityError } = await supabase
-                .from("activities")
-                .delete()
-                .eq("id", id);
-                
-              if (deleteActivityError) {
-                alert("Error deleting activity: " + deleteActivityError.message);
-                return;
-              }
-              
-              alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
-              loadActivities();
-              loadBookings();
-              
-            } else {
-              // No bookings, safe to delete - ask for confirmation
-              if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
-              
-              // Delete the activity
-              const { error } = await supabase
-                .from("activities")
-                .delete()
-                .eq("id", id);
-                
-              if (error) {
-                alert("Error deleting activity: " + error.message);
-              } else {
-                alert("Activity deleted successfully!");
-                loadActivities();
-              }
-            }
-          }
-        });
-
-        // --- Load Bookings ---
-        let allBookings = [];
-        async function loadBookings() {
-          const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-          if (error) return console.error(error);
-          allBookings = data;
-          renderBookings();
-          
-          // Update stats
-          document.getElementById("totalBookings").textContent = data.length;
-          
-          const today = new Date().toISOString().split('T')[0];
-          const todayBookings = data.filter(b => b.tour_date === today).length;
-          document.getElementById("todayBookings").textContent = todayBookings;
-        }
-
-// --- Render Bookings (safe version) ---
+// --- Render Bookings (IMPROVED VERSION) ---
 function renderBookings(filterTour = "", filterDate = "") {
+  console.log("Rendering bookings...", { filterTour, filterDate, totalBookings: allBookings.length });
+  
   const tbody = document.querySelector("#bookingsTable tbody");
-  if (!tbody) return;
+  if (!tbody) {
+    console.error("Bookings table body not found!");
+    return;
+  }
 
   const filteredBookings = allBookings
     .filter(b => (filterTour ? b.tour_name === filterTour : true))
     .filter(b => (filterDate ? b.tour_date === filterDate : true));
+
+  console.log("Filtered bookings:", filteredBookings.length);
 
   tbody.innerHTML = "";
 
@@ -883,7 +594,7 @@ function renderBookings(filterTour = "", filterDate = "") {
     return;
   }
 
-  // helper to safely escape HTML
+  // Helper to safely escape HTML
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -897,11 +608,16 @@ function renderBookings(filterTour = "", filterDate = "") {
   filteredBookings.forEach(b => {
     const row = document.createElement('tr');
 
-    // Use activities array safely, fallback to empty array if not loaded
-    const availableActivities = Array.isArray(activities) ? activities : [];
-    const tourOptions = availableActivities.map(a => 
-      `<option value="${escapeHtml(a.name)}" ${a.name === b.tour_name ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
-    ).join('');
+    // Create tour options - ensure activities is loaded
+    let tourOptions = '';
+    if (activities && activities.length > 0) {
+      tourOptions = activities.map(a => 
+        `<option value="${escapeHtml(a.name)}" ${a.name === b.tour_name ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+      ).join('');
+    } else {
+      // Fallback if activities not loaded yet
+      tourOptions = `<option value="${escapeHtml(b.tour_name || '')}" selected>${escapeHtml(b.tour_name || 'Unknown')}</option>`;
+    }
 
     row.innerHTML = `
       <td>
@@ -915,7 +631,7 @@ function renderBookings(filterTour = "", filterDate = "") {
       </td>
       <td>
         <select class="editField" data-id="${b.id}" data-field="tour_name">
-          ${tourOptions || `<option value="${escapeHtml(b.tour_name || '')}" selected>${escapeHtml(b.tour_name || 'Unknown')}</option>`}
+          ${tourOptions}
         </select>
       </td>
       <td>
@@ -935,63 +651,455 @@ function renderBookings(filterTour = "", filterDate = "") {
 
     tbody.appendChild(row);
   });
+  
+  console.log("Bookings rendered successfully");
 }
 
-        // --- Ensure bookings load after activities ---
-        // (loadBookings was called earlier; but call again when activities change)
+// --- FIXED INITIALIZATION SEQUENCE ---
+async function initializePage() {
+  try {
+    console.log("Initializing page...");
+    
+    // Load activities first
+    const activitiesLoaded = await loadActivities();
+    if (!activitiesLoaded) {
+      console.error("Failed to load activities");
+    }
+    
+    // Then load bookings
+    const bookingsLoaded = await loadBookings();
+    if (!bookingsLoaded) {
+      console.error("Failed to load bookings");
+    }
+    
+    console.log("Page initialization complete");
+  } catch (err) {
+    console.error("Error during page initialization:", err);
+  }
+}
 
-        // --- Filter buttons ---
-        document.getElementById('applyFilter').addEventListener('click', () => {
-          const tour = document.getElementById('tourFilter').value;
-          const date = document.getElementById('dateFilter').value;
-          renderBookings(tour, date);
-        });
+// --- Wait for DOM to be ready, then initialize ---
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializePage);
+} else {
+  initializePage();
+}
 
-        document.getElementById('clearFilter').addEventListener('click', () => {
-          document.getElementById('tourFilter').value = '';
-          document.getElementById('dateFilter').value = '';
-          renderBookings();
-        });
+// --- Render Activities Table ---
+function renderActivitiesTable() {
+  const tbody = document.querySelector("#activitiesTable tbody");
+  if (!tbody) return;
+  
+  tbody.innerHTML = "";
+  if (activities.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6c757d; padding: 40px;">No activities found. Add your first activity above.</td></tr>';
+    return;
+  }
+  
+  activities.forEach(activity => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>
+        <img src="${activity.image_url}" alt="${activity.name}" class="activity-image">
+      </td>
+      <td>
+        <input type="text" value="${activity.name}" 
+               data-id="${activity.id}" class="editActivityField" data-field="name">
+      </td>
+      <td>
+        <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
+                  style="min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
+      </td>
+      <td>
+        <input type="number" value="${activity.price}" 
+               data-id="${activity.id}" class="editActivityField" data-field="price"
+               step="0.01" min="0">
+      </td>
+      <td>
+        <button class="updateImageBtn btn btn-info" data-id="${activity.id}" style="margin-bottom: 5px; padding: 5px 10px; font-size: 12px;">
+          Update Image
+        </button>
+        <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
+        <br>
+        <button class="deleteActivityBtn btn btn-danger" data-id="${activity.id}" style="padding: 5px 10px; font-size: 12px;">
+          Delete
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
 
-        // --- Send Notification button (queues into a 'notifications' table) ---
-        document.getElementById('sendNotify').addEventListener('click', async () => {
-          const email = document.getElementById('notifyEmail').value.trim();
-          const message = document.getElementById('notifyMessage').value.trim();
-          if (!email || !message) return alert('Please provide both email and message.');
+// --- Add Activity Form Handler ---
+document.addEventListener('DOMContentLoaded', () => {
+  const addActivityForm = document.getElementById("addActivityForm");
+  if (addActivityForm) {
+    addActivityForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-          const { error } = await supabase.from('notifications').insert([{ email, message }]);
-          if (error) return alert('Error sending notification: ' + error.message);
-          alert('Notification queued successfully.');
-          document.getElementById('notifyEmail').value = '';
-          document.getElementById('notifyMessage').value = '';
-        });
+      const name = document.getElementById("activityName").value;
+      const description = document.getElementById("activityDesc").value;
+      const price = parseFloat(document.getElementById("activityPrice").value || 0);
+      const file = document.getElementById("activityImage").files[0];
 
-        // --- Booking action handlers: delete and email ---
-        document.addEventListener('click', async (e) => {
-          if (e.target.classList.contains('deleteBookingBtn')) {
-            const id = e.target.dataset.id;
-            if (!confirm('Are you sure you want to delete this booking?')) return;
-            const { error } = await supabase.from('bookings').delete().eq('id', id);
-            if (error) return alert('Error deleting booking: ' + error.message);
-            alert('Booking deleted.');
-            loadBookings();
+      if (!file) {
+        return alert("Please select an image.");
+      }
+
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `activities/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("tour-images")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        return alert("Image upload failed: " + uploadError.message);
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("tour-images")
+        .getPublicUrl(filePath);
+
+      // Save activity with image_url
+      const { error } = await supabase
+        .from("activities")
+        .insert([{ name, description, price, image_url: publicUrl }]);
+
+      if (error) {
+        alert("Error adding activity: " + error.message);
+      } else {
+        alert("Activity added successfully!");
+        document.getElementById("addActivityForm").reset();
+        await loadActivities();
+        await loadBookings(); // Refresh bookings to update tour dropdowns
+      }
+    });
+  }
+});
+
+// --- Edit Activity Fields (auto-update on change) ---
+document.addEventListener("change", async e => {
+  if (e.target.classList.contains("editActivityField")) {
+    const id = e.target.dataset.id;
+    const field = e.target.dataset.field;
+    let value = e.target.value;
+    
+    // Convert price to number
+    if (field === "price") {
+      value = parseFloat(value) || 0;
+    }
+    
+    const { error } = await supabase
+      .from("activities")
+      .update({ [field]: value })
+      .eq("id", id);
+      
+    if (error) {
+      alert("Error updating activity: " + error.message);
+    } else {
+      // Update local activities array
+      const activityIndex = activities.findIndex(a => a.id === parseInt(id));
+      if (activityIndex !== -1) {
+        activities[activityIndex][field] = value;
+      }
+    }
+  }
+  
+  // Handle booking field edits
+  if (e.target.classList.contains("editField")) {
+    const id = e.target.dataset.id;
+    const field = e.target.dataset.field;
+    const value = e.target.value;
+    const { error } = await supabase.from("bookings").update({ [field]: value }).eq("id", id);
+    if (error) {
+      console.error("Error updating booking:", error);
+      alert("Error updating booking: " + error.message);
+    }
+  }
+});
+
+// --- Filter buttons ---
+document.addEventListener('DOMContentLoaded', () => {
+  const applyFilterBtn = document.getElementById('applyFilter');
+  const clearFilterBtn = document.getElementById('clearFilter');
+  
+  if (applyFilterBtn) {
+    applyFilterBtn.addEventListener('click', () => {
+      const tour = document.getElementById('tourFilter').value;
+      const date = document.getElementById('dateFilter').value;
+      renderBookings(tour, date);
+    });
+  }
+  
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', () => {
+      document.getElementById('tourFilter').value = '';
+      document.getElementById('dateFilter').value = '';
+      renderBookings();
+    });
+  }
+});
+
+// --- Send Notification button ---
+document.addEventListener('DOMContentLoaded', () => {
+  const sendNotifyBtn = document.getElementById('sendNotify');
+  if (sendNotifyBtn) {
+    sendNotifyBtn.addEventListener('click', async () => {
+      const email = document.getElementById('notifyEmail').value.trim();
+      const message = document.getElementById('notifyMessage').value.trim();
+      if (!email || !message) return alert('Please provide both email and message.');
+
+      const { error } = await supabase.from('notifications').insert([{ email, message }]);
+      if (error) return alert('Error sending notification: ' + error.message);
+      alert('Notification queued successfully.');
+      document.getElementById('notifyEmail').value = '';
+      document.getElementById('notifyMessage').value = '';
+    });
+  }
+});
+
+// --- Booking and Activity action handlers ---
+document.addEventListener('click', async (e) => {
+  // Delete booking
+  if (e.target.classList.contains('deleteBookingBtn')) {
+    const id = e.target.dataset.id;
+    if (!confirm('Are you sure you want to delete this booking?')) return;
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
+    if (error) return alert('Error deleting booking: ' + error.message);
+    alert('Booking deleted.');
+    loadBookings();
+  }
+
+  // Email booking
+  if (e.target.classList.contains('emailBookingBtn')) {
+    const email = e.target.dataset.email;
+    const name = e.target.dataset.name || '';
+    const bookingId = e.target.dataset.id;
+    const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
+    const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
+    if (!message) return;
+
+    const { error } = await supabase.from('notifications').insert([{ email, message, booking_id: bookingId }]);
+    if (error) return alert('Error queuing message: ' + error.message);
+    alert('Message queued successfully.');
+  }
+
+  // Update Activity Image
+  if (e.target.classList.contains("updateImageBtn")) {
+    const activityId = e.target.dataset.id;
+    const fileInput = document.getElementById(`imageFile_${activityId}`);
+    fileInput.click();
+    
+    fileInput.onchange = async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `activities/${fileName}`;
+      
+      // Upload new image
+      const { error: uploadError } = await supabase.storage
+        .from("tour-images")
+        .upload(filePath, file);
+        
+      if (uploadError) {
+        return alert("Image upload failed: " + uploadError.message);
+      }
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("tour-images")
+        .getPublicUrl(filePath);
+        
+      // Update activity with new image URL
+      const { error } = await supabase
+        .from("activities")
+        .update({ image_url: publicUrl })
+        .eq("id", activityId);
+        
+      if (error) {
+        alert("Error updating image: " + error.message);
+      } else {
+        alert("Image updated successfully!");
+        loadActivities(); // Refresh the table
+      }
+    };
+  }
+  
+  // Delete Activity (keeping your existing complex logic)
+  if (e.target.classList.contains("deleteActivityBtn")) {
+    const id = e.target.dataset.id;
+    const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
+    
+    // First, check if there are any bookings for this activity
+    const { data: bookings, error: checkError } = await supabase
+      .from("bookings")
+      .select("id, full_name, tour_date")
+      .eq("tour_name", activityName);
+      
+    if (checkError) {
+      alert("Error checking bookings: " + checkError.message);
+      return;
+    }
+    
+    if (bookings && bookings.length > 0) {
+      const bookingCount = bookings.length;
+      const recentBookings = bookings.slice(0, 5).map(b => `• ${b.full_name} (${b.tour_date})`).join('\n');
+      
+      // Show options for handling bookings
+      const deleteChoice = confirm(
+        `"${activityName}" has ${bookingCount} existing booking(s):\n\n` +
+        `${recentBookings}${bookingCount > 5 ? '\n• ...and ' + (bookingCount - 5) + ' more' : ''}\n\n` +
+        `⚠️ WARNING: Choose your action carefully ⚠️\n\n` +
+        `Click OK to DELETE ACTIVITY + ALL BOOKINGS\n` +
+        `Click Cancel to choose a different option`
+      );
+      
+      if (deleteChoice) {
+        // User chose to delete everything
+        const finalConfirm = confirm(
+          `🚨 FINAL CONFIRMATION 🚨\n\n` +
+          `This will PERMANENTLY DELETE:\n` +
+          `• "${activityName}" activity\n` +
+          `• All ${bookingCount} associated bookings\n` +
+          `• Customer booking records\n\n` +
+          `This action CANNOT be undone!\n\n` +
+          `Type the activity name to confirm deletion:`
+        );
+        
+        if (finalConfirm) {
+          const typedName = prompt(`Type "${activityName}" exactly to confirm:`);
+          if (typedName !== activityName) {
+            alert("Activity name doesn't match. Deletion cancelled for safety.");
+            return;
           }
-
-          if (e.target.classList.contains('emailBookingBtn')) {
-            const email = e.target.dataset.email;
-            const name = e.target.dataset.name || '';
-            const bookingId = e.target.dataset.id;
-            const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
-            const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
-            if (!message) return;
-
-            const { error } = await supabase.from('notifications').insert([{ email, message, booking_id: bookingId }]);
-            if (error) return alert('Error queuing message: ' + error.message);
-            alert('Message queued successfully.');
+          
+          // Delete all bookings for this activity first
+          const { error: deleteBookingsError } = await supabase
+            .from("bookings")
+            .delete()
+            .eq("tour_name", activityName);
+            
+          if (deleteBookingsError) {
+            alert("Error deleting bookings: " + deleteBookingsError.message);
+            return;
           }
-        });
+          
+          // Now delete the activity
+          const { error: deleteActivityError } = await supabase
+            .from("activities")
+            .delete()
+            .eq("id", id);
+            
+          if (deleteActivityError) {
+            alert("Error deleting activity: " + deleteActivityError.message);
+            return;
+          }
+          
+          alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
+          loadActivities();
+          loadBookings();
+          return;
+        } else {
+          alert("Deletion cancelled.");
+          return;
+        }
+      }
+      
+      // User cancelled, offer transfer option
+      const transferChoice = confirm(
+        `Would you like to transfer the ${bookingCount} booking(s) to another activity instead?\n\n` +
+        `Click OK to transfer bookings\n` +
+        `Click Cancel to keep everything as is`
+      );
+      
+      if (!transferChoice) {
+        return; // User doesn't want to do anything
+      }
+      
+      // Show dialog to select replacement activity
+      const otherActivities = activities.filter(a => a.id !== parseInt(id));
+      if (otherActivities.length === 0) {
+        alert("Cannot transfer bookings - no other activities exist. Please add another activity first.");
+        return;
+      }
+      
+      let replacementOptions = "Choose a replacement activity:\n\n";
+      otherActivities.forEach((a, index) => {
+        replacementOptions += `${index + 1}. ${a.name} ($${a.price})\n`;
+      });
+      
+      const choice = prompt(replacementOptions + "\nEnter the number of your choice (or 0 to cancel):");
+      const choiceIndex = parseInt(choice) - 1;
+      
+      if (choice === "0") {
+        alert("Transfer cancelled.");
+        return;
+      }
+      
+      if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
+        alert("Invalid choice. Transfer cancelled.");
+        return;
+      }
+      
+      const replacementActivity = otherActivities[choiceIndex];
+      
+      // Update all bookings to use the replacement activity
+      const { error: updateError } = await supabase
+        .from("bookings")
+        .update({ tour_name: replacementActivity.name })
+        .eq("tour_name", activityName);
+        
+      if (updateError) {
+        alert("Error updating bookings: " + updateError.message);
+        return;
+      }
+      
+      // Now delete the activity
+      const { error: deleteActivityError } = await supabase
+        .from("activities")
+        .delete()
+        .eq("id", id);
+        
+      if (deleteActivityError) {
+        alert("Error deleting activity: " + deleteActivityError.message);
+        return;
+      }
+      
+      alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
+      loadActivities();
+      loadBookings();
+      
+    } else {
+      // No bookings, safe to delete - ask for confirmation
+      if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+      
+      // Delete the activity
+      const { error } = await supabase
+        .from("activities")
+        .delete()
+        .eq("id", id);
+        
+      if (error) {
+        alert("Error deleting activity: " + error.message);
+      } else {
+        alert("Activity deleted successfully!");
+        loadActivities();
+      }
+    }
+  }
+});
 
-        // --- Close script and HTML ---
-      </script>
+</script>
+
+
+
     </body>
     </html>
