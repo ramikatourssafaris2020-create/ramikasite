@@ -863,6 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
 // --- Booking and Activity action handlers ---
 document.addEventListener('click', async (e) => {
   // Delete booking
@@ -875,16 +876,20 @@ document.addEventListener('click', async (e) => {
     loadBookings();
   }
 
-  // Email booking
+  // Email booking - FIXED VERSION
   if (e.target.classList.contains('emailBookingBtn')) {
     const email = e.target.dataset.email;
     const name = e.target.dataset.name || '';
-    const bookingId = e.target.dataset.id;
     const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
     const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
     if (!message) return;
 
-    const { error } = await supabase.from('notifications').insert([{ email, message, booking_id: bookingId }]);
+    // Insert without booking_id
+    const { error } = await supabase.from('notifications').insert([{ 
+      email, 
+      message 
+    }]);
+    
     if (error) return alert('Error queuing message: ' + error.message);
     alert('Message queued successfully.');
   }
