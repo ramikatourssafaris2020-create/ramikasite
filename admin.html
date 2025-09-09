@@ -1,743 +1,816 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      color: #333;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .header {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .header h2 {
-      color: #2c3e50;
-      font-size: 2.2em;
-      font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-    }
-
-    .card h3 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      font-size: 1.4em;
-      font-weight: 600;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #e8ecf3;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    }
-
-    .btn-danger:hover {
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-    }
-
-    .btn-secondary {
-      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-      box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .filter-section {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    input, select, textarea {
-      padding: 12px 16px;
-      border: 2px solid #e8ecf3;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background: white;
-      min-width: 200px;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-      font-family: inherit;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    th {
-      background: rgb(99, 97, 97);
-      color: white;
-      padding: 16px 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #e8ecf3;
-      vertical-align: middle;
-    }
-
-    tr:hover {
-      background-color: #f8f9ff;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .table-input {
-      border: 1px solid #e8ecf3;
-      padding: 8px 12px;
-      border-radius: 6px;
-      width: 100%;
-      min-width: 120px;
-      font-size: 13px;
-    }
-
-    .table-input:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 6px;
-    }
-
-    .notification-form {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 25px;
-    }
-
-    .notification-form h3 {
-      color: white;
-      border-bottom-color: rgba(255,255,255,0.3);
-    }
-
-    .notification-form input,
-    .notification-form textarea {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .notification-form .btn {
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    .notification-form .btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .stat-number {
-      font-size: 2em;
-      font-weight: bold;
-      color: #667eea;
-      margin-bottom: 5px;
-    }
-
-    .stat-label {
-      color: #7f8c8d;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      
-      .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-      }
-      
-      .filter-section {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .form-row {
-        flex-direction: column;
-      }
-      
-      input, select, textarea {
-        min-width: unset;
-      }
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #c3e6cb;
-      margin-bottom: 20px;
-    }
-
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #f5c6cb;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tour Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .section {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .section-header h2 {
+            color: #495057;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .section-content {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        table th {
+            background: #f8f9fa;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        table td {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        table input,
+        table select,
+        table textarea {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .activity-image {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+        
+        .filter-group {
+            flex: 1;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .notifications-section {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+            
+            .section-content {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            table th,
+            table td {
+                padding: 8px 6px;
+            }
+            
+            .activity-image {
+                width: 50px;
+                height: 40px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
     <div class="header">
-      <h2>Admin Dashboard</h2>
-      <button id="logout" class="btn btn-danger">Logout</button>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number" id="totalBookings">0</div>
-        <div class="stat-label">Total Bookings</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalActivities">0</div>
-        <div class="stat-label">Total Activities</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="todayBookings">0</div>
-        <div class="stat-label">Today's Bookings</div>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card">
-      <h3>🔍 Filters</h3>
-      <div class="filter-section">
-        <select id="tourFilter">
-          <option value="">All Tours</option>
-        </select>
-        <input type="date" id="dateFilter">
-        <button id="applyFilter" class="btn">Apply Filter</button>
-        <button id="clearFilter" class="btn btn-secondary">Clear Filter</button>
-      </div>
-    </div>
-
-    <!-- Add Activity Form -->
-    <div class="card">
-      <h3>➕ Add New Activity</h3>
-      <form id="addActivityForm">
-        <div class="form-group">
-          <div class="form-row">
-            <input type="text" id="activityName" placeholder="Activity Name" required>
-            <input type="number" id="activityPrice" placeholder="Price ($)" step="0.01">
-          </div>
-          <textarea id="activityDesc" placeholder="Activity Description"></textarea>
-          <input type="file" id="activityImage" accept="image/*" required>
-          <button type="submit" class="btn">Add Activity</button>
+        <div class="header-content">
+            <h1>🏖️ Tour Admin Dashboard</h1>
+            <button id="logout" class="logout-btn">Sign Out</button>
         </div>
-      </form>
     </div>
 
-    <!-- Send Notification -->
-    <div class="card notification-form">
-      <h3>📧 Send Notification</h3>
-      <div class="form-group">
-        <input type="email" id="notifyEmail" placeholder="User Email">
-        <textarea id="notifyMessage" placeholder="Notification Message"></textarea>
-        <button id="sendNotify" class="btn">Send Notification</button>
-      </div>
+    <div class="container">
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalActivities">-</div>
+                <div class="stat-label">Total Activities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalBookings">-</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayBookings">-</div>
+                <div class="stat-label">Today's Bookings</div>
+            </div>
+        </div>
+
+        <!-- Add New Activity Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>➕ Add New Activity</h2>
+            </div>
+            <div class="section-content">
+                <form id="addActivityForm">
+                    <div class="form-group">
+                        <label for="activityName">Activity Name *</label>
+                        <input type="text" id="activityName" required placeholder="e.g., Safari Adventure">
+                    </div>
+                    <div class="form-group">
+                        <label for="activityDesc">Description</label>
+                        <textarea id="activityDesc" placeholder="Describe the activity..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityPrice">Price ($)</label>
+                        <input type="number" id="activityPrice" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="activityImage">Activity Image *</label>
+                        <input type="file" id="activityImage" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn">Add Activity</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manage Activities Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🎯 Manage Activities</h2>
+            </div>
+            <div class="section-content">
+                <div class="alert alert-info">
+                    <strong>Edit Tips:</strong> Click on any field to edit directly. Images can be updated using the "Update Image" button. 
+                    Deleting activities with bookings will give you options to transfer or delete associated bookings.
+                </div>
+                <div class="table-responsive">
+                    <table id="activitiesTable">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price ($)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="loading">Loading activities...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Management Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>📋 Manage Bookings</h2>
+            </div>
+            <div class="section-content">
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="tourFilter">Filter by Tour</label>
+                        <select id="tourFilter">
+                            <option value="">All Tours</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateFilter">Filter by Date</label>
+                        <input type="date" id="dateFilter">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="applyFilter" class="btn btn-info">Apply Filter</button>
+                        <button id="clearFilter" class="btn">Clear Filter</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Tour</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                                <th>Booked At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="8" class="loading">Loading bookings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send Notifications Section -->
+        <div class="section notifications-section">
+            <div class="section-header">
+                <h2>📧 Send Customer Notification</h2>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label for="notifyEmail">Customer Email</label>
+                    <input type="email" id="notifyEmail" placeholder="customer@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="notifyMessage">Message</label>
+                    <textarea id="notifyMessage" placeholder="Your booking has been confirmed..."></textarea>
+                </div>
+                <button id="sendNotify" class="btn btn-success">Send Notification</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Bookings Table -->
-    <div class="card">
-      <h3>📋 Bookings Management</h3>
-      <div class="table-container">
-        <table id="bookingsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Tour</th>
-              <th>Date</th>
-              <th>Notes</th>
-              <th>Created At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<!-- Add this section to your admin page HTML -->
-<div class="activities-section" style="margin-bottom: 30px;">
-  <h2>Manage Activities</h2>
-  
-  <div style="overflow-x: auto;">
-    <table id="activitiesTable" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-      <thead>
-        <tr style="background-color: #f8f9fa;">
-          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Image</th>
-          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Name</th>
-          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Description</th>
-          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Price ($)</th>
-          <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Activities will be loaded here -->
-      </tbody>
-    </table>
-  </div>
-</div>
+        const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-<style>
-  .activities-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  #activitiesTable td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    vertical-align: top;
-  }
-  
-  .updateImageBtn:hover {
-    background: #0056b3 !important;
-  }
-  
-  .deleteActivityBtn:hover {
-    background: #c82333 !important;
-  }
-  
-  @media (max-width: 768px) {
-    #activitiesTable {
-      font-size: 14px;
-    }
-    
-    #activitiesTable td {
-      padding: 8px;
-    }
-    
-    #activitiesTable img {
-      width: 60px !important;
-      height: 45px !important;
-    }
-  }
-</style>
-<script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+        // --- Check if admin is logged in ---
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) window.location.href = "sign-in.html";
 
-    const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk"; 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+        // --- Logout ---
+        document.getElementById("logout").addEventListener("click", async () => {
+          await supabase.auth.signOut();
+          window.location.href = "sign-in.html";
+        });
 
-    // --- Check if admin is logged in ---
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) window.location.href = "sign-in.html";
-
-    // --- Logout ---
-    document.getElementById("logout").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "sign-in.html";
-    });
-
-    // --- Load Activities for filter, booking table, and activities preview ---
-    let activities = [];
-    async function loadActivities() {
-      const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      activities = data;
-      
-      // Update tour filter dropdown
-      const tourFilter = document.getElementById("tourFilter");
-      tourFilter.innerHTML = '<option value="">All Tours</option>';
-      data.forEach(a => {
-        const option = document.createElement("option");
-        option.value = a.name;
-        option.textContent = a.name;
-        tourFilter.appendChild(option);
-      });
-      
-      // Render activities preview table
-      renderActivitiesTable();
-    }
-
-    // --- Render Activities Table ---
-    function renderActivitiesTable() {
-      const tbody = document.querySelector("#activitiesTable tbody");
-      if (!tbody) return; // Table might not exist on page
-      
-      tbody.innerHTML = "";
-      activities.forEach(activity => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>
-            <img src="${activity.image_url}" alt="${activity.name}" 
-                 style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
-          </td>
-          <td>
-            <input type="text" value="${activity.name}" 
-                   data-id="${activity.id}" class="editActivityField" data-field="name"
-                   style="width: 100%; padding: 4px; border: 1px solid #ccc;">
-          </td>
-          <td>
-            <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
-                      style="width: 100%; padding: 4px; border: 1px solid #ccc; min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
-          </td>
-          <td>
-            <input type="number" value="${activity.price}" 
-                   data-id="${activity.id}" class="editActivityField" data-field="price"
-                   style="width: 100%; padding: 4px; border: 1px solid #ccc;" step="0.01" min="0">
-          </td>
-          <td>
-            <button class="updateImageBtn" data-id="${activity.id}" 
-                    style="background: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 5px;">
-              Update Image
-            </button>
-            <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
-            <br>
-            <button class="deleteActivityBtn" data-id="${activity.id}"
-                    style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">
-              Delete
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    await loadActivities();
-
-    // --- Add Activity Form Handler ---
-    document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById("activityName").value;
-      const description = document.getElementById("activityDesc").value;
-      const price = parseFloat(document.getElementById("activityPrice").value || 0);
-      const file = document.getElementById("activityImage").files[0];
-
-      if (!file) {
-        return alert("Please select an image.");
-      }
-
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `activities/${fileName}`;
-
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from("tour-images")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        return alert("Image upload failed: " + uploadError.message);
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from("tour-images")
-        .getPublicUrl(filePath);
-
-      // Save activity with image_url
-      const { error } = await supabase
-        .from("activities")
-        .insert([{ name, description, price, image_url: publicUrl }]);
-
-      if (error) {
-        alert("Error adding activity: " + error.message);
-      } else {
-        alert("Activity added successfully!");
-        document.getElementById("addActivityForm").reset();
-        loadActivities();
-      }
-    });
-
-    // --- Edit Activity Fields (auto-update on change) ---
-    document.addEventListener("change", async e => {
-      if (e.target.classList.contains("editActivityField")) {
-        const id = e.target.dataset.id;
-        const field = e.target.dataset.field;
-        let value = e.target.value;
-        
-        // Convert price to number
-        if (field === "price") {
-          value = parseFloat(value) || 0;
-        }
-        
-        const { error } = await supabase
-          .from("activities")
-          .update({ [field]: value })
-          .eq("id", id);
+        // --- Load Activities for filter, booking table, and activities preview ---
+        let activities = [];
+        async function loadActivities() {
+          const { data, error } = await supabase.from("activities").select("*").order("created_at", { ascending: false });
+          if (error) return console.error(error);
+          activities = data;
           
-        if (error) {
-          alert("Error updating activity: " + error.message);
-        } else {
-          // Update local activities array
-          const activityIndex = activities.findIndex(a => a.id === parseInt(id));
-          if (activityIndex !== -1) {
-            activities[activityIndex][field] = value;
+          // Update tour filter dropdown
+          const tourFilter = document.getElementById("tourFilter");
+          tourFilter.innerHTML = '<option value="">All Tours</option>';
+          data.forEach(a => {
+            const option = document.createElement("option");
+            option.value = a.name;
+            option.textContent = a.name;
+            tourFilter.appendChild(option);
+          });
+          
+          // Render activities preview table
+          renderActivitiesTable();
+          
+          // Update stats
+          document.getElementById("totalActivities").textContent = data.length;
+        }
+
+        // --- Render Activities Table ---
+        function renderActivitiesTable() {
+          const tbody = document.querySelector("#activitiesTable tbody");
+          if (!tbody) return;
+          
+          tbody.innerHTML = "";
+          if (activities.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6c757d; padding: 40px;">No activities found. Add your first activity above.</td></tr>';
+            return;
           }
-        }
-      }
-      
-      // Handle booking field edits
-      if (e.target.classList.contains("editField")) {
-        const id = e.target.dataset.id;
-        const field = e.target.dataset.field;
-        const value = e.target.value;
-        await supabase.from("bookings").update({ [field]: value }).eq("id", id);
-      }
-    });
-
-    // --- Update Activity Image ---
-    document.addEventListener("click", async e => {
-      if (e.target.classList.contains("updateImageBtn")) {
-        const activityId = e.target.dataset.id;
-        const fileInput = document.getElementById(`imageFile_${activityId}`);
-        fileInput.click();
-        
-        fileInput.onchange = async () => {
-          const file = fileInput.files[0];
-          if (!file) return;
           
+          activities.forEach(activity => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>
+                <img src="${activity.image_url}" alt="${activity.name}" class="activity-image">
+              </td>
+              <td>
+                <input type="text" value="${activity.name}" 
+                       data-id="${activity.id}" class="editActivityField" data-field="name">
+              </td>
+              <td>
+                <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
+                          style="min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
+              </td>
+              <td>
+                <input type="number" value="${activity.price}" 
+                       data-id="${activity.id}" class="editActivityField" data-field="price"
+                       step="0.01" min="0">
+              </td>
+              <td>
+                <button class="updateImageBtn btn btn-info" data-id="${activity.id}" style="margin-bottom: 5px; padding: 5px 10px; font-size: 12px;">
+                  Update Image
+                </button>
+                <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
+                <br>
+                <button class="deleteActivityBtn btn btn-danger" data-id="${activity.id}" style="padding: 5px 10px; font-size: 12px;">
+                  Delete
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+
+        await loadActivities();
+
+        // --- Add Activity Form Handler ---
+        document.getElementById("addActivityForm").addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("activityName").value;
+          const description = document.getElementById("activityDesc").value;
+          const price = parseFloat(document.getElementById("activityPrice").value || 0);
+          const file = document.getElementById("activityImage").files[0];
+
+          if (!file) {
+            return alert("Please select an image.");
+          }
+
           // Generate unique filename
           const fileExt = file.name.split('.').pop();
           const fileName = `${Date.now()}.${fileExt}`;
           const filePath = `activities/${fileName}`;
-          
-          // Upload new image
+
+          // Upload to Supabase Storage
           const { error: uploadError } = await supabase.storage
             .from("tour-images")
             .upload(filePath, file);
-            
+
           if (uploadError) {
             return alert("Image upload failed: " + uploadError.message);
           }
-          
+
           // Get public URL
           const { data: { publicUrl } } = supabase.storage
             .from("tour-images")
             .getPublicUrl(filePath);
-            
-          // Update activity with new image URL
+
+          // Save activity with image_url
           const { error } = await supabase
             .from("activities")
-            .update({ image_url: publicUrl })
-            .eq("id", activityId);
-            
+            .insert([{ name, description, price, image_url: publicUrl }]);
+
           if (error) {
-            alert("Error updating image: " + error.message);
+            alert("Error adding activity: " + error.message);
           } else {
-            alert("Image updated successfully!");
-            loadActivities(); // Refresh the table
+            alert("Activity added successfully!");
+            document.getElementById("addActivityForm").reset();
+            loadActivities();
           }
-        };
-      }
-      
-      // Delete Activity
-      if (e.target.classList.contains("deleteActivityBtn")) {
-        const id = e.target.dataset.id;
-        const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
-        
-        // First, check if there are any bookings for this activity
-        const { data: bookings, error: checkError } = await supabase
-          .from("bookings")
-          .select("id, full_name, tour_date")
-          .eq("tour_name", activityName);
-          
-        if (checkError) {
-          alert("Error checking bookings: " + checkError.message);
-          return;
-        }
-        
-        if (bookings && bookings.length > 0) {
-          const bookingCount = bookings.length;
-          const recentBookings = bookings.slice(0, 5).map(b => `• ${b.full_name} (${b.tour_date})`).join('\n');
-          
-          // Show options for handling bookings
-          const deleteChoice = confirm(
-            `"${activityName}" has ${bookingCount} existing booking(s):\n\n` +
-            `${recentBookings}${bookingCount > 5 ? '\n• ...and ' + (bookingCount - 5) + ' more' : ''}\n\n` +
-            `⚠️ WARNING: Choose your action carefully ⚠️\n\n` +
-            `Click OK to DELETE ACTIVITY + ALL BOOKINGS\n` +
-            `Click Cancel to choose a different option`
-          );
-          
-          if (deleteChoice) {
-            // User chose to delete everything
-            const finalConfirm = confirm(
-              `🚨 FINAL CONFIRMATION 🚨\n\n` +
-              `This will PERMANENTLY DELETE:\n` +
-              `• "${activityName}" activity\n` +
-              `• All ${bookingCount} associated bookings\n` +
-              `• Customer booking records\n\n` +
-              `This action CANNOT be undone!\n\n` +
-              `Type the activity name to confirm deletion:`
-            );
+        });
+
+        // --- Edit Activity Fields (auto-update on change) ---
+        document.addEventListener("change", async e => {
+          if (e.target.classList.contains("editActivityField")) {
+            const id = e.target.dataset.id;
+            const field = e.target.dataset.field;
+            let value = e.target.value;
             
-            if (finalConfirm) {
-              const typedName = prompt(`Type "${activityName}" exactly to confirm:`);
-              if (typedName !== activityName) {
-                alert("Activity name doesn't match. Deletion cancelled for safety.");
+            // Convert price to number
+            if (field === "price") {
+              value = parseFloat(value) || 0;
+            }
+            
+            const { error } = await supabase
+              .from("activities")
+              .update({ [field]: value })
+              .eq("id", id);
+              
+            if (error) {
+              alert("Error updating activity: " + error.message);
+            } else {
+              // Update local activities array
+              const activityIndex = activities.findIndex(a => a.id === parseInt(id));
+              if (activityIndex !== -1) {
+                activities[activityIndex][field] = value;
+              }
+            }
+          }
+          
+          // Handle booking field edits
+          if (e.target.classList.contains("editField")) {
+            const id = e.target.dataset.id;
+            const field = e.target.dataset.field;
+            const value = e.target.value;
+            await supabase.from("bookings").update({ [field]: value }).eq("id", id);
+          }
+        });
+
+        // --- Update Activity Image ---
+        document.addEventListener("click", async e => {
+          if (e.target.classList.contains("updateImageBtn")) {
+            const activityId = e.target.dataset.id;
+            const fileInput = document.getElementById(`imageFile_${activityId}`);
+            fileInput.click();
+            
+            fileInput.onchange = async () => {
+              const file = fileInput.files[0];
+              if (!file) return;
+              
+              // Generate unique filename
+              const fileExt = file.name.split('.').pop();
+              const fileName = `${Date.now()}.${fileExt}`;
+              const filePath = `activities/${fileName}`;
+              
+              // Upload new image
+              const { error: uploadError } = await supabase.storage
+                .from("tour-images")
+                .upload(filePath, file);
+                
+              if (uploadError) {
+                return alert("Image upload failed: " + uploadError.message);
+              }
+              
+              // Get public URL
+              const { data: { publicUrl } } = supabase.storage
+                .from("tour-images")
+                .getPublicUrl(filePath);
+                
+              // Update activity with new image URL
+              const { error } = await supabase
+                .from("activities")
+                .update({ image_url: publicUrl })
+                .eq("id", activityId);
+                
+              if (error) {
+                alert("Error updating image: " + error.message);
+              } else {
+                alert("Image updated successfully!");
+                loadActivities(); // Refresh the table
+              }
+            };
+          }
+          
+          // Delete Activity
+          if (e.target.classList.contains("deleteActivityBtn")) {
+            const id = e.target.dataset.id;
+            const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
+            
+            // First, check if there are any bookings for this activity
+            const { data: bookings, error: checkError } = await supabase
+              .from("bookings")
+              .select("id, full_name, tour_date")
+              .eq("tour_name", activityName);
+              
+            if (checkError) {
+              alert("Error checking bookings: " + checkError.message);
+              return;
+            }
+            
+            if (bookings && bookings.length > 0) {
+              const bookingCount = bookings.length;
+              const recentBookings = bookings.slice(0, 5).map(b => `• ${b.full_name} (${b.tour_date})`).join('\n');
+              
+              // Show options for handling bookings
+              const deleteChoice = confirm(
+                `"${activityName}" has ${bookingCount} existing booking(s):\n\n` +
+                `${recentBookings}${bookingCount > 5 ? '\n• ...and ' + (bookingCount - 5) + ' more' : ''}\n\n` +
+                `⚠️ WARNING: Choose your action carefully ⚠️\n\n` +
+                `Click OK to DELETE ACTIVITY + ALL BOOKINGS\n` +
+                `Click Cancel to choose a different option`
+              );
+              
+              if (deleteChoice) {
+                // User chose to delete everything
+                const finalConfirm = confirm(
+                  `🚨 FINAL CONFIRMATION 🚨\n\n` +
+                  `This will PERMANENTLY DELETE:\n` +
+                  `• "${activityName}" activity\n` +
+                  `• All ${bookingCount} associated bookings\n` +
+                  `• Customer booking records\n\n` +
+                  `This action CANNOT be undone!\n\n` +
+                  `Type the activity name to confirm deletion:`
+                );
+                
+                if (finalConfirm) {
+                  const typedName = prompt(`Type "${activityName}" exactly to confirm:`);
+                  if (typedName !== activityName) {
+                    alert("Activity name doesn't match. Deletion cancelled for safety.");
+                    return;
+                  }
+                  
+                  // Delete all bookings for this activity first
+                  const { error: deleteBookingsError } = await supabase
+                    .from("bookings")
+                    .delete()
+                    .eq("tour_name", activityName);
+                    
+                  if (deleteBookingsError) {
+                    alert("Error deleting bookings: " + deleteBookingsError.message);
+                    return;
+                  }
+                  
+                  // Now delete the activity
+                  const { error: deleteActivityError } = await supabase
+                    .from("activities")
+                    .delete()
+                    .eq("id", id);
+                    
+                  if (deleteActivityError) {
+                    alert("Error deleting activity: " + deleteActivityError.message);
+                    return;
+                  }
+                  
+                  alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
+                  loadActivities();
+                  loadBookings();
+                  return;
+                } else {
+                  alert("Deletion cancelled.");
+                  return;
+                }
+              }
+              
+              // User cancelled, offer transfer option
+              const transferChoice = confirm(
+                `Would you like to transfer the ${bookingCount} booking(s) to another activity instead?\n\n` +
+                `Click OK to transfer bookings\n` +
+                `Click Cancel to keep everything as is`
+              );
+              
+              if (!transferChoice) {
+                return; // User doesn't want to do anything
+              }
+              
+              // Show dialog to select replacement activity
+              const otherActivities = activities.filter(a => a.id !== parseInt(id));
+              if (otherActivities.length === 0) {
+                alert("Cannot transfer bookings - no other activities exist. Please add another activity first.");
                 return;
               }
               
-              // Delete all bookings for this activity first
-              const { error: deleteBookingsError } = await supabase
+              let replacementOptions = "Choose a replacement activity:\n\n";
+              otherActivities.forEach((a, index) => {
+                replacementOptions += `${index + 1}. ${a.name} ($${a.price})\n`;
+              });
+              
+              const choice = prompt(replacementOptions + "\nEnter the number of your choice (or 0 to cancel):");
+              const choiceIndex = parseInt(choice) - 1;
+              
+              if (choice === "0") {
+                alert("Transfer cancelled.");
+                return;
+              }
+              
+              if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
+                alert("Invalid choice. Transfer cancelled.");
+                return;
+              }
+              
+              const replacementActivity = otherActivities[choiceIndex];
+              
+              // Update all bookings to use the replacement activity
+              const { error: updateError } = await supabase
                 .from("bookings")
-                .delete()
+                .update({ tour_name: replacementActivity.name })
                 .eq("tour_name", activityName);
                 
-              if (deleteBookingsError) {
-                alert("Error deleting bookings: " + deleteBookingsError.message);
+              if (updateError) {
+                alert("Error updating bookings: " + updateError.message);
                 return;
               }
               
@@ -752,200 +825,165 @@
                 return;
               }
               
-              alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
+              alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
               loadActivities();
               loadBookings();
-              return;
+              
             } else {
-              alert("Deletion cancelled.");
-              return;
+              // No bookings, safe to delete - ask for confirmation
+              if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+              
+              // Delete the activity
+              const { error } = await supabase
+                .from("activities")
+                .delete()
+                .eq("id", id);
+                
+              if (error) {
+                alert("Error deleting activity: " + error.message);
+              } else {
+                alert("Activity deleted successfully!");
+                loadActivities();
+              }
             }
           }
-          
-          // User cancelled, offer transfer option
-          const transferChoice = confirm(
-            `Would you like to transfer the ${bookingCount} booking(s) to another activity instead?\n\n` +
-            `Click OK to transfer bookings\n` +
-            `Click Cancel to keep everything as is`
-          );
-          
-          if (!transferChoice) {
-            return; // User doesn't want to do anything
-          }
-          
-          // Show dialog to select replacement activity
-          const otherActivities = activities.filter(a => a.id !== parseInt(id));
-          if (otherActivities.length === 0) {
-            alert("Cannot transfer bookings - no other activities exist. Please add another activity first.");
-            return;
-          }
-          
-          let replacementOptions = "Choose a replacement activity:\n\n";
-          otherActivities.forEach((a, index) => {
-            replacementOptions += `${index + 1}. ${a.name} (${a.price})\n`;
-          });
-          
-          const choice = prompt(replacementOptions + "\nEnter the number of your choice (or 0 to cancel):");
-          const choiceIndex = parseInt(choice) - 1;
-          
-          if (choice === "0") {
-            alert("Transfer cancelled.");
-            return;
-          }
-          
-          if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= otherActivities.length) {
-            alert("Invalid choice. Transfer cancelled.");
-            return;
-          }
-          
-          const replacementActivity = otherActivities[choiceIndex];
-          
-          // Update all bookings to use the replacement activity
-          const { error: updateError } = await supabase
-            .from("bookings")
-            .update({ tour_name: replacementActivity.name })
-            .eq("tour_name", activityName);
-            
-          if (updateError) {
-            alert("Error updating bookings: " + updateError.message);
-            return;
-          }
-          
-          // Now delete the activity
-          const { error: deleteActivityError } = await supabase
-            .from("activities")
-            .delete()
-            .eq("id", id);
-            
-          if (deleteActivityError) {
-            alert("Error deleting activity: " + deleteActivityError.message);
-            return;
-          }
-          
-          alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
-          loadActivities();
-          loadBookings();
-          
-        } else {
-          // No bookings, safe to delete - ask for confirmation
-          if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
-          
-          // Delete the activity
-          const { error } = await supabase
-            .from("activities")
-            .delete()
-            .eq("id", id);
-            
-          if (error) {
-            alert("Error deleting activity: " + error.message);
-          } else {
-            alert("Activity deleted successfully!");
-            loadActivities();
-          }
-        }
-      }
-    });
-
-    // --- Load Bookings ---
-    let allBookings = [];
-    async function loadBookings() {
-      const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
-      if (error) return console.error(error);
-      allBookings = data;
-      renderBookings();
-    }
-
-    // --- Render Bookings ---
-    function renderBookings(filterTour = "", filterDate = "") {
-      const tbody = document.querySelector("#bookingsTable tbody");
-      if (!tbody) return; // Table might not exist on page
-      
-      tbody.innerHTML = "";
-      allBookings
-        .filter(b => (filterTour ? b.tour_name === filterTour : true))
-        .filter(b => (filterDate ? b.tour_date === filterDate : true))
-        .forEach(b => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td><input type="text" value="${b.full_name}" data-id="${b.id}" class="editField" data-field="full_name"></td>
-            <td><input type="email" value="${b.email || ''}" data-id="${b.id}" class="editField" data-field="email"></td>
-            <td><input type="text" value="${b.phone || ''}" data-id="${b.id}" class="editField" data-field="phone"></td>
-            <td>
-              <select data-id="${b.id}" class="editField" data-field="tour_name">
-                ${activities.map(a => `<option value="${a.name}" ${a.name===b.tour_name?'selected':''}>${a.name}</option>`).join('')}
-              </select>
-            </td>
-            <td><input type="date" value="${b.tour_date}" data-id="${b.id}" class="editField" data-field="tour_date"></td>
-            <td><input type="text" value="${b.notes || ''}" data-id="${b.id}" class="editField" data-field="notes"></td>
-            <td>${b.created_at}</td>
-            <td><button class="deleteBtn" data-id="${b.id}">Delete</button></td>
-          `;
-          tbody.appendChild(row);
         });
-    }
 
-    await loadBookings();
-    
-    // --- Cancel Booking ---
-    document.addEventListener("click", async e => {
-      if (e.target.classList.contains("cancelBtn")) {
-        const id = e.target.dataset.id;
-        if (!confirm("Are you sure you want to cancel this booking?")) return;
-        const { error } = await supabase
-          .from("bookings")
-          .update({ cancelled: true })
-          .eq("id", id);
-        if (error) return alert(error.message);
-        loadBookings(); // refresh table
-      }
-    });
+        // --- Load Bookings ---
+        let allBookings = [];
+        async function loadBookings() {
+          const { data, error } = await supabase.from("bookings").select("*").order("created_at", { ascending: false });
+          if (error) return console.error(error);
+          allBookings = data;
+          renderBookings();
+          
+          // Update stats
+          document.getElementById("totalBookings").textContent = data.length;
+          
+          const today = new Date().toISOString().split('T')[0];
+          const todayBookings = data.filter(b => b.tour_date === today).length;
+          document.getElementById("todayBookings").textContent = todayBookings;
+        }
 
-    // --- Send Notification ---
-    document.getElementById("sendNotify")?.addEventListener("click", async () => {
-      const email = document.getElementById("notifyEmail").value;
-      const message = document.getElementById("notifyMessage").value;
-      if (!email || !message) return alert("Enter email and message");
+        // --- Render Bookings ---
+        function renderBookings(filterTour = "", filterDate = "") {
+          const tbody = document.querySelector("#bookingsTable tbody");
+          if (!tbody) return;
+          
+          const filteredBookings = allBookings
+            .filter(b => (filterTour ? b.tour_name === filterTour : true))
+            .filter(b => (filterDate ? b.tour_date === filterDate : true));
+            
+          tbody.innerHTML = "";
+          
+          if (filteredBookings.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #6c757d; padding: 40px;">No bookings found.</td></tr>';
+            return;
+          }
+          
+          // helper to safely escape HTML
+          function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
+          }
 
-      const { error } = await supabase.from("notifications").insert([
-        { user_email: email, message }
-      ]);
-      if (error) return alert(error.message);
+          filteredBookings.forEach(b => {
+            const row = document.createElement('tr');
+            const tourOptions = activities.map(a => `<option value="${escapeHtml(a.name)}" ${a.name === b.tour_name ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
 
-      alert("Notification added!");
-      document.getElementById("notifyEmail").value = "";
-      document.getElementById("notifyMessage").value = "";
-    });
+            row.innerHTML = `
+              <td>
+                <input class="editField" data-id="${b.id}" data-field="full_name" value="${escapeHtml(b.full_name || '')}">
+              </td>
+              <td>
+                <input class="editField" data-id="${b.id}" data-field="email" value="${escapeHtml(b.email || '')}">
+              </td>
+              <td>
+                <input class="editField" data-id="${b.id}" data-field="phone" value="${escapeHtml(b.phone || '')}">
+              </td>
+              <td>
+                <select class="editField" data-id="${b.id}" data-field="tour_name">${tourOptions}</select>
+              </td>
+              <td>
+                <input type="date" class="editField" data-id="${b.id}" data-field="tour_date" value="${escapeHtml(b.tour_date || '')}">
+              </td>
+              <td>
+                <textarea class="editField" data-id="${b.id}" data-field="notes" style="min-height:60px; resize:vertical;">${escapeHtml(b.notes || '')}</textarea>
+              </td>
+              <td>
+                ${b.created_at ? new Date(b.created_at).toLocaleString() : ''}
+              </td>
+              <td>
+                <button class="deleteBookingBtn btn btn-danger" data-id="${b.id}" style="padding:5px 8px; font-size:12px;">Delete</button>
+                <button class="emailBookingBtn btn btn-success" data-email="${escapeHtml(b.email || '')}" data-name="${escapeHtml(b.full_name || '')}" data-id="${b.id}" style="margin-left:6px; padding:5px 8px; font-size:12px;">Email</button>
+              </td>
+            `;
 
-    // --- Apply Filter ---
-    document.getElementById("applyFilter")?.addEventListener("click", () => {
-      const tour = document.getElementById("tourFilter").value;
-      const date = document.getElementById("dateFilter").value;
-      renderBookings(tour, date);
-    });
+            tbody.appendChild(row);
+          });
 
-    document.getElementById("clearFilter")?.addEventListener("click", () => {
-      document.getElementById("tourFilter").value = "";
-      document.getElementById("dateFilter").value = "";
-      renderBookings();
-    });
+        }
 
-    // --- Real-time bookings alert ---
-    supabase.from('bookings').on('INSERT', payload => {
-      alert(`New booking: ${payload.new.full_name} booked ${payload.new.tour_name}`);
-      loadBookings();
-    }).subscribe();
+        // --- Ensure bookings load after activities ---
+        // (loadBookings was called earlier; but call again when activities change)
 
-    // --- Delete Booking ---
-    document.addEventListener("click", async e => {
-      if (e.target.classList.contains("deleteBtn")) {
-        const id = e.target.dataset.id;
-        if (!confirm("Delete this booking?")) return;
-        const { error } = await supabase.from("bookings").delete().eq("id", id);
-        if (error) return alert(error.message);
-        loadBookings();
-      }
-    });
+        // --- Filter buttons ---
+        document.getElementById('applyFilter').addEventListener('click', () => {
+          const tour = document.getElementById('tourFilter').value;
+          const date = document.getElementById('dateFilter').value;
+          renderBookings(tour, date);
+        });
 
-</script>
-</body>
-</html>
+        document.getElementById('clearFilter').addEventListener('click', () => {
+          document.getElementById('tourFilter').value = '';
+          document.getElementById('dateFilter').value = '';
+          renderBookings();
+        });
+
+        // --- Send Notification button (queues into a 'notifications' table) ---
+        document.getElementById('sendNotify').addEventListener('click', async () => {
+          const email = document.getElementById('notifyEmail').value.trim();
+          const message = document.getElementById('notifyMessage').value.trim();
+          if (!email || !message) return alert('Please provide both email and message.');
+
+          const { error } = await supabase.from('notifications').insert([{ email, message }]);
+          if (error) return alert('Error sending notification: ' + error.message);
+          alert('Notification queued successfully.');
+          document.getElementById('notifyEmail').value = '';
+          document.getElementById('notifyMessage').value = '';
+        });
+
+        // --- Booking action handlers: delete and email ---
+        document.addEventListener('click', async (e) => {
+          if (e.target.classList.contains('deleteBookingBtn')) {
+            const id = e.target.dataset.id;
+            if (!confirm('Are you sure you want to delete this booking?')) return;
+            const { error } = await supabase.from('bookings').delete().eq('id', id);
+            if (error) return alert('Error deleting booking: ' + error.message);
+            alert('Booking deleted.');
+            loadBookings();
+          }
+
+          if (e.target.classList.contains('emailBookingBtn')) {
+            const email = e.target.dataset.email;
+            const name = e.target.dataset.name || '';
+            const bookingId = e.target.dataset.id;
+            const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
+            const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
+            if (!message) return;
+
+            const { error } = await supabase.from('notifications').insert([{ email, message, booking_id: bookingId }]);
+            if (error) return alert('Error queuing message: ' + error.message);
+            alert('Message queued successfully.');
+          }
+        });
+
+        // --- Close script and HTML ---
+      </script>
+    </body>
+    </html>
