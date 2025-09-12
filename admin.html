@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
     <title>Admin Dashboard - Tour Management</title>
     <style>
         * {
@@ -566,14 +567,14 @@ async function checkAuth() {
     }
 }
 
-// Load Activities
+// Load Activities - UPDATED to sort from OLD to NEW
 async function loadActivities() {
     try {
         console.log("Loading activities...");
         const { data, error } = await supabase
             .from("activities")
             .select("*")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: true }); // Changed to TRUE for old to new
         
         if (error) {
             console.error("Error loading activities:", error);
@@ -582,7 +583,7 @@ async function loadActivities() {
         }
         
         activities = data || [];
-        console.log("Activities loaded:", activities.length);
+        console.log("Activities loaded:", activities.length, "- sorted from oldest to newest");
         
         // Update tour filter dropdown
         const tourFilter = document.getElementById("tourFilter");
@@ -612,7 +613,6 @@ async function loadActivities() {
         return false;
     }
 }
-
 // Load Bookings
 async function loadBookings() {
     try {
