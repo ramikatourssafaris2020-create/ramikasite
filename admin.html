@@ -10,18 +10,21 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+        :root  {
+            border: rgba(255, 255, 255, 0.712);
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #222222;
             line-height: 1.6;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #222222;
             color: white;
             padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+           border-bottom: 1px solid rgba(255, 255, 255, 0.137);
         }
         
         .header-content {
@@ -59,21 +62,21 @@
         }
         
         .section {
-            background: white;
+            background: rgb(53, 53, 53);
             margin-bottom: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+           border: 1px solid rgba(128, 128, 128, 0.63);
             overflow: hidden;
         }
         
         .section-header {
-            background: #f8f9fa;
+            background: #343434;
             padding: 20px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(202, 196, 196, 0.384);
         }
         
         .section-header h2 {
-            color: #495057;
+            color: #d2d4d6;
             font-size: 1.4rem;
             font-weight: 600;
         }
@@ -90,7 +93,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: #495057;
+            color: #8a8b8b;
         }
         
         .form-group input,
@@ -98,18 +101,17 @@
         .form-group select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ced4da;
+            border: none;color: white;
             border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
+            font-size: 14px;background-color: #222222;
         }
         
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #d5d5d8;
+            box-shadow: 0 0 0 3px rgba(169, 170, 175, 0.123);
         }
         
         .form-group textarea {
@@ -118,21 +120,23 @@
         }
         
         .btn {
-            background: #667eea;
-            color: white;
+            background: #222222;
+            color: rgb(255, 255, 255);
             border: none;
             padding: 12px 24px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             transition: background-color 0.3s ease;
-            display: inline-block;
+            display: block;
             text-decoration: none;
+            float: right;
+            margin-bottom: 10px;
         }
         
         .btn:hover {
-            background: #5a6fd8;
+            background: #303031;
         }
         
         .btn:disabled {
@@ -244,11 +248,10 @@
         }
         
         .stat-card {
-            background: white;
+            background: #21222254;
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .stat-number {
@@ -362,7 +365,7 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>🏖️ Tour Admin Dashboard</h1>
+            <h1>Ramika Admin Dashboard</h1>
             <button id="logout" class="logout-btn">Sign Out</button>
         </div>
     </div>
@@ -378,16 +381,12 @@
                 <div class="stat-number" id="totalBookings">-</div>
                 <div class="stat-label">Total Bookings</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="todayBookings">-</div>
-                <div class="stat-label">Today's Bookings</div>
-            </div>
         </div>
 
         <!-- Add New Activity Section -->
         <div class="section">
             <div class="section-header">
-                <h2>➕ Add New Activity</h2>
+                <h2>Add New Activity</h2>
             </div>
             <div class="section-content">
                 <div id="addActivityError" class="error-message"></div>
