@@ -287,11 +287,661 @@
             </form>
          </div>
 
-   
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk";
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // DOM Elements
+        const tourSelect = document.getElementById("tourSelect");
+        const bookingForm = document.getElementById("bookingForm");
+        const emailInput = document.getElementById("email");
+        const fullNameInput = document.getElementById("full_name");
+        const phoneInput = document.getElementById("phone");
+        const tourDateInput = document.getElementById("tour_date");
+        const userBookingsDiv = document.getElementById("userBookings");
+        const notificationsDiv = document.getElementById("notificationsDiv");
+        const tourCardsContainer = document.getElementById("tourCards");
+
+        // Global variables - Using memory storage instead of localStorage
+        let userData = null;
+        let toursData = [];
+        let lastEmail = '';
+
+        // ============ TOAST NOTIFICATION SYSTEM ============
+        function createToastContainer() {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 9999;
+                    max-width: 350px;
+                `;
+                document.body.appendChild(container);
+            }
+            return container;
+        }
+
+        function showToast(message, type = 'info', duration = 5000) {
+            const container = createToastContainer();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const colors = {
+                success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+                warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+                info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+            };
+            
+            const color = colors[type] || colors.info;
+            
+            toast.style.cssText = `
+                background-color: ${color.bg};
+                border: 1px solid ${color.border};
+                color: ${color.text};
+                padding: 12px 16px;
+                margin-bottom: 10px;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                line-height: 1.4;
+            `;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>${icons[type] || icons.info}</span>
+                    <span style="flex: 1;">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="
+                        background: none;
+                        border: none;
+                        color: ${color.text};
+                        cursor: pointer;
+                        font-size: 16px;
+                        padding: 0;
+                        margin-left: 8px;
+                        opacity: 0.7;
+                    ">×</button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(0)';
+            }, 10);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+
+        // ============ USER DATA MANAGEMENT (MEMORY BASED) ============
+        function saveUserData(data) {
+            userData = { ...data, last_updated: new Date().toISOString() };
+            console.log('User data saved to memory:', userData);
+            showToast('Your information has been saved for this session', 'success', 3000);
+        }
+
+        function loadUserData() {
+            return userData;
+        }
+
+        function clearUserData() {
+            userData = null;
+            console.log('User data cleared from memory');
+        }
+
+        // ============ PRICE FORMATTING ============
+        function formatPrice(amount) {
+            if (!amount || amount === 0) return "Free";
+            return Number(amount).toLocaleString("en-US") + " TZS";
+        }
+
+        // ============ FORM AUTO-FILL ============
+        function autoFillForm() {
+            const savedData = loadUserData();
+            if (savedData) {
+                fullNameInput.value = savedData.full_name || '';
+                emailInput.value = savedData.email || '';
+                phoneInput.value = savedData.phone || '';
+                
+                if (savedData.email) {
+                    lastEmail = savedData.email;
+                    loadUserBookingsAndNotifications(savedData.email);
+                }
+                
+                showToast('Form filled with your saved information', 'info', 3000);
+            }
+        }
+
+        // ============ AUTO-SAVE SETUP ============
+        function setupAutoSave() {
+            const inputs = [fullNameInput, emailInput, phoneInput];
+            
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => {
+                    const formData = {
+                        full_name: fullNameInput.value.trim(),
+                        email: emailInput.value.trim(),
+                        phone: phoneInput.value.trim()
+                    };
+                    
+                    if (formData.email && (formData.full_name || formData.phone)) {
+                        saveUserData(formData);
+                    }
+                });
+            });
+        }
+
+        // ============ TOUR MANAGEMENT ============
+        async function loadTours() {
+            try {
+                showToast('Loading tours...', 'info', 2000);
+                
+                const { data, error } = await supabase.from('activities')
+                    .select('id, name, price, image_url, description')
+                    .order('created_at', { ascending: true });
+                
+                if (error) {
+                    console.error('Load tours error:', error);
+                    showToast('Error loading tours: ' + error.message, 'error');
+                    return;
+                }
+
+                toursData = data || [];
+                
+                // Populate dropdown
+                tourSelect.innerHTML = '<option value="">Select a Tour</option>';
+                toursData.forEach(tour => {
+                    const option = document.createElement('option');
+                    option.value = tour.name;
+                    option.textContent = `${tour.name} (${formatPrice(tour.price)})`;
+                    tourSelect.appendChild(option);
+                });
+
+                createTourCards(toursData);
+                showToast(`${toursData.length} tours loaded successfully!`, 'success', 3000);
+                
+            } catch (error) {
+                console.error('Error in loadTours:', error);
+                showToast('Failed to load tours', 'error');
+                
+                // Show fallback message
+                tourCardsContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="alert alert-info">
+                            <h5>Tours are currently loading...</h5>
+                            <p>Please check your internet connection or try again later.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createTourCards(tours) {
+            if (!tours || tours.length === 0) {
+                tourCardsContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="alert alert-info">
+                            <h5>No tours available at the moment</h5>
+                            <p>Please check back later for exciting safari adventures!</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            tourCardsContainer.innerHTML = '';
+            
+            tours.forEach(tour => {
+                const card = document.createElement('div');
+                card.className = 'tour-card';
+                
+                let imageUrl = tour.image_url;
+                if (imageUrl && !imageUrl.startsWith('http')) {
+                    imageUrl = `${supabaseUrl}/storage/v1/object/public/tour-images/${imageUrl}`;
+                }
+                
+                if (!imageUrl) {
+                    imageUrl = `https://via.placeholder.com/300x200/4CAF50/white?text=${encodeURIComponent(tour.name)}`;
+                }
+                
+                card.innerHTML = `
+                    <div class="tour-card-image">
+                        <img src="${imageUrl}" alt="${tour.name}" onerror="this.src='https://via.placeholder.com/300x200/4CAF50/white?text=Safari+Tour'">
+                    </div>
+                    <div class="tour-card-content">
+                        <h3 class="tour-title">${tour.name}</h3>
+                        <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure with professional guides and comfortable accommodations.`}</p>
+                        <div class="tour-details">
+                            <span class="tour-id">ID: ${tour.id}</span>
+                             <span class="tour-price">${formatPrice(tour.price)}</span>
+                        </div>
+                         </div>
+                    <div class="tour-footer">
+                        <button class="select-tour-btn" onclick="selectTour('${tour.name}')">
+                            <i class="bi bi-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                `;
+                
+                tourCardsContainer.appendChild(card);
+            });
+        }
+
+        // ============ TOUR SELECTION ============
+        window.selectTour = function(tourName) {
+            tourSelect.value = tourName;
+            tourSelect.dispatchEvent(new Event('change'));
+            
+            // Scroll to booking form
+            bookingForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update visual selection
+            document.querySelectorAll('.tour-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = Array.from(document.querySelectorAll('.tour-card')).find(card => 
+                card.querySelector('.tour-title').textContent === tourName
+            );
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            showToast(`Selected: ${tourName}`, 'success', 3000);
+        }
+
+        // ============ USER BOOKINGS AND NOTIFICATIONS ============
+        async function loadUserBookingsAndNotifications(email) {
+            if (!email) {
+                userBookingsDiv.innerHTML = "<p>Enter your email to see your bookings.</p>";
+                notificationsDiv.innerHTML = "<p>No notifications yet.</p>";
+                return;
+            }
+
+            try {
+                showToast('Loading your data...', 'info', 2000);
+
+                const [bookingsRes, notificationsRes] = await Promise.all([
+                    supabase.from('bookings')
+                        .select('tour_name, tour_date, created_at')
+                        .eq('email', email)
+                        .order('created_at', { ascending: false })
+                        .limit(10),
+
+                    supabase.from('notifications')
+                        .select('message, created_at')
+                        .eq('user_email', email)
+                        .order('created_at', { ascending: false })
+                        .limit(10)
+                ]);
+
+                // Handle bookings
+                const bookings = bookingsRes.data || [];
+                if (bookings.length > 0) {
+                    userBookingsDiv.innerHTML = bookings.map(booking => `
+                        <div class="booked-tour">
+                            <strong><i class="bi bi-compass"></i> ${booking.tour_name}</strong>
+                            <br><small><i class="bi bi-calendar-event"></i> Tour Date: ${new Date(booking.tour_date).toLocaleDateString()}</small>
+                            <br><small style="color: #666;"><i class="bi bi-clock"></i> Booked: ${new Date(booking.created_at).toLocaleDateString()}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    userBookingsDiv.innerHTML = "<p>No booked tours yet. Book your first adventure!</p>";
+                }
+
+                // Handle notifications
+                const notifications = notificationsRes.data || [];
+                if (notifications.length > 0) {
+                    notificationsDiv.innerHTML = notifications.map(notification => `
+                        <div class="notification-item">
+                            <p style="margin: 0;"><i class="bi bi-bell"></i> ${notification.message}</p>
+                            <small style="color: #666;">${new Date(notification.created_at).toLocaleDateString()}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    notificationsDiv.innerHTML = "<p>No notifications yet.</p>";
+                }
+
+                showToast('Your data loaded successfully', 'success', 2000);
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('Error loading your data', 'error');
+                userBookingsDiv.innerHTML = "<p>Error loading bookings. Please try again.</p>";
+                notificationsDiv.innerHTML = "<p>Error loading notifications.</p>";
+            }
+        }
+
+        // ============ FORM SUBMISSION ============
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            console.log('Form submission started...');
+            
+            const booking = {
+                full_name: fullNameInput.value.trim(),
+                email: emailInput.value.trim(),
+                phone: phoneInput.value.trim(),
+                tour_name: tourSelect.value,
+                tour_date: tourDateInput.value,
+                notes: ""
+            };
+
+            console.log('Booking data:', booking);
+
+            // Validation
+            if (!booking.tour_name) {
+                showToast('Please select a tour', 'warning');
+                tourSelect.focus();
+                return;
+            }
+            if (!booking.full_name) {
+                showToast('Please enter your full name', 'warning');
+                fullNameInput.focus();
+                return;
+            }
+            if (!booking.email) {
+                showToast('Please enter your email address', 'warning');
+                emailInput.focus();
+                return;
+            }
+            if (!booking.tour_date) {
+                showToast('Please select a tour date', 'warning');
+                tourDateInput.focus();
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(booking.email)) {
+                showToast('Please enter a valid email address', 'warning');
+                emailInput.focus();
+                return;
+            }
+
+            // Date validation (must be future date)
+            const selectedDate = new Date(booking.tour_date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                showToast('Please select a future date for your tour', 'warning');
+                tourDateInput.focus();
+                return;
+            }
+
+            try {
+                showToast('Processing your booking...', 'info');
+
+                // Save user data to memory
+                saveUserData({
+                    full_name: booking.full_name,
+                    email: booking.email,
+                    phone: booking.phone
+                });
+
+                // Check for duplicate booking
+                const { data: existing, error: checkError } = await supabase.from('bookings')
+                    .select('id, tour_date')
+                    .eq('email', booking.email)
+                    .eq('tour_name', booking.tour_name)
+                    .eq('tour_date', booking.tour_date);
+
+                if (checkError) {
+                    console.error('Error checking existing bookings:', checkError);
+                    showToast('Error checking existing bookings: ' + checkError.message, 'error');
+                    return;
+                }
+
+                if (existing && existing.length > 0) {
+                    showToast('You have already booked this tour for the same date!', 'warning');
+                    return;
+                }
+
+                // Insert booking
+                const { data: insertData, error: insertError } = await supabase
+                    .from('bookings')
+                    .insert([booking])
+                    .select();
+
+                if (insertError) {
+                    console.error('Booking insert error:', insertError);
+                    showToast('Booking failed: ' + insertError.message, 'error');
+                    return;
+                }
+
+                console.log('Booking successful:', insertData);
+                showToast('🎉 Booking confirmed! Your safari adventure awaits!', 'success', 6000);
+                
+                // Reset only tour-specific fields, keep user info
+                tourSelect.value = '';
+                tourDateInput.value = '';
+                
+                // Clear tour selection visual
+                document.querySelectorAll('.tour-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Reload user bookings
+                loadUserBookingsAndNotifications(booking.email);
+                
+                // Scroll to bookings section to show the new booking
+                setTimeout(() => {
+                    userBookingsDiv.scrollIntoView({ behavior: 'smooth' });
+                }, 1000);
+
+            } catch (error) {
+                console.error('Booking submission error:', error);
+                showToast('An unexpected error occurred. Please try again.', 'error');
+            }
+        });
+
+        // ============ EMAIL INPUT HANDLER ============
+        emailInput.addEventListener('blur', () => {
+            const email = emailInput.value.trim();
+            if (email && email !== lastEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                lastEmail = email;
+                loadUserBookingsAndNotifications(email);
+            }
+        });
+
+        // ============ CLEAR DATA FUNCTIONALITY ============
+        window.clearAllData = function() {
+            if (confirm('Are you sure you want to clear your saved information? This will remove all your data for this session.')) {
+                clearUserData();
+                
+                // Clear form
+                fullNameInput.value = '';
+                emailInput.value = '';
+                phoneInput.value = '';
+                tourSelect.value = '';
+                tourDateInput.value = '';
+                
+                // Clear displays
+                userBookingsDiv.innerHTML = "No booked tours yet.";
+                notificationsDiv.innerHTML = "No notifications yet.";
+                
+                // Clear tour selection
+                document.querySelectorAll('.tour-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                lastEmail = '';
+                
+                showToast('All saved data cleared successfully!', 'success');
+            }
+        }
+
+        // ============ SET MINIMUM DATE ============
+        function setMinimumDate() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const minDate = tomorrow.toISOString().split('T')[0];
+            tourDateInput.setAttribute('min', minDate);
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Initializing Ramika Safaris app...');
+            
+            try {
+                // Set minimum date for tour booking
+                setMinimumDate();
+                
+                // Load tours first
+                await loadTours();
+                
+                // Add enhanced styles
+                addEnhancedStyles();
+                
+                // Setup enhanced auto-save functionality
+                setupEnhancedAutoSave();
+                
+                // Auto-fill form with any existing data
+                autoFillForm();
+                
+                showToast('🌍 Welcome to Ramika Safaris! Ready for your adventure?', 'success', 4000);
+                console.log('Ramika Safaris app initialized successfully');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showToast('Error initializing app. Please refresh the page.', 'error');
+            }
+        });
+
+        // ============ TOUR SELECT CHANGE HANDLER ============
+        tourSelect.addEventListener('change', (e) => {
+            const selectedTour = e.target.value;
+            
+            // Update visual selection
+            document.querySelectorAll('.tour-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (selectedTour) {
+                const selectedCard = Array.from(document.querySelectorAll('.tour-card')).find(card => 
+                    card.querySelector('.tour-title').textContent === selectedTour
+                );
+                if (selectedCard) {
+                    selectedCard.classList.add('selected');
+                    selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        // ============ FORM VALIDATION HELPERS ============
+        function addRealTimeValidation() {
+            // Real-time email validation
+            emailInput.addEventListener('input', (e) => {
+                const email = e.target.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (email && !emailRegex.test(email)) {
+                    e.target.style.borderColor = '#dc3545';
+                } else {
+                    e.target.style.borderColor = '';
+                }
+            });
+
+            // Real-time name validation
+            fullNameInput.addEventListener('input', (e) => {
+                const name = e.target.value.trim();
+                if (name && name.length < 2) {
+                    e.target.style.borderColor = '#dc3545';
+                } else {
+                    e.target.style.borderColor = '';
+                }
+            });
+
+            // Phone number validation
+            phoneInput.addEventListener('input', (e) => {
+                const phone = e.target.value.trim();
+                const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+                
+                if (phone && !phoneRegex.test(phone)) {
+                    e.target.style.borderColor = '#dc3545';
+                } else {
+                    e.target.style.borderColor = '';
+                }
+            });
+        }
+
+        // Add real-time validation after DOM is loaded
+        setTimeout(addRealTimeValidation, 100);
+
+        // ============ KEYBOARD SHORTCUTS ============
+        document.addEventListener('keydown', (e) => {
+            // Escape key to clear selections
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.tour-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                tourSelect.value = '';
+            }
+        });
+
+        // ============ ACCESSIBILITY IMPROVEMENTS ============
+        function improveAccessibility() {
+            // Add aria-labels to important elements
+            tourSelect.setAttribute('aria-label', 'Select a tour for booking');
+            tourDateInput.setAttribute('aria-label', 'Select tour date');
+            fullNameInput.setAttribute('aria-label', 'Enter your full name');
+            emailInput.setAttribute('aria-label', 'Enter your email address');
+            phoneInput.setAttribute('aria-label', 'Enter your phone number');
+
+            // Add focus management for tour cards
+            document.querySelectorAll('.tour-card').forEach((card, index) => {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Select ${card.querySelector('.tour-title').textContent} tour`);
+                
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const tourName = card.querySelector('.tour-title').textContent;
+                        selectTour(tourName);
+                    }
+                });
+            });
+        }
+
+        // Apply accessibility improvements after tours are loaded
+        setTimeout(improveAccessibility, 2000);
+
+    </script>
       <!-- Bootstrap bundle js -->
       <script src="vender/bootstrap/js/bootstrap.bundle.min.js"></script>
       <!-- Script js -->
       <script src="js/script.js"></script> 
-   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="ad21f07bb07096a435ab4d49-|49" defer=""></script><script defer="" src="../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dd471ab1978346bbb991feaa79e6ce5c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+   </body>
 </html>
