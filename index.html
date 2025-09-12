@@ -593,7 +593,7 @@
                   </a>
                </div>
             </div> 
-
+      <div id="toast-container"></div>
 
 
 
@@ -622,7 +622,7 @@
          <span>Discover</span>
          </a>
       </div>
-      <div id="toast-container"></div>
+
     <!-- Bootstrap bundle js -->
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Script js -->
@@ -808,7 +808,7 @@
                 
                 const { data, error } = await supabase.from('activities')
                     .select('id, name, price, image_url, description')
-                    .order('created_at', { ascending: true });
+                    .order('created_at', { ascending: false });
                 
                 if (error) {
                     console.error('Load tours error:', error);
@@ -882,7 +882,7 @@
                         <h3 class="tour-title">${tour.name}</h3>
                         <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure with professional guides and comfortable accommodations.`}</p>
                         <div class="tour-details">
-                            <span class="tour-id">ID: ${tour.id}</span>
+                            <span class="tour-id">Tour Identity ${tour.id}</span>
                              <span class="tour-price">${formatPrice(tour.price)}</span>
                         </div>
                          </div>
