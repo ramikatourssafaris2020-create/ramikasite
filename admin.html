@@ -171,18 +171,19 @@
         .table-responsive {
             overflow-x: auto;
             margin-top: 20px;
+            background-color: #222222;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            background: #222222;
         }
         
         table th {
-            background: #f8f9fa;
+            background: #121212;
             padding: 12px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #474747;
             text-align: left;
             font-weight: 600;
             color: #495057;
@@ -190,12 +191,12 @@
         
         table td {
             padding: 12px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #474747;
             vertical-align: top;
         }
         
         table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color:  #222222;
         }
         
         table input,
@@ -203,7 +204,7 @@
         table textarea {
             width: 100%;
             padding: 6px;
-            border: 1px solid #ced4da;
+            border: 1px solid #474747;
             border-radius: 4px;
             font-size: 13px;
         }
@@ -213,7 +214,7 @@
             height: 60px;
             object-fit: cover;
             border-radius: 6px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #474747;
         }
         
         .filters {
@@ -236,7 +237,7 @@
         }
         
         .notifications-section {
-            background: #e3f2fd;
+            background: #0c0c0c;
             border-left: 4px solid #2196f3;
         }
         
@@ -435,7 +436,7 @@
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
-                                <th>Price ($)</th>
+                                <th>Price (TZS)</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -473,7 +474,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-responsive" style="border-radius: 10px;">
                     <table id="bookingsTable">
                         <thead>
                             <tr>
