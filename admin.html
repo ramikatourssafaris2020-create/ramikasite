@@ -148,12 +148,6 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-        }
-        
-        .section:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
         }
         
         .section-header {
@@ -212,7 +206,6 @@
             border-radius: var(--border-radius-sm);
             color: var(--text-primary);
             font-size: 0.875rem;
-            transition: var(--transition);
             font-family: inherit;
         }
         
@@ -239,12 +232,10 @@
             cursor: pointer;
             font-size: 0.875rem;
             font-weight: 600;
-            transition: var(--transition);
             position: relative;
             overflow: hidden;
             text-decoration: none;
             display: inline-block;
-            float: right;
             margin-bottom: 1rem;
             box-shadow: var(--shadow-md);
         }
@@ -257,20 +248,6 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
         }
         
         .btn:disabled {
@@ -309,7 +286,7 @@
         }
         
         table th {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            background: #121212;
             padding: 1rem;
             border: none;
             border-bottom: 2px solid var(--border-color);
@@ -342,10 +319,6 @@
             transition: var(--transition);
         }
         
-        table tr:hover {
-            background: rgba(255, 255, 255, 0.03);
-            transform: scale(1.01);
-        }
         
         table tr:hover td {
             color: var(--text-primary);
@@ -641,10 +614,7 @@
     <div class="header">
         <div class="header-content">
             <h1>Ramika Admin Dashboard</h1>
-            <div class="cleanupImagesBtn">
-                <button id="cleanupImagesBtn" class="btn btn-info" style="margin-right: 10px;">🧹 Cleanup Images</button>
-                </div>
-            <button id="logout" class="logout-btn">Sign Out</button>
+        <button id="logout" class="logout-btn">Sign Out</button>
         </div>
     </div>
 
@@ -699,7 +669,7 @@
         <!-- Manage Activities Section -->
         <div class="section">
             <div class="section-header">
-                <h2>🎯 Manage Activities</h2>
+                <h2>Manage Activities</h2>
             </div>
             <div class="section-content">
                 <div class="alert alert-info">
@@ -730,20 +700,20 @@
         <!-- Bookings Management Section -->
         <div class="section">
             <div class="section-header">
-                <h2>📋 Manage Bookings</h2>
+                <h2>Manage Bookings</h2>
             </div>
             <div class="section-content">
                 <!-- Filters -->
                 <div class="filters">
                     <div class="filter-group">
                         <label for="tourFilter">Filter by Tour</label>
-                        <select id="tourFilter">
+                        <select id="tourFilter" style="border: none;padding: 5px 10px;border-radius: 20px;background-color: #121212;color: white;">
                             <option value="">All Tours</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label for="dateFilter">Filter by Date</label>
-                        <input type="date" id="dateFilter">
+                        <input type="date" id="dateFilter" style="padding: 5px 10px;border-radius: 20px;background-color: #121212;color: white; border: none;">
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button id="applyFilter" class="btn btn-info">Apply Filter</button>
@@ -755,9 +725,9 @@
                     <table id="bookingsTable">
                         <thead>
                             <tr>
-                                <th>Customer Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
+                                <th>Customer Name </th>
+                                <th>Email </th>
+                                <th> Phone</th>
                                 <th>Tour</th>
                                 <th>Date</th>
                                 <th>Notes</th>
@@ -774,6 +744,8 @@
                 </div>
             </div>
         </div>
+          <button id="cleanupImagesBtn" class="logout-btn" style="margin-right: 10px;margin-bottom: 10px;float: right;">🧹 Cleanup Images</button>
+        
     </div>
 
 <script type="module">
@@ -820,15 +792,13 @@ function setButtonLoading(buttonId, spinnerId, isLoading) {
     }
 }
 
-// Image cleanup utility functions
 function getFilePathFromUrl(publicUrl) {
     try {
         const url = new URL(publicUrl);
-        // For Supabase URLs like: https://xxx.supabase.co/storage/v1/object/public/tour-images/activities/filename.jpg
         const pathParts = url.pathname.split('/');
         const bucketIndex = pathParts.findIndex(part => part === 'tour-images');
         if (bucketIndex !== -1) {
-            return pathParts.slice(bucketIndex + 1).join('/'); // returns "activities/filename.jpg"
+            return pathParts.slice(bucketIndex + 1).join('/');
         }
         return null;
     } catch (error) {
@@ -858,12 +828,10 @@ async function removeImageFromStorage(imageUrl) {
     }
 }
 
-// Admin maintenance function to cleanup unused images
 async function cleanupUnusedImages() {
     try {
         console.log("Starting cleanup of unused images...");
         
-        // Get all files in storage
         const { data: files, error: listError } = await supabase.storage
             .from("tour-images")
             .list("activities");
@@ -874,7 +842,6 @@ async function cleanupUnusedImages() {
             return;
         }
         
-        // Get all image URLs currently in use
         const usedImageUrls = activities
             .map(a => a.image_url)
             .filter(url => url)
