@@ -544,6 +544,99 @@ function setButtonLoading(buttonId, spinnerId, isLoading) {
     }
 }
 
+// Image cleanup utility functions
+function getFilePathFromUrl(publicUrl) {
+    try {
+        const url = new URL(publicUrl);
+        // For Supabase URLs like: https://xxx.supabase.co/storage/v1/object/public/tour-images/activities/filename.jpg
+        const pathParts = url.pathname.split('/');
+        const bucketIndex = pathParts.findIndex(part => part === 'tour-images');
+        if (bucketIndex !== -1) {
+            return pathParts.slice(bucketIndex + 1).join('/'); // returns "activities/filename.jpg"
+        }
+        return null;
+    } catch (error) {
+        console.error("Error parsing URL:", error);
+        return null;
+    }
+}
+
+async function removeImageFromStorage(imageUrl) {
+    if (!imageUrl) return;
+    
+    try {
+        const filePath = getFilePathFromUrl(imageUrl);
+        if (filePath) {
+            const { error } = await supabase.storage
+                .from("tour-images")
+                .remove([filePath]);
+            
+            if (error) {
+                console.warn("Failed to remove image:", error);
+            } else {
+                console.log("Image removed successfully:", filePath);
+            }
+        }
+    } catch (error) {
+        console.warn("Error removing image:", error);
+    }
+}
+
+// Admin maintenance function to cleanup unused images
+async function cleanupUnusedImages() {
+    try {
+        console.log("Starting cleanup of unused images...");
+        
+        // Get all files in storage
+        const { data: files, error: listError } = await supabase.storage
+            .from("tour-images")
+            .list("activities");
+            
+        if (listError) {
+            console.error("Error listing files:", listError);
+            alert("Error listing files: " + listError.message);
+            return;
+        }
+        
+        // Get all image URLs currently in use
+        const usedImageUrls = activities
+            .map(a => a.image_url)
+            .filter(url => url)
+            .map(url => getFilePathFromUrl(url))
+            .filter(path => path);
+        
+        // Find unused files
+        const unusedFiles = files.filter(file => {
+            const filePath = `activities/${file.name}`;
+            return !usedImageUrls.includes(filePath);
+        });
+        
+        console.log(`Found ${unusedFiles.length} unused files`);
+        
+        // Remove unused files
+        if (unusedFiles.length > 0) {
+            const filesToRemove = unusedFiles.map(f => `activities/${f.name}`);
+            const { error: removeError } = await supabase.storage
+                .from("tour-images")
+                .remove(filesToRemove);
+                
+            if (removeError) {
+                console.error("Error removing unused files:", removeError);
+                alert("Error removing unused files: " + removeError.message);
+            } else {
+                console.log(`Removed ${unusedFiles.length} unused files`);
+                alert(`Cleanup complete! Removed ${unusedFiles.length} unused images.`);
+            }
+        } else {
+            alert("No unused images found!");
+        }
+        
+    } catch (error) {
+        console.error("Cleanup error:", error);
+        alert("Error during cleanup: " + error.message);
+    }
+}
+
 // Check authentication
 async function checkAuth() {
     try {
@@ -574,7 +667,7 @@ async function loadActivities() {
         const { data, error } = await supabase
             .from("activities")
             .select("*")
-            .order("created_at", { ascending: true }); // Changed to TRUE for old to new
+            .order("created_at", { ascending: false }); // Changed to TRUE for old to new
         
         if (error) {
             console.error("Error loading activities:", error);
@@ -613,6 +706,7 @@ async function loadActivities() {
         return false;
     }
 }
+
 // Load Bookings
 async function loadBookings() {
     try {
@@ -940,6 +1034,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Cleanup Images Button Handler
+document.addEventListener('DOMContentLoaded', () => {
+    const cleanupBtn = document.getElementById('cleanupImagesBtn');
+    if (cleanupBtn) {
+        cleanupBtn.addEventListener('click', async () => {
+            if (confirm('This will remove all unused images from storage. Continue?')) {
+                await cleanupUnusedImages();
+            }
+        });
+    }
+});
+
 // Logout handler
 document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById("logout");
@@ -1127,9 +1233,10 @@ document.addEventListener('click', async (e) => {
         }
     }
 
-    // Update Activity Image
+    // Update Activity Image - UPDATED WITH CLEANUP
     if (e.target.classList.contains("updateImageBtn")) {
         const activityId = e.target.dataset.id;
+        const activity = activities.find(a => a.id === parseInt(activityId));
         const fileInput = document.getElementById(`imageFile_${activityId}`);
         
         if (!fileInput) {
@@ -1153,6 +1260,9 @@ document.addEventListener('click', async (e) => {
                 if (!allowedTypes.includes(file.type)) {
                     return alert("Invalid file type. Please select a JPG, PNG, or GIF image.");
                 }
+
+                // Store old image URL before upload
+                const oldImageUrl = activity?.image_url;
 
                 // Generate unique filename
                 const fileExt = file.name.split('.').pop();
@@ -1180,8 +1290,19 @@ document.addEventListener('click', async (e) => {
                     .eq("id", activityId);
                     
                 if (error) {
+                    // If database update failed, try to cleanup the uploaded image
+                    try {
+                        await supabase.storage.from("tour-images").remove([filePath]);
+                    } catch (cleanupError) {
+                        console.warn("Failed to cleanup failed upload:", cleanupError);
+                    }
                     alert("Error updating image: " + error.message);
                 } else {
+                    // Remove old image after successful update
+                    if (oldImageUrl) {
+                        await removeImageFromStorage(oldImageUrl);
+                    }
+                    
                     alert("Image updated successfully!");
                     loadActivities(); // Refresh the table
                 }
@@ -1192,10 +1313,11 @@ document.addEventListener('click', async (e) => {
         };
     }
     
-    // Delete Activity (with complex logic for handling bookings)
+    // Delete Activity - UPDATED WITH IMAGE CLEANUP
     if (e.target.classList.contains("deleteActivityBtn")) {
         const id = e.target.dataset.id;
-        const activityName = activities.find(a => a.id === parseInt(id))?.name || "this activity";
+        const activity = activities.find(a => a.id === parseInt(id));
+        const activityName = activity?.name || "this activity";
         
         try {
             // First, check if there are any bookings for this activity
@@ -1229,7 +1351,8 @@ document.addEventListener('click', async (e) => {
                         `This will PERMANENTLY DELETE:\n` +
                         `• "${activityName}" activity\n` +
                         `• All ${bookingCount} associated bookings\n` +
-                        `• Customer booking records\n\n` +
+                        `• Customer booking records\n` +
+                        `• Activity image from storage\n\n` +
                         `This action CANNOT be undone!\n\n` +
                         `Are you absolutely sure?`
                     );
@@ -1246,6 +1369,11 @@ document.addEventListener('click', async (e) => {
                             return;
                         }
                         
+                        // Remove the activity image from storage
+                        if (activity?.image_url) {
+                            await removeImageFromStorage(activity.image_url);
+                        }
+                        
                         // Now delete the activity
                         const { error: deleteActivityError } = await supabase
                             .from("activities")
@@ -1257,7 +1385,7 @@ document.addEventListener('click', async (e) => {
                             return;
                         }
                         
-                        alert(`Successfully deleted "${activityName}" and ${bookingCount} associated bookings.`);
+                        alert(`Successfully deleted "${activityName}", ${bookingCount} associated bookings, and cleaned up storage.`);
                         loadActivities();
                         loadBookings();
                         return;
@@ -1316,6 +1444,11 @@ document.addEventListener('click', async (e) => {
                     return;
                 }
                 
+                // Remove the activity image from storage
+                if (activity?.image_url) {
+                    await removeImageFromStorage(activity.image_url);
+                }
+                
                 // Now delete the activity
                 const { error: deleteActivityError } = await supabase
                     .from("activities")
@@ -1327,13 +1460,18 @@ document.addEventListener('click', async (e) => {
                     return;
                 }
                 
-                alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}" and deleted "${activityName}".`);
+                alert(`Successfully transferred ${bookingCount} booking(s) to "${replacementActivity.name}", deleted "${activityName}", and cleaned up storage.`);
                 loadActivities();
                 loadBookings();
                 
             } else {
                 // No bookings, safe to delete - ask for confirmation
                 if (!confirm(`Are you sure you want to delete "${activityName}"? This action cannot be undone.`)) return;
+                
+                // Remove the activity image from storage
+                if (activity?.image_url) {
+                    await removeImageFromStorage(activity.image_url);
+                }
                 
                 // Delete the activity
                 const { error } = await supabase
@@ -1344,7 +1482,7 @@ document.addEventListener('click', async (e) => {
                 if (error) {
                     alert("Error deleting activity: " + error.message);
                 } else {
-                    alert("Activity deleted successfully!");
+                    alert("Activity deleted successfully and storage cleaned up!");
                     loadActivities();
                 }
             }
