@@ -359,7 +359,6 @@
 
 
    <link rel="stylesheet" href="css/slider.css">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
    </head>
    <body>
       <!-- Status Bar (mimics mobile device status bar) -->
@@ -937,29 +936,15 @@ function addNotificationStyles() {
             position: relative;
         }
 
-        .notification-item:hover {
-            background: #f8f9fa;
-        }
-
         .notification-item:last-child {
             border-bottom: none;
         }
 
         .notification-item.unread {
-            background: #fff3cd;
+            background: #ddd;
+            border: none;
         }
 
-        .notification-item.unread::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 8px;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background: #007bff;
-            border-radius: 50%;
-        }
 
         .notification-content {
             display: flex;
@@ -1375,9 +1360,7 @@ window.clearAllNotifications = clearAllNotifications;
 
     // ============ TOUR MANAGEMENT ============
     async function loadTours() {
-        try {
-            showToast('Loading safari tours...', 'info', 2000);
-            
+        try {            
             const { data, error } = await supabase.from('activities')
                 .select('id, name, price, image_url, description')
                 .order('created_at', { ascending: false });
@@ -1400,7 +1383,7 @@ window.clearAllNotifications = clearAllNotifications;
             });
 
             createTourCards(toursData);
-            showToast(`${toursData.length} tours loaded successfully! 🌍`, 'success', 3000);
+            showToast(` Current ${toursData.length} available tours `, 'success', 3000);
             
         } catch (error) {
             console.error('Error in loadTours:', error);
@@ -1506,8 +1489,6 @@ window.clearAllNotifications = clearAllNotifications;
         }
 
         try {
-            showToast('Loading your data...', 'info', 2000);
-
             const [bookingsRes, notificationsRes] = await Promise.all([
                 supabase.from('bookings')
                     .select('tour_name, tour_date, created_at')
@@ -1580,7 +1561,6 @@ window.clearAllNotifications = clearAllNotifications;
                 notificationsDiv.innerHTML = "<p class='text-muted'>No notifications yet.</p>";
             }
 
-            showToast('Your data loaded successfully', 'success', 2000);
 
         } catch (error) {
             console.error('Error loading user data:', error);
