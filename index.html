@@ -1,91 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramika Safaris - Safari Booking System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2d5016;
-            --secondary-color: #4CAF50;
-            --accent-color: #8BC34A;
-            --text-dark: #333;
-            --border-radius: 12px;
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="logo.png" type="image/png">
+      <title>Ramika Safaris & Tours</title>
+      <!-- Bootstrap css -->
+      <link rel="stylesheet" href="vender/bootstrap/css/bootstrap.min.css">
+      <link rel="stylesheet" href="font/bootstrap-icons.css">
+   <!-- Custom css -->
+   <link rel="stylesheet" href="css/style.css">
+   <!-- Slider css -->
+      <style>
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            line-height: 1.6;
-        }
-
-        .hero-section {
-            background: linear-gradient(rgba(45, 80, 22, 0.8), rgba(45, 80, 22, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%234CAF50" width="1200" height="800"/><circle fill="%232d5016" cx="200" cy="200" r="100" opacity="0.3"/><circle fill="%238BC34A" cx="800" cy="400" r="150" opacity="0.2"/></svg>');
-            background-size: cover;
-            color: white;
-            padding: 80px 0;
+        .header {
             text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-bottom: 3px solid var(--accent-color);
         }
 
-        .hero-section h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero-section p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-        }
-
-        .section-title {
+        .header h1 {
             color: var(--primary-color);
             font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
-            position: relative;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: var(--secondary-color);
-            border-radius: 2px;
+        .header p {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .tour-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .tour-card {
             background: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-            overflow: hidden;
-            cursor: pointer;
-            border: 3px solid transparent;
-        }
-
-        .tour-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-
-        .tour-card.selected {
-            border-color: var(--secondary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.3);
+            border-radius: 15px;font-size: 14px;
+            overflow: hidden;margin: 30px;
+            border: 1px solid #00000060;
         }
 
         .tour-card-image {
-            height: 220px;
+            height: 200px;
             overflow: hidden;
             position: relative;
         }
@@ -94,157 +64,181 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .tour-card:hover .tour-card-image img {
-            transform: scale(1.1);
         }
 
         .tour-card-content {
-            padding: 1.5rem;
+            padding: 20px;
         }
 
         .tour-title {
             color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
         .tour-description {
-            color: var(--text-dark);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
 
         .tour-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tour-id, .tour-id9 {
+            font-size: 0.85rem;
+            color: #615858;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 12px;
         }
 
         .tour-price {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--secondary-color);
+            font-weight: 600;
+            color: white;
+            background: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
         }
 
-        .tour-id {
-            font-size: 0.9rem;
-            color: #666;
-            background: #f8f9fa;
+        .tour-amenities {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .amenity {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            background: #f0f8f0;
             padding: 4px 8px;
-            border-radius: 6px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .tour-footer {
-            padding: 0 1.5rem 1.5rem;
+            padding: 0 20px 20px;
         }
 
         .select-tour-btn {
             width: 100%;
-            background: var(--secondary-color);
-            border: none;
+            background: var(--primary-color);
             color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 1rem;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 500;font-size: 16px;
+            cursor: pointer;
         }
 
         .select-tour-btn:hover {
-            background: var(--primary-color);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .booking-card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
+        .booking-section {
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f8e8 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            border: 2px solid var(--accent-color);
         }
 
-        .form-control {
-            border-radius: 8px;
+        .form-control, .form-select {
+            border-radius: 15px;
             border: 2px solid #e9ecef;
-            padding: 12px 15px;
+            padding: 12px 20px;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(106, 176, 76, 0.25);
         }
 
         .btn-primary {
-            background: var(--secondary-color);
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
             border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
+            padding: 15px 40px;
+            border-radius: 25px;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-size: 1.1rem;
         }
 
         .btn-primary:hover {
-            background: var(--primary-color);
             transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-outline-secondary {
-            border: 2px solid #6c757d;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .user-info-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: var(--border-radius);
-            border-left: 5px solid var(--secondary-color);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+        .user-data-section {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+           margin: 30px;
+            border: 2px solid rgba(128, 128, 128, 0.308);
         }
 
         .booked-tour {
             background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--secondary-color);
+            border-bottom: 1px solid #272626;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .notification-item {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 6px;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 0 10px 10px 0;
         }
 
-        .stats-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 1rem;
+        .clear-data-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
         }
 
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 0.5rem;
+        .clear-data-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
         }
 
-        /* Toast Notification Styles */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tour-cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+     /* Toast Notification Styles */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -256,7 +250,6 @@
         .toast {
             margin-bottom: 10px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             opacity: 0;
             transform: translateX(100%);
             transition: all 0.4s ease;
@@ -273,27 +266,27 @@
         }
 
         .toast-success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            background: white;
             border: 1px solid #c3e6cb;
-            color: #155724;
+            color: green;
         }
 
         .toast-error {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            background: white;
             border: 1px solid #f5c6cb;
             color: #721c24;
         }
 
         .toast-warning {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            background: white;
             border: 1px solid #ffeaa7;
             color: #856404;
         }
 
         .toast-info {
-            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            background: white;
             border: 1px solid #bee5eb;
-            color: #0c5460;
+            color: #083da0;
         }
 
         .toast-body {
@@ -357,449 +350,384 @@
             }
         }
 
-        /* Loading Animation */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
+</style>
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-section p {
-                font-size: 1.1rem;
-            }
-            
-            .tour-card-content {
-                padding: 1rem;
-            }
-            
-            .booking-card {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-    <style>
-        /* ============ BOOKING CONFIRMATION MODAL ============ */
-.booking-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    animation: modalFadeIn 0.3s ease;
-}
 
-.booking-modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.booking-modal-content {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    margin: 20px;
-    padding: 0;
-    border: none;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: modalSlideIn 0.4s ease;
-    overflow: hidden;
-}
 
-.booking-modal-header {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    padding: 25px 30px;
-    text-align: center;
-    position: relative;
-}
 
-.booking-modal-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: shimmer 3s ease-in-out infinite;
-}
 
-.booking-modal-header .success-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    display: block;
-    animation: bounceIn 0.6s ease;
-}
+   <link rel="stylesheet" href="css/slider.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+   </head>
+   <body>
+      <!-- Status Bar (mimics mobile device status bar) -->
+      <div class="status-bar">
+         <div><a href="mpanga.html" style="color: white;">Catch up the upcoming tour [Mpanga Kipengele on 27/09/025]</a></div>
+         <div>
+            <i class="bi bi-arrow-right ms-2"></i>
+         </div>
+      </div>
+     <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+         <div class="sidebar-header">
 
-.booking-modal-header h2 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
+            <div class="d-flex justify-content-between align-items-center">
+               <div>
+                  <small>Travel Points</small>
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-star-fill me-1 points-icon"></i>
+                     <span>2,450</span>
+                  </div>
+               </div>
+               <a href="profile.html" class="btn btn-sm profile-edit-btn rounded-3">
+                Discover
+               </a>
+            </div>
+         </div>
+         <div class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item">
+            <i class="bi bi-house-door"></i>
+            <span>Home</span>
+            </a>
+            <a href="bus-listing.html" class="sidebar-menu-item">
+            <i class="bi bi-list"></i>
+            <span>Bus Listing</span>
+            </a>
+            <a href="bus-details.html" class="sidebar-menu-item">
+            <i class="bi bi-view-list"></i>
+            <span>Bus Details</span>
+            </a>
+            <a href="select-seat.html" class="sidebar-menu-item">
+            <i class="bi bi-ui-checks-grid"></i>
+            <span>Select Seat</span>
+            </a>
+            <a href="not-available.html" class="sidebar-menu-item">
+            <i class="bi bi-emoji-frown"></i>
+            <span>Not Available</span>
+            </a>
+         </div>
+         <div class="p-3 text-center">
+  <span onclick="clearAllData()" class="btn btn-outline-danger w-100 rounded-3">
+    <i class="bi bi me-2"></i> Clear My Data
+  </span>
+</div>
 
-.booking-modal-body {
-    padding: 30px;
-    text-align: center;
-}
+      </div>
+      <!-- Overlay -->
+      <div class="overlay" id="overlay"></div>
+      <!-- App Header -->
+      <div class="app-header d-flex justify-content-between align-items-center">
+         <div class="d-flex align-items-center">
+            <button id="menuBtn" class="btn menu-btn">
+            <i class="bi bi-three-dots-vertical menu-icon"></i>
+            </button>
+            <div class="d-flex align-items-center">
+               <img src="logo.png" height="50">              
+            </div>
+         </div>
+        <div class="d-flex align-items-center">
+             <a id="notification-bell" class="btn header-btn me-2">
+            <i class="bi bi-bell icon-md" style="font-size: 24px;"></i>
+            </a>&nbsp;&nbsp;
+         </div>
+      </div>
+      <!-- Main Content Area -->
+      <div class="content-area">
+<div class="hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.349), rgba(0,0,0,0.45)), url('maua.JPG');">
+  <div class="content">
+    <h1>Welcome to Ramika Safaris</h1>
+    <p>A local tour super agent company discovering your next safari <br> in the southern highlands of Tanzania.</p>
+  </div>
+</div>
 
-.booking-details {
-    background: #f8f9fa;
-    border-radius: 15px;
-    padding: 25px;
-    margin: 20px 0;
-    border-left: 5px solid #28a745;
-}
 
-.booking-detail-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #e9ecef;
-    font-size: 1rem;
-}
 
-.booking-detail-item:last-child {
-    border-bottom: none;
-}
+         <!-- Search Section -->
+          <div class="search-card">
+            <h5 class="text-primary-color mb-3 fw-semibold">
+             Book available tours <span style="color: grey;font-size: small;">(no sign-in required)</span> 
+            </h5>
+            <form id="bookingForm">
+  
+               <div class="mb-3">
+                  <label for="fromLocation" class="form-label">
+                  <i class="bi bi-geo-alt me-1 text-primary-color"></i>Available tours
+                  </label>
+                  <select class="form-select" id="tourSelect">
+                  <option value="selected">Select a tour</option>
+                  </select>
+               </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Name</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-dark border-end-0">
+                  <i class="bi bi-person text-white"></i>
+                  </span>
+                  <input type="text" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="full_name" placeholder="Enter your name">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Email</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-dark border-end-0">
+                  <i class="bi bi-envelope text-white"></i>
+                  </span>
+                  <input type="email" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="email" placeholder="Enter your email">
+               </div>
+            </div>
+            <div class="mb-3">
+               <label for="email" class="form-label">Phone number</label>
+               <div class="input-group">
+                  <span class="input-group-text bg-dark border-end-0">
+                  <i class="bi bi-phone text-white"></i>
+                  </span>
+                  <input type="number" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="phone" placeholder="Enter active phone number">
+               </div>
+            </div>
+            <div class="form-check mb-3">
+                <label class="form-check-label" for="bookForOthers" style="color: rgb(7, 98, 151);">
+               This will be your next default informations
+               </label>
+            </div>
+ 
+               <div class="mb-3">
+                  <label for="travelDate" class="form-label">
+                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of visit
+                  </label>
+                  <input type="date" class="form-control" id="tour_date" placeholder="Add visit date">
+               </div>
+               <button type="submit" class="p-2" style="color: white; border-radius: 9px;border: none;width: 100%;background: var(--primary-color);">
+                Book Now
+               </button>
 
-.booking-detail-label {
-    font-weight: 600;
-    color: #495057;
-    display: flex;
-    align-items: center;
-}
+            </form>
+         </div>
+           <div class="tour-card">
+    <div class="tour-card-image">
+      <img src="kitulo.JPG" alt="Safari Tour">
+    </div>
+    <div class="tour-card-content">
+      <h3 class="tour-title">A HOUSE OF FLOWERS <SPAN style="font-size: small; color: #4a7c59;">( KITULO NAT. PARK)</SPAN>
+      </h3>
+      <p class="tour-description">Experience the Great vision and the breathtaking naturelife of Kitulo with expert guides and luxury camping.</p>
 
-.booking-detail-label i {
-    margin-right: 8px;
-    color: #28a745;
-    width: 20px;
-}
-
-.booking-detail-value {
-    font-weight: 500;
-    color: #212529;
-    text-align: right;
-}
-
-.booking-modal-footer {
-    padding: 20px 30px;
-    text-align: center;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-}
-
-.booking-modal-footer .next-steps {
-    background: #e3f2fd;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-left: 4px solid #2196f3;
-}
-
-.booking-modal-footer .next-steps h6 {
-    color: #1976d2;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.booking-modal-footer .next-steps p {
-    color: #424242;
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-.modal-close-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-}
-
-.modal-close-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-}
-
-.modal-close-btn:active {
-    transform: translateY(0);
-}
-
-.booking-reference {
-    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 15px 0;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-
-/* ============ ANIMATIONS ============ */
-@keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    70% {
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes shimmer {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.success-icon {
-    animation: pulse 2s ease-in-out infinite;
-}
-
-/* ============ RESPONSIVE DESIGN ============ */
-@media (max-width: 768px) {
-    .booking-modal-content {
-        margin: 10px;
-        width: 95%;
-        border-radius: 15px;
-    }
-    
-    .booking-modal-header {
-        padding: 20px;
-    }
-    
-    .booking-modal-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .booking-modal-header .success-icon {
-        font-size: 2.5rem;
-    }
-    
-    .booking-modal-body {
-        padding: 20px;
-    }
-    
-    .booking-details {
-        padding: 20px;
-    }
-    
-    .booking-detail-item {
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
-    
-    .booking-detail-value {
-        text-align: left;
-        margin-top: 5px;
-        font-size: 0.95rem;
-    }
-}
-
-/* ============ PRINT STYLES ============ */
-@media print {
-    .booking-modal {
-        display: block !important;
-        position: static;
-        background: white;
-    }
-    
-    .booking-modal-content {
-        box-shadow: none;
-        border: 2px solid #28a745;
-    }
-    
-    .modal-close-btn {
-        display: none;
-    }
-}
-
-    </style>
-</head>
-<body>
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="container">
-            <h1><i class="bi bi-geo-alt-fill"></i> Ramika Safaris</h1>
-            <p>Experience the wilderness of Tanzania with expert guides and unforgettable adventures</p>
-        </div>
+      <!-- Details -->
+      <div class="tour-details">
+        <span class="tour-id"> Next - 27/09/025</span>
+        <span class="tour-id"></span>
+        <span class="tour-id">Luxury Package</span>
+      </div>
+      <a href="kitulo.html">
+<button class="p-2" style="color: white; border-radius: 9px;border: none;width: 100%;background: var(--primary-color);">
+            Check More Details
+               </button></a>
     </div>
 
-    <!-- Main Content -->
-    <div class="container my-5">
-        <!-- Tours Section -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h2 class="section-title">
-                    <i class="bi bi-compass"></i> Available Safari Tours
-                </h2>
-                <div id="tourCards" class="row">
-                    <!-- Tour cards will be loaded here -->
-                    <div class="col-12 text-center">
-                        <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
-                            <div>
-                                <div class="loading-spinner"></div>
-                                <p class="mt-2">Loading amazing safari tours...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  </div>
+<div id="tourCards">
 
-        <!-- Booking Form -->
-        <div class="row mb-5">
-            <div class="col-md-8 mx-auto">
-                <div class="booking-card">
-                    <h3 class="section-title">
-                        <i class="bi bi-calendar-check"></i> Book Your Safari Adventure
-                    </h3>
-                    
-                    <form id="bookingForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="tourSelect" class="form-label">
-                                    <i class="bi bi-pin-map"></i> Select Tour *
-                                </label>
-                                <select id="tourSelect" class="form-control" required>
-                                    <option value="">Choose your adventure...</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="tour_date" class="form-label">
-                                    <i class="bi bi-calendar-event"></i> Tour Date *
-                                </label>
-                                <input type="date" id="tour_date" class="form-control" required>
-                            </div>
-                        </div>
+</div>
+ 
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="full_name" class="form-label">
-                                    <i class="bi bi-person"></i> Full Name *
-                                </label>
-                                <input type="text" id="full_name" class="form-control" placeholder="Enter your full name" required>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label">
-                                    <i class="bi bi-envelope"></i> Email Address *
-                                </label>
-                                <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">
-                                    <i class="bi bi-telephone"></i> Phone Number
-                                </label>
-                                <input type="tel" id="phone" class="form-control" placeholder="+255 123 456 789">
-                            </div>
-                        </div>
-
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg me-3">
-                                <i class="bi bi-check-circle"></i> Confirm Booking
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="clearAllData()">
-                                <i class="bi bi-trash"></i> Clear Data
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- User Dashboard -->
+<!-- User Dashboard -->
         <div class="row">
-            <div class="col-md-6 mb-4">
                 <div class="user-info-card">
-                    <h4 class="text-primary mb-3">
-                        <i class="bi bi-bookmark-check"></i> Your Bookings
-                    </h4>
+                    <h6 class="section-header">Your Bookings</h6>
                     <div id="userBookings">
                         <p class="text-muted">Enter your email to see your bookings.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
+                    </div>                    
+                </div> 
+            </div>          
                 <div class="user-info-card">
-                    <h4 class="text-warning mb-3">
-                        <i class="bi bi-bell"></i> Notifications
-                    </h4>
+                    <h6 class="section-header">Notifications</h6>
                     <div id="notificationsDiv">
                         <p class="text-muted">No notifications yet.</p>
                     </div>
                 </div>
-            </div>
         </div>
-    </div>
 
-    <!-- Toast Container -->
+
+<div class="wrapper-hero">         
+<div class="hero-2" 
+     style="
+       background-image: linear-gradient(rgba(0, 0, 0, 0.473),rgba(0, 0, 0, 0.836)), url('mpanga.jpg');
+       background-size: cover;
+       background-position: center;
+       background-repeat: no-repeat;
+       height: 30vh;">
+  <div class="content">
+    <h1>Visit Mpanga Kipengere</h1>
+    <p>Discovering your next safari WITHIN Mpanga kipengere <br> inside Wanging'ombe District</p>
+    <a href="mpanga.html">
+     <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
+                Check full details 
+             </span>
+    </a>  
+  </div>
+</div>
+</div>
+<div class="wrapper-hero">         
+<div class="hero-2" 
+     style="
+       background-image: linear-gradient(rgba(0, 0, 0, 0.473),rgba(0, 0, 0, 0.836)), url('kitulo.JPG');
+       background-position: center;
+       background-repeat: no-repeat;
+       height: 30vh;">
+  <div class="content">
+    <h1>Visit Kitulo National Park</h1>
+    <p>Discovering your next safari WITHIN Kitulo national park <br> inside Makete Njombe</p>
+    <a href="kitulo.html">
+      <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
+                Check full details 
+             </span> 
+    </a>  
+  </div>
+</div>
+
+</div>
+         <!-- Recent Searches -->
+         <h6 class="section-header">Popular bookings</h6>
+         <a href="kitulo.html" class="route-card d-block">
+            <div class="d-flex justify-content-between align-items-center">
+               <div>
+                  <div class="d-flex align-items-center">
+                     <span class="fw-semibold text-dark">Kitulo National park</span>
+                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                     <span class="fw-semibold text-dark">Makete Njombe</span>
+                  </div>
+                  <div class="d-flex align-items-center mt-2">
+                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
+                     <span class="text-muted small"> Next tour - Sept 27-29, 2025</span>
+                  </div>
+               </div>
+             <span class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                   <i class="bi bi-search"></i> Check availability
+             </span>
+            </div>
+         </a>
+         <a href="mpanga.html" class="route-card d-block">
+            <div class="d-flex justify-content-between align-items-center">
+               <div>
+                  <div class="d-flex align-items-center">
+                     <span class="fw-semibold text-dark">Mpanga Kipengele</span>
+                     <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                     <span class="fw-semibold text-dark">Wanging'ombe District</span>
+                  </div>
+                  <div class="d-flex align-items-center mt-2">
+                     <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
+                     <span class="text-muted small">Next tour - Sept 27-29, 2025</span>
+                  </div>
+               </div>
+            <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
+                  <i class="bi bi-search"></i> Check availability
+               </div>
+            </div>
+         </a>
+         <!-- Special Offers -->
+         <h6 class="section-header">Special Offers</h6>
+         <a class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
+            <span class="offer-badge">20% OFF</span>
+            <div class="d-flex align-items-center">
+               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-1">
+                  <i class="bi bi-ticket-perforated text-white fs-24"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="fw-semibold text-dark">Weekend Special</div>
+                  <div class="text-muted small">20% off on all weekend trips</div>
+                  <div class="mt-1 text-accent-color fs-11">
+                     <i class="bi bi-clock-history me-1"></i>Valid until Apr 30
+                  </div>
+               </div>
+            </div>
+         </a>
+         <a class="offer-card d-block mb-4"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
+            <span class="offer-badge">$10 OFF</span>
+            <div class="d-flex align-items-center">
+               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-2">
+                  <i class="bi bi-gift text-white fs-24"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="fw-semibold text-dark">First Trip Discount</div>
+                  <div class="text-muted small">$10 off on your first booking</div>
+                  <div class="mt-1 text-accent-color fs-11">
+                     <i class="bi bi-person-plus me-1"></i>Limited offer
+                  </div>
+               </div>
+            </div>
+         </a>
+           <!-- Upcoming Trips -->
+            <h6 class="section-header mt-0">Upcoming Tours</h6>
+         <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
+               <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                     <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-primary-color">Mpanga Kipengere</span>
+                        <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
+                        <span class="fw-semibold text-primary-color">Makambako, Tanzania</span>
+                     </div>
+                  </div>
+                  <span class="status-badge confirmed">Confirmed</span>
+               </div>
+               <div class="d-flex justify-content-between mb-3">
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">Dec 15, 2025</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">From 10:30 AM</span>
+                  </div>
+               </div>
+               <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                     <div class="fw-semibold">Booking #BG78945</div>
+                     <div class="small text-muted">Login to check goings</div>
+                  </div>
+                  <a href="kitulo.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
+                  View Ticket
+                  </a>
+               </div>
+            </div> 
+   
+
+
+
+     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
+
+      </div>
+      <!-- Bottom Navigation Bar (App-style) -->
+      <div class="bottom-nav"  style="z-index: 2;">
+         <a href="index.html" class="nav-item active">
+         <i class="bi bi-house-door-fill"></i>
+         <span>Home</span>
+         </a>
+         <a href="search.html" class="nav-item">
+         <i class="bi bi-play-circle"></i>
+         <span>Videos</span>
+         </a>
+         <a href="tour-details.html" class="nav-item btn rounded-4" style="color: white;background-color: black;">
+         <i class="bi bi-ticket-perforated"></i>
+          <span>My Bookings</span>
+         </a>
+         <a href="offers-rewards.html" class="nav-item">
+         <i class="bi bi-gift"></i>
+         <span>Offers</span>
+         </a>
+         <a href="discover.html" class="nav-item">
+         <i class="bi bi-stack"></i>
+         <span>Discover</span>
+         </a>
+      </div>
+
+    <!-- Bootstrap bundle js -->
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Script js -->
+<script src="js/script.js"></script>
+<script src="js/slider.js"></script>
+
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -830,67 +758,501 @@
         PREFERENCES: 'ramika_safaris_preferences'
     };
 
-    // ============ ENHANCED TOAST NOTIFICATION SYSTEM ============
-    function createToastContainer() {
-        let container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            container.className = 'toast-container';
-            document.body.appendChild(container);
-        }
-        return container;
+// ============ CONSOLIDATED NOTIFICATION SYSTEM ============
+let notifications = [];
+let notificationCounter = 0;
+
+function createNotificationSystem() {
+    // Remove existing toast container
+    const existingToastContainer = document.getElementById('toast-container');
+    if (existingToastContainer) {
+        existingToastContainer.remove();
     }
 
-    function showToast(message, type = 'info', duration = 5000) {
-        console.log(`Toast: [${type.toUpperCase()}] ${message}`); // Debug log
+    // Find existing bell icon (adjust the ID to match your header bell icon)
+    const existingBell = document.getElementById('notification-bell'); // Change this ID to match your header bell
+    
+    if (existingBell) {
+        // Add badge to existing bell
+        const badge = document.createElement('span');
+        badge.id = 'notification-badge';
+        badge.className = 'notification-badge hidden';
+        badge.textContent = '0';
         
-        const container = createToastContainer();
+        // Make existing bell clickable and add badge
+        existingBell.style.position = 'relative';
+        existingBell.style.cursor = 'pointer';
+        existingBell.appendChild(badge);
+        existingBell.onclick = toggleNotifications;
+    }
+
+    // Create notification panel (positioned relative to the header bell)
+    const notificationPanel = `
+        <div id="notification-panel" class="notification-panel hidden">
+            <div class="notification-header">
+                <h6><i class="bi bi-bell"></i> Notifications</h6>
+                <div class="notification-actions">
+                    <button onclick="markAllAsRead()" class="btn-link" title="Mark all as read">
+                        <i class="bi bi-check2-all"></i>
+                    </button>
+                    <button onclick="clearAllNotifications()" class="btn-link" title="Clear all">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                    <button onclick="toggleNotifications()" class="btn-link" title="Close">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="notification-list" class="notification-list">
+                <div class="no-notifications">
+                    <i class="bi bi-bell-slash"></i>
+                    <p>No notifications yet</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add panel to document body
+    const container = document.createElement('div');
+    container.innerHTML = notificationPanel;
+    document.body.appendChild(container.firstElementChild);
+
+    // Add CSS styles
+    addNotificationStyles();
+}
+
+function addNotificationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            border: 2px solid white;
+            z-index: 10001;
+        }
+
+        .notification-badge.hidden {
+            display: none;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            width: 350px;
+            max-height: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(-10px);
+            opacity: 0;
+            z-index: 10000;
+        }
+
+        .notification-panel.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification-panel.hidden {
+            display: none;
+        }
+
+        .notification-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid grey;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-link:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .no-notifications i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .no-notifications p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .notification-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background: #fff3cd;
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 8px;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #007bff;
+            border-radius: 50%;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;border: none;
+        }
+
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success {
+            background: white;
+            color: #155724;
+        }
+
+        .notification-icon.error {
+            background: white;
+            color: #721c24;
+        }
+
+        .notification-icon.warning {
+            background: white;
+            color: #856404;
+        }
+
+        .notification-icon.info {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #495057;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .notification-close:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        @media (max-width: 768px) {
+            .notification-panel {
+                width: 300px;
+                max-width: calc(100vw - 40px);
+                right: 20px;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function addNotification(message, type = 'info', duration = null) {
+    console.log(`Notification: [${type.toUpperCase()}] ${message}`);
+    
+    const notification = {
+        id: ++notificationCounter,
+        message: message,
+        type: type,
+        read: false
+    };
+
+    notifications.unshift(notification);
+    
+    // Limit to 50 notifications
+    if (notifications.length > 50) {
+        notifications = notifications.slice(0, 50);
+    }
+
+    updateNotificationUI();
+    
+    return notification;
+}
+
+function updateNotificationUI() {
+    const badge = document.getElementById('notification-badge');
+    const list = document.getElementById('notification-list');
+    
+    if (!badge || !list) return;
+
+    const unreadCount = notifications.filter(n => !n.read).length;
+    
+    // Update badge
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.classList.remove('hidden');
         
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
-        };
-        
-        toast.innerHTML = `
-            <div class="toast-body">
-                <span class="toast-icon">${icons[type] || icons.info}</span>
-                <span class="toast-message">${message}</span>
-                <button class="toast-close" onclick="this.closest('.toast').remove()">×</button>
+        // Add pulse animation for new notifications
+        const bell = document.getElementById('notification-bell');
+        bell.style.animation = 'none';
+        setTimeout(() => {
+            bell.style.animation = 'pulse 0.5s ease-in-out';
+        }, 10);
+    } else {
+        badge.classList.add('hidden');
+    }
+
+    // Update list
+    if (notifications.length === 0) {
+        list.innerHTML = `
+            <div class="no-notifications">
+                <i class="bi bi-bell-slash"></i>
+                <p>No notifications yet</p>
             </div>
         `;
-        
-        container.appendChild(toast);
-        
-        // Trigger animation
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-        
-        // Auto-remove after duration
-        const timeoutId = setTimeout(() => {
-            if (toast.parentElement) {
-                toast.style.animation = 'slideOut 0.4s ease forwards';
-                setTimeout(() => {
-                    if (toast.parentElement) {
-                        toast.remove();
-                    }
-                }, 400);
-            }
-        }, duration);
-        
-        // Clear timeout if manually closed
-        toast.querySelector('.toast-close').addEventListener('click', () => {
-            clearTimeout(timeoutId);
-        });
-        
-        return toast;
+    } else {
+        list.innerHTML = notifications.map(notification => {
+            const icons = {
+                success: 'bi-check-circle',
+                error: 'bi-x-circle',
+                warning: 'bi-exclamation-triangle',
+                info: 'bi-info-circle'
+            };
+
+            return `
+                <div class="notification-item ${!notification.read ? 'unread' : ''}" 
+                     onclick="markAsRead(${notification.id})">
+                    <div class="notification-content">
+                        <div class="notification-icon ${notification.type}">
+                            <i class="bi ${icons[notification.type] || icons.info}"></i>
+                        </div>
+                        <div class="notification-text">
+                            <p class="notification-message">${notification.message}</p>
+                        </div>
+                        <button class="notification-close" onclick="event.stopPropagation(); removeNotification(${notification.id})" title="Remove">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
+}
+
+function getTimeAgo(timestamp) {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - timestamp) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+}
+
+function toggleNotifications() {
+    const panel = document.getElementById('notification-panel');
+    const bellIcon = document.getElementById('notification-bell'); // Use your header bell ID
+    
+    if (panel.classList.contains('hidden')) {
+        // Position panel relative to the bell icon
+        if (bellIcon) {
+            const rect = bellIcon.getBoundingClientRect();
+            panel.style.position = 'fixed';
+            panel.style.top = (rect.bottom + 10) + 'px';
+            panel.style.right = (window.innerWidth - rect.right) + 'px';
+            
+            // Adjust for mobile
+            if (window.innerWidth < 768) {
+                panel.style.right = '20px';
+                panel.style.left = 'auto';
+                panel.style.width = 'calc(100vw - 40px)';
+                panel.style.maxWidth = '350px';
+            }
+        }
+        
+        panel.classList.remove('hidden');
+        setTimeout(() => panel.classList.add('show'), 10);
+        
+        // Click outside to close
+        setTimeout(() => {
+            document.addEventListener('click', closeOnClickOutside, { once: true });
+        }, 100);
+    } else {
+        closeNotificationPanel();
+    }
+}
+
+function closeNotificationPanel() {
+    const panel = document.getElementById('notification-panel');
+    panel.classList.remove('show');
+    setTimeout(() => panel.classList.add('hidden'), 300);
+}
+
+function closeOnClickOutside(event) {
+    const panel = document.getElementById('notification-panel');
+    const bellIcon = document.getElementById('notification-bell'); // Use your header bell ID
+    
+    if (!panel.contains(event.target) && !bellIcon.contains(event.target)) {
+        closeNotificationPanel();
+    } else if (!panel.contains(event.target)) {
+        // Re-add listener if clicked on bell but not panel
+        setTimeout(() => {
+            document.addEventListener('click', closeOnClickOutside, { once: true });
+        }, 10);
+    }
+}
+
+function markAsRead(notificationId) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification && !notification.read) {
+        notification.read = true;
+        updateNotificationUI();
+    }
+}
+
+function markAllAsRead() {
+    notifications.forEach(n => n.read = true);
+    updateNotificationUI();
+}
+
+function removeNotification(notificationId) {
+    notifications = notifications.filter(n => n.id !== notificationId);
+    updateNotificationUI();
+}
+
+function clearAllNotifications() {
+    if (confirm('Clear all notifications?')) {
+        notifications = [];
+        updateNotificationUI();
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeNotificationPanel();
+    }
+    
+    // Ctrl+Shift+N to open notifications
+    if (e.ctrlKey && e.shiftKey && e.key === 'N') {
+        e.preventDefault();
+        toggleNotifications();
+    }
+});
+
+// Replace the old showToast function
+function showToast(message, type = 'info', duration = 5000) {
+    addNotification(message, type, duration);
+}
+
+// Initialize the system
+document.addEventListener('DOMContentLoaded', () => {
+    createNotificationSystem();
+});
+
+// Add pulse animation
+const pulseKeyframes = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+`;
+
+const pulseStyle = document.createElement('style');
+pulseStyle.textContent = pulseKeyframes;
+document.head.appendChild(pulseStyle);
+
+// Make functions globally available
+window.toggleNotifications = toggleNotifications;
+window.markAsRead = markAsRead;
+window.markAllAsRead = markAllAsRead;
+window.removeNotification = removeNotification;
+window.clearAllNotifications = clearAllNotifications;
+
 
     // ============ ENHANCED USER DATA MANAGEMENT WITH LOCALSTORAGE ============
     function saveUserData(data) {
@@ -1075,7 +1437,7 @@
         
         tours.forEach(tour => {
             const card = document.createElement('div');
-            card.className = 'col-lg-4 col-md-6';
+            card.className = 'tour-cards-container';
             
             let imageUrl = tour.image_url;
             if (imageUrl && !imageUrl.startsWith('http')) {
@@ -1095,7 +1457,7 @@
                         <h3 class="tour-title">${tour.name}</h3>
                         <p class="tour-description">${tour.description || `Experience an amazing ${tour.name.toLowerCase()} adventure with professional guides.`}</p>
                         <div class="tour-details">
-                            <span class="tour-id">ID: ${tour.id}</span>
+                            <span class="tour-id">Tour identity ${tour.id}</span>
                             <span class="tour-price">${formatPrice(tour.price)}</span>
                         </div>
                     </div>
@@ -1132,7 +1494,7 @@
             selectedCard.classList.add('selected');
         }
         
-        showToast(`Selected: ${tourName}`, 'success', 2000);
+        showToast(`Selected ${tourName}`, 'success', 2000);
     }
 
     // ============ USER BOOKINGS AND NOTIFICATIONS ============
@@ -1164,11 +1526,34 @@
             const bookings = bookingsRes.data || [];
             if (bookings.length > 0) {
                 userBookingsDiv.innerHTML = bookings.map(booking => `
-                    <div class="booked-tour">
-                        <strong><i class="bi bi-compass"></i> ${booking.tour_name}</strong>
-                        <br><small><i class="bi bi-calendar-event"></i> Tour Date: ${new Date(booking.tour_date).toLocaleDateString()}</small>
-                        <br><small style="color: #666;"><i class="bi bi-clock"></i> Booked: ${new Date(booking.created_at).toLocaleDateString()}</small>
-                    </div>
+                    <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                     <div>
+                     <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-primary-color"> ${booking.tour_name}</span>
+                     </div>
+                  </div>
+                  <span class="status-badge confirmed">Confirmed</span>
+               </div>
+               <div class="d-flex justify-content-between mb-3">
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">${new Date(booking.tour_date).toLocaleDateString()}</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
+                     <span class="text-muted">Booked on ${new Date(booking.created_at).toLocaleDateString()}</span>
+                  </div>
+               </div>
+               <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                     <div class="fw-semibold">Ticket</div>
+                     <div class="small text-muted">Login to check goings</div>
+                  </div>
+                  <a href="kitulo.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
+                  View Ticket
+                  </a>
+               </div></div>
                 `).join('');
             } else {
                 userBookingsDiv.innerHTML = "<p class='text-muted'>No booked tours yet. Book your first adventure!</p>";
@@ -1178,10 +1563,18 @@
             const notifications = notificationsRes.data || [];
             if (notifications.length > 0) {
                 notificationsDiv.innerHTML = notifications.map(notification => `
-                    <div class="notification-item">
-                        <p style="margin: 0;"><i class="bi bi-bell"></i> ${notification.message}</p>
-                        <small style="color: #666;">${new Date(notification.created_at).toLocaleDateString()}</small>
-                    </div>
+                <a class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
+            <div class="d-flex align-items-center">
+               <div class="ms-3">
+                  <div class="fw-semibold text-dark"><i class="bi bi-bell"></i> New Message from Admin</div>
+                  <div class="text-muted small">${notification.message}</div>
+                  <div class="mt-1 text-accent-color fs-11">
+                     <i class="bi bi-clock-history me-1"></i>${new Date(notification.created_at).toLocaleDateString()}
+                  </div>
+               </div>
+            </div>
+         </a>
+
                 `).join('');
             } else {
                 notificationsDiv.innerHTML = "<p class='text-muted'>No notifications yet.</p>";
@@ -1581,7 +1974,7 @@ This action cannot be undone.`;
                 
                 lastEmail = '';
                 
-                showToast('🗑️ All saved data cleared successfully! Your information has been removed from this device.', 'success', 5000);
+                showToast('All saved data cleared successfully! Your information has been removed from this device.', 'success', 5000);
                 
             } catch (error) {
                 console.error('Error clearing data:', error);
@@ -1605,7 +1998,7 @@ This action cannot be undone.`;
             
             // Show when data was last saved
             const lastUpdated = new Date(savedData.last_updated).toLocaleDateString();
-            showToast(`📋 Form filled with your saved information (last updated: ${lastUpdated})`, 'info', 4000);
+            showToast(`Form filled with your saved information (last updated: ${lastUpdated})`, 'info', 4000);
         } else {
             // Check if there's a last email without full data
             const lastEmailStored = getLastEmail();
@@ -1613,7 +2006,7 @@ This action cannot be undone.`;
                 emailInput.value = lastEmailStored;
                 lastEmail = lastEmailStored;
                 loadUserBookingsAndNotifications(lastEmailStored);
-                showToast('📧 Your last email address has been restored', 'info', 3000);
+                showToast('Your last email address has been restored', 'info', 3000);
             }
         }
         
@@ -1625,7 +2018,7 @@ This action cannot be undone.`;
             if (tourExists) {
                 setTimeout(() => {
                     tourSelect.value = preferences.last_selected_tour;
-                    showToast(`🎯 Your previously selected tour "${preferences.last_selected_tour}" has been restored`, 'info', 3000);
+                    showToast(`Your previously selected tour "${preferences.last_selected_tour}" has been restored`, 'info', 3000);
                 }, 1000);
             }
         }
@@ -1689,7 +2082,7 @@ This action cannot be undone.`;
             link.download = `ramika_safaris_data_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
             
-            showToast('📤 Your data has been exported successfully!', 'success', 4000);
+            showToast('Your data has been exported successfully!', 'success', 4000);
             
         } catch (error) {
             console.error('Export error:', error);
@@ -1821,9 +2214,9 @@ This action cannot be undone.`;
             // Show welcome message with storage info
             const savedData = loadUserData();
             if (savedData) {
-                showToast('🌍 Welcome back to Ramika Safaris! Your information has been restored.', 'success', 100000);
+                showToast('Welcome back to Ramika Safaris! Your information has been restored.', 'success', 5000);
             } else {
-                showToast('🌍 Welcome to Ramika Safaris! Your information will be saved automatically.', 'success', 100000);
+                showToast('Welcome to Ramika Safaris! Your information will be saved automatically.', 'success', 5000);
             }
             
             console.log('Ramika Safaris app initialized successfully');
@@ -1989,6 +2382,7 @@ This action cannot be undone.`;
         console.log('User Data:', loadUserData());
         console.log('Preferences:', getUserPreferences());
         console.log('Last Email:', getLastEmail());
+        showToast('📱 Data will be debuges', 'info', 3000);
         
         let totalSize = 0;
         for (let key in localStorage) {
@@ -2038,8 +2432,5 @@ This action cannot be undone.`;
     setTimeout(addDataManagementButtons, 2000);
 
 </script>
-
-
-
 </body>
 </html>
