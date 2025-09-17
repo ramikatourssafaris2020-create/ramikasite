@@ -1452,8 +1452,8 @@ document.addEventListener('click', async (e) => {
             return alert('Error: No email found for this booking.');
         }
 
-        const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking.\n\nRegards,\nAdmin`;
-        const message = prompt(`Enter message to send to ${email}:`, defaultMsg);
+        const defaultMsg = `Hello ${name},\n\nThis is a message regarding your booking. We will contact you within 7 - 10min for more details and payment info.\n\nRegards,\nAdmin`;
+        const message = prompt(`Enter message to send to ${name}:`, defaultMsg);
 
         if (!message) return; // User cancelled
 
