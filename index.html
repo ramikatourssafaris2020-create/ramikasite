@@ -12,358 +12,17 @@
    <!-- Custom css -->
    <link rel="stylesheet" href="css/style.css">
    <!-- Slider css -->
-      <style>
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
-            border-bottom: 3px solid var(--accent-color);
-        }
-
-        .header h1 {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: var(--secondary-color);
-            font-size: 1.2rem;
-        }
-
-        .tour-cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .tour-card {
-            background: white;
-            border-radius: 15px;font-size: 14px;
-            overflow: hidden;margin: 30px;
-            border: 1px solid #00000060;
-        }
-
-        .tour-card-image {
-            height: 200px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .tour-card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .tour-card-content {
-            padding: 20px;
-        }
-
-        .tour-title {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .tour-description {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-
-        .tour-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tour-id, .tour-id9 {
-            font-size: 0.85rem;
-            color: #615858;
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 12px;
-        }
-
-        .tour-price {
-            font-weight: 600;
-            color: white;
-            background: var(--primary-color);
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-        }
-
-        .tour-amenities {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .amenity {
-            font-size: 0.85rem;
-            color: var(--secondary-color);
-            background: #f0f8f0;
-            padding: 4px 8px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .tour-footer {
-            padding: 0 20px 20px;
-        }
-
-        .select-tour-btn {
-            width: 100%;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-weight: 500;font-size: 16px;
-            cursor: pointer;
-        }
-
-        .select-tour-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .booking-section {
-            background: linear-gradient(135deg, #f8fff8 0%, #e8f8e8 100%);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 30px 0;
-            border: 2px solid var(--accent-color);
-        }
-
-        .form-control, .form-select {
-            border-radius: 15px;
-            border: 2px solid #e9ecef;
-            padding: 12px 20px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(106, 176, 76, 0.25);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
-            border: none;
-            padding: 15px 40px;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .user-data-section {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-           margin: 30px;
-            border: 2px solid rgba(128, 128, 128, 0.308);
-        }
-
-        .booked-tour {
-            background: white;
-            border-bottom: 1px solid #272626;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .notification-item {
-            border-left: 4px solid #007bff;
-            padding: 15px;
-            margin: 10px 0;
-            background: rgba(0, 123, 255, 0.1);
-            border-radius: 0 10px 10px 0;
-        }
-
-        .clear-data-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-        }
-
-        .clear-data-btn:hover {
-            background: #c82333;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .tour-cards-container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-<style>
-     /* Toast Notification Styles */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            max-width: 400px;
-        }
-
-        .toast {
-            margin-bottom: 10px;
-            border-radius: 8px;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.4s ease;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 14px;
-            line-height: 1.4;
-            min-width: 300px;
-            animation: slideIn 0.4s ease forwards;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .toast-success {
-            background: white;
-            border: 1px solid #c3e6cb;
-            color: green;
-        }
-
-        .toast-error {
-            background: white;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .toast-warning {
-            background: white;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-        }
-
-        .toast-info {
-            background: white;
-            border: 1px solid #bee5eb;
-            color: #083da0;
-        }
-
-        .toast-body {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            gap: 10px;
-        }
-
-        .toast-icon {
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-
-        .toast-message {
-            flex: 1;
-            font-weight: 500;
-        }
-
-        .toast-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            opacity: 0.7;
-            padding: 0;
-            margin-left: 8px;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-        }
-
-        .toast-close:hover {
-            opacity: 1;
-            background: rgba(0,0,0,0.1);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-        }
-
-</style>
-
-
-
-
-
-
-
    <link rel="stylesheet" href="css/slider.css">
+   <style>
+    .space {
+       padding: 100px;
+    }
+   </style>
    </head>
    <body>
       <!-- Status Bar (mimics mobile device status bar) -->
       <div class="status-bar">
-         <div><a href="mpanga.html" style="color: white;">Catch up the upcoming tour [Mpanga Kipengele on 27/09/025]</a></div>
+         <div><a href="mpanga.html" style="color: white;background: var(--primary-color);">Catch up the upcoming tour [Mpanga Kipengele on 04/10/025]</a></div>
          <div>
             <i class="bi bi-arrow-right ms-2"></i>
          </div>
@@ -434,7 +93,7 @@
       </div>
       <!-- Main Content Area -->
       <div class="content-area">
-<div class="hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0,0,0,0.2)), url('maua.JPG');">
+<div class="hero" style="background-image: linear-gradient(rgba(0, 0, 0, 0.349), rgba(0,0,0,0.45)), url('maua.JPG');">
   <div class="content">
     <h1>Welcome to Ramika Safaris</h1>
     <p>A local tour super agent company discovering your next safari <br> in the southern highlands of Tanzania.</p>
@@ -461,7 +120,7 @@
             <div class="mb-3">
                <label for="email" class="form-label">Name</label>
                <div class="input-group">
-                  <span class="input-group-text bg-dark border-end-0">
+                  <span class="input-group-text  border-end-0" style="background: var(--primary-color);">
                   <i class="bi bi-person text-white"></i>
                   </span>
                   <input type="text" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="full_name" placeholder="Enter your name">
@@ -470,7 +129,7 @@
             <div class="mb-3">
                <label for="email" class="form-label">Email</label>
                <div class="input-group">
-                  <span class="input-group-text bg-dark border-end-0">
+                  <span class="input-group-text border-end-0" style="background: var(--primary-color);">
                   <i class="bi bi-envelope text-white"></i>
                   </span>
                   <input type="email" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="email" placeholder="Enter your email">
@@ -479,7 +138,7 @@
             <div class="mb-3">
                <label for="email" class="form-label">Phone number</label>
                <div class="input-group">
-                  <span class="input-group-text bg-dark border-end-0">
+                  <span class="input-group-text border-end-0" style="background: var(--primary-color);">
                   <i class="bi bi-phone text-white"></i>
                   </span>
                   <input type="number" style=" border: 1px solid #5251513b;" class="form-control border-start-0" id="phone" placeholder="Enter active phone number">
@@ -493,7 +152,7 @@
  
                <div class="mb-3">
                   <label for="travelDate" class="form-label">
-                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of visit
+                  <i class="bi bi-calendar3 me-1 text-accent-color"></i>Date of visit (important)
                   </label>
                   <input type="date" class="form-control" id="tour_date" placeholder="Add visit date">
                </div>
@@ -503,6 +162,7 @@
 
             </form>
          </div>
+         <h6 class="section-header">Popular Tours & Safaris</h6>
            <div class="tour-card">
     <div class="tour-card-image">
       <img src="kitulo.JPG" alt="Safari Tour">
@@ -513,15 +173,14 @@
       <p class="tour-description">Experience the Great vision and the breathtaking naturelife of Kitulo with expert guides and luxury camping.</p>
 
       <!-- Details -->
-      <div class="tour-details">
-        <span class="tour-id"> Next - 27/09/025</span>
-        <span class="tour-id"></span>
-        <span class="tour-id">Luxury Package</span>
-      </div>
-      <a href="kitulo.html">
+      <div class="tour-details" style="gap: 10px;">
+        <span class="tour-id">    <a href="kitulo.html">
 <button class="p-2" style="color: white; border-radius: 9px;border: none;width: 100%;background: var(--primary-color);">
-            Check More Details
-               </button></a>
+            Check Tour Details
+               </button></a></span>
+        <span class="tour-id"> <a href="discover.html">View More <i class="bi bi-arrow-right"></i></a></span>
+      </div>
+   
     </div>
 
   </div>
@@ -535,14 +194,14 @@
                 <div class="user-info-card">
                     <h6 class="section-header">Your Bookings</h6>
                     <div id="userBookings">
-                        <p class="text-muted">Enter your email to see your bookings.</p>
+                       <p class="text-muted" style="text-align: center;">Enter your email to see your bookings.</p>
                     </div>                    
                 </div> 
             </div>          
                 <div class="user-info-card">
                     <h6 class="section-header">Notifications</h6>
                     <div id="notificationsDiv">
-                        <p class="text-muted">No notifications yet.</p>
+                        <p class="text-muted" style="text-align: center;">No notifications yet.</p>
                     </div>
                 </div>
         </div>
@@ -558,7 +217,7 @@
        height: 30vh;">
   <div class="content">
     <h1>Visit Mpanga Kipengere</h1>
-    <p>Discovering your next safari WITHIN Mpanga kipengere <br> inside Wanging'ombe District</p>
+    <p>Discovering your next safari WITHIN <br>Mpanga kipengere  inside Wanging'ombe District</p>
     <a href="mpanga.html">
      <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
                 Check full details 
@@ -576,7 +235,7 @@
        height: 30vh;">
   <div class="content">
     <h1>Visit Kitulo National Park</h1>
-    <p>Discovering your next safari WITHIN Kitulo national park <br> inside Makete Njombe</p>
+    <p>Discovering your next safari WITHIN <br>Kitulo national park inside Makete Njombe</p>
     <a href="kitulo.html">
       <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
                 Check full details 
@@ -601,9 +260,10 @@
                      <span class="text-muted small"> Next tour - Sept 27-29, 2025</span>
                   </div>
                </div>
-             <span class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
-                   <i class="bi bi-search"></i> Check availability
-             </span>
+      <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
+                Check full details 
+             </span> 
+
             </div>
          </a>
          <a href="mpanga.html" class="route-card d-block">
@@ -612,108 +272,58 @@
                   <div class="d-flex align-items-center">
                      <span class="fw-semibold text-dark">Mpanga Kipengele</span>
                      <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                     <span class="fw-semibold text-dark">Wanging'ombe District</span>
+                     <span class="fw-semibold text-dark">Wanging'ombe</span>
                   </div>
                   <div class="d-flex align-items-center mt-2">
                      <i class="bi bi-calendar3 me-2 fs-12 text-secondary-color"></i>
                      <span class="text-muted small">Next tour - Sept 27-29, 2025</span>
                   </div>
                </div>
-            <div class="btn btn-light btn-sm" style="border: 1px solid rgba(206, 201, 201, 0.603);">
-                  <i class="bi bi-search"></i> Check availability
-               </div>
+            <span class="btn btn-light btn-sm" style="font-weight: 500; border: none;background-color: var(--primary-color);color: white;">
+                Check full details 
+             </span> 
             </div>
          </a>
-         <!-- Special Offers -->
-         <h6 class="section-header">Special Offers</h6>
-         <a class="offer-card d-block"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
-            <span class="offer-badge">20% OFF</span>
-            <div class="d-flex align-items-center">
-               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-1">
-                  <i class="bi bi-ticket-perforated text-white fs-24"></i>
-               </div>
-               <div class="ms-3">
-                  <div class="fw-semibold text-dark">Weekend Special</div>
-                  <div class="text-muted small">20% off on all weekend trips</div>
-                  <div class="mt-1 text-accent-color fs-11">
-                     <i class="bi bi-clock-history me-1"></i>Valid until Apr 30
-                  </div>
-               </div>
-            </div>
-         </a>
-         <a class="offer-card d-block mb-4"  style="border: 1px solid rgba(206, 201, 201, 0.603);">
-            <span class="offer-badge">$10 OFF</span>
-            <div class="d-flex align-items-center">
-               <div class="icon-50 d-flex align-items-center justify-content-center rounded-3 gradient-2">
-                  <i class="bi bi-gift text-white fs-24"></i>
-               </div>
-               <div class="ms-3">
-                  <div class="fw-semibold text-dark">First Trip Discount</div>
-                  <div class="text-muted small">$10 off on your first booking</div>
-                  <div class="mt-1 text-accent-color fs-11">
-                     <i class="bi bi-person-plus me-1"></i>Limited offer
-                  </div>
-               </div>
-            </div>
-         </a>
-           <!-- Upcoming Trips -->
-            <h6 class="section-header mt-0">Upcoming Tours</h6>
-         <div class="list-item" style="border: 1px solid rgba(206, 201, 201, 0.603); margin: 15px;">
-               <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                     <div class="d-flex align-items-center">
-                        <span class="fw-semibold text-primary-color">Mpanga Kipengere</span>
-                        <i class="bi bi-arrow-right mx-2 text-secondary-color"></i>
-                        <span class="fw-semibold text-primary-color">Makambako, Tanzania</span>
-                     </div>
-                  </div>
-                  <span class="status-badge confirmed">Confirmed</span>
-               </div>
-               <div class="d-flex justify-content-between mb-3">
-                  <div class="d-flex align-items-center">
-                     <i class="bi bi-calendar3 me-2 text-secondary-color fs-14"></i>
-                     <span class="text-muted">Dec 15, 2025</span>
-                  </div>
-                  <div class="d-flex align-items-center">
-                     <i class="bi bi-clock me-2 text-secondary-color fs-14"></i>
-                     <span class="text-muted">From 10:30 AM</span>
-                  </div>
-               </div>
-               <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                     <div class="fw-semibold">Booking #BG78945</div>
-                     <div class="small text-muted">Login to check goings</div>
-                  </div>
-                  <a href="kitulo.html" class=" fs-14 rounded-3 bg-primary-color text-white" style="padding: 8px;">
-                  View Ticket
-                  </a>
-               </div>
-            </div> 
-   
 
+                  <h6 class="section-header"> Manage Saved Data</h6>
+           <div id="dataManagement" class="p-3 border rounded bg-light">
+                <div class="btn-group-sm" role="group">
+                    <button type="button" class="btn btn-sm me-2" style="background: var(--primary-color);color: white;" onclick="exportUserData()">
+                        <i class="bi bi-download"></i> Export Data
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearAllData()">
+                        <i class="bi bi-trash"></i> Clear All Data
+                    </button>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-shield-check"></i> Your data is stored securely on your device only.
+                </small> 
+            </div>
 
 
      <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
       </div>
+      
       <!-- Bottom Navigation Bar (App-style) -->
       <div class="bottom-nav"  style="z-index: 2;">
          <a href="index.html" class="nav-item active">
          <i class="bi bi-house-door-fill"></i>
          <span>Home</span>
          </a>
-         <a href="search.html" class="nav-item">
+         <a href="#" class="nav-item">
          <i class="bi bi-play-circle"></i>
          <span>Videos</span>
          </a>
-         <a href="tour-details.html" class="nav-item btn rounded-4" style="color: white;background-color: black;">
+         <a href="#" class="nav-item">
          <i class="bi bi-ticket-perforated"></i>
           <span>My Bookings</span>
          </a>
-         <a href="offers-rewards.html" class="nav-item">
+         <a href="#" class="nav-item">
          <i class="bi bi-gift"></i>
-         <span>Offers</span>
+         <span>Gallery</span>
          </a>
          <a href="discover.html" class="nav-item">
          <i class="bi bi-stack"></i>
@@ -726,8 +336,7 @@
 <!-- Script js -->
 <script src="js/script.js"></script>
 <script src="js/slider.js"></script>
-
-<script type="module">
+      <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const supabaseUrl = "https://tmqxjnegtiuircaxqkof.supabase.co";
@@ -756,8 +365,6 @@
         LAST_EMAIL: 'ramika_safaris_last_email',
         PREFERENCES: 'ramika_safaris_preferences'
     };
-
-// ============ CONSOLIDATED NOTIFICATION SYSTEM ============
 let notifications = [];
 let notificationCounter = 0;
 
@@ -2385,7 +1992,7 @@ This action cannot be undone.`;
             dataSection.id = 'dataManagement';
             dataSection.className = 'mt-4 p-3 border rounded bg-light';
             dataSection.innerHTML = `
-                <h6><i class="bi bi-gear"></i> Data Management</h6>
+                <h6 class="section-header"> Manage Saved Data</h6>
                 <div class="btn-group-sm" role="group">
                     <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="exportUserData()">
                         <i class="bi bi-download"></i> Export Data
@@ -2401,7 +2008,7 @@ This action cannot be undone.`;
             `;
             
             // Add to the form or create a dedicated section
-            const form = document.getElementById('bookingForm');
+            const form = document.getElementById('Lastlast');
             if (form && form.parentNode) {
                 form.parentNode.insertBefore(dataSection, form.nextSibling);
             }
@@ -2412,6 +2019,344 @@ This action cannot be undone.`;
     setTimeout(addDataManagementButtons, 2000);
 
 </script>
+      <style>
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .tour-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tour-card {
+            background: white;
+            border-radius: 15px;font-size: 14px;
+            overflow: hidden;margin: 30px;
+            border: 1px solid #00000060;
+        }
+
+        .tour-card-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;margin-top: -10px;
+        }
+
+        .tour-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tour-card-content {
+            padding: 20px;
+        }
+
+        .tour-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .tour-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .tour-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tour-id, .tour-id9 {
+            font-size: 0.85rem;
+            color: #615858;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .tour-price {
+            font-weight: 600;
+            color: white;
+            background: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .tour-amenities {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .amenity {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            background: #f0f8f0;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tour-footer {
+            padding: 0 20px 20px;
+        }
+
+        .select-tour-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 500;font-size: 16px;
+            cursor: pointer;
+        }
+
+        .select-tour-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .booking-section {
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f8e8 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            border: 2px solid var(--accent-color);
+        }
+
+        .form-control, .form-select {
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(106, 176, 76, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-data-section {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+           margin: 30px;
+            border: 2px solid rgba(128, 128, 128, 0.308);
+        }
+
+        .booked-tour {
+            background: white;
+            border-bottom: 1px solid #272626;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-item {
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .clear-data-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .clear-data-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tour-cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+     /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .toast {
+            margin-bottom: 10px;
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s ease;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+            min-width: 300px;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            background: white;
+            border: 1px solid #c3e6cb;
+            color: green;
+        }
+
+        .toast-error {
+            background: white;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .toast-warning {
+            background: white;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .toast-info {
+            background: white;
+            border: 1px solid #bee5eb;
+            color: #083da0;
+        }
+
+        .toast-body {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            gap: 10px;
+        }
+
+        .toast-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+            padding: 0;
+            margin-left: 8px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+            background: rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+</style>
 </body>
 </html>
-
