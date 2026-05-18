@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Host: ramikasafaris.com
+Sitemap: https://ramikasafaris.com/sitemap.xml
