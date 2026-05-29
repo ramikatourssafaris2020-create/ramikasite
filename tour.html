@@ -74,12 +74,18 @@ button { cursor: pointer; font-family: inherit; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
 /* ── HERO IMAGE ── */
-.tour-hero {
+.tour-hero-wrap {
   margin-top: var(--nav-h);
+  background: var(--bg-alt);
+  padding: 24px 0 0;
+}
+.tour-hero {
   position: relative;
-  height: clamp(200px, 28vw, 340px);
+  height: clamp(200px, 30vw, 320px);
   overflow: hidden;
   background: #e5e7eb;
+  border-radius: var(--r-lg);
+  max-width: 860px;
 }
 .tour-hero img {
   width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
@@ -355,6 +361,123 @@ button { cursor: pointer; font-family: inherit; }
   .book-card { position: static; }
   .tour-layout { padding: 24px 0 48px; }
 }
+
+/* ── REVIEWS ── */
+.reviews-section { padding: 0 0 64px; }
+.rv-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 28px;
+}
+.rv-header-left h2 {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--text);
+}
+.rv-summary {
+  display: flex; align-items: center; gap: 10px; margin-top: 6px;
+}
+.rv-score {
+  font-size: 36px; font-weight: 700; color: var(--text); line-height: 1;
+}
+.rv-stars-row { display: flex; gap: 2px; }
+.rv-stars-row svg { flex-shrink: 0; }
+.rv-count { font-size: 13px; color: var(--text-3); }
+
+/* Rating bars */
+.rv-bars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+.rv-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+.rv-bar-label { width: 12px; text-align: right; flex-shrink: 0; }
+.rv-bar-track { flex: 1; height: 6px; background: var(--bg-alt); border-radius: 3px; overflow: hidden; }
+.rv-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.6s ease; }
+.rv-bar-count { width: 20px; text-align: left; flex-shrink: 0; }
+
+/* Review cards */
+.rv-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.rv-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px 20px;
+}
+.rv-card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 10px;
+}
+.rv-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+}
+.rv-meta { flex: 1; }
+.rv-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.rv-date { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.rv-body { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+.rv-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  background: var(--primary-lt); color: var(--primary-dk);
+  border-radius: 99px; margin-top: 10px;
+}
+
+/* Write review form */
+.rv-form-wrap {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px;
+  margin-top: 8px;
+}
+.rv-form-wrap h3 {
+  font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600;
+  color: var(--text); margin-bottom: 4px;
+}
+.rv-form-wrap p { font-size: 13px; color: var(--text-3); margin-bottom: 20px; }
+
+/* Star picker */
+.star-picker {
+  display: flex; gap: 6px; margin-bottom: 16px;
+}
+.star-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  transition: transform 0.1s;
+}
+.star-btn:hover { transform: scale(1.15); }
+.star-btn svg { display: block; }
+
+.rv-ff { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.rv-ff label { font-size: 11px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; }
+.rv-ff input, .rv-ff textarea {
+  width: 100%; padding: 10px 13px;
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  font-size: 14px; color: var(--text); background: var(--surface);
+  font-family: inherit; outline: none; appearance: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.rv-ff input:focus, .rv-ff textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,102,68,0.1); }
+.rv-ff input.err, .rv-ff textarea.err { border-color: var(--danger); }
+.rv-ff textarea { resize: vertical; min-height: 90px; }
+.rv-ff-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 500px) { .rv-ff-row { grid-template-columns: 1fr; } }
+
+.btn-review {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 24px; background: var(--primary); color: #fff;
+  border: none; border-radius: var(--r-sm); font-size: 14px; font-weight: 600;
+  transition: background 0.15s; cursor: pointer;
+}
+.btn-review:hover { background: var(--primary-dk); }
+.btn-review:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.rv-empty {
+  text-align: center; padding: 40px 20px; color: var(--text-3); font-size: 14px;
+}
+.rv-empty svg { margin: 0 auto 12px; color: var(--border); }
+
+.rv-load-more {
+  width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--text-2); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.rv-load-more:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Rating summary in meta-chip (hero area) */
+.meta-chip .star-inline { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -379,6 +502,13 @@ button { cursor: pointer; font-family: inherit; }
     <!-- filled by JS -->
   </div>
 </div>
+
+<!-- Reviews Section (full width, below the two-column layout) -->
+<section class="reviews-section" id="reviews-section" style="display:none;">
+  <div class="container">
+    <div id="reviews-inner"></div>
+  </div>
+</section>
 
 <div id="toast-root" aria-live="polite"></div>
 
@@ -423,7 +553,7 @@ async function loadTour(id) {
   try {
     const { data, error } = await supabase
       .from('activities')
-      .select('*')
+      .select('id,name,description,price,price_usd,image_url,images,duration,difficulty,group_size,highlights,itinerary,created_at')
       .eq('id', id)
       .single();
 
@@ -432,13 +562,15 @@ async function loadTour(id) {
       return;
     }
     renderTour(data);
+    // Load reviews after tour renders (non-blocking)
+    initReviews(data.id, data.name);
   } catch(e) {
     showNotFound('Connection error. Please refresh.');
   }
 }
 
 function showSkeleton() {
-  $('tour-hero-wrap').innerHTML = `<div class="tour-hero skeleton" style="margin-top:var(--nav-h)"></div>`;
+  $('tour-hero-wrap').innerHTML = `<div class="tour-hero-wrap"><div class="container"><div class="tour-hero skeleton"></div></div></div>`;
   $('tour-layout-wrap').innerHTML = `<div class="loading-state">
     <div class="skeleton sk-title"></div>
     <div class="skeleton sk-line" style="width:80%"></div>
@@ -484,17 +616,19 @@ function renderTour(t) {
 
   // ── Hero: clean static image, no zoom ──────────────────────────────────────
   $('tour-hero-wrap').innerHTML = `
-    <div class="tour-hero">
-      <img src="${esc(primaryImg)}" alt="${esc(t.name)}"
-           onerror="this.src='https://via.placeholder.com/1400x600/1a6644/fff?text=Safari'">
-      <div class="tour-hero-overlay"></div>
-      <span class="hero-badge">🌿 Southern Highlands</span>
-      ${priceDisplay !== 'Contact us' ? `
-      <div class="hero-price-pill">
-        <span class="hp-from">From</span>
-        <span class="hp-val">${esc(priceDisplay)}</span>
-        <span class="hp-per">/ person</span>
-      </div>` : ''}
+    <div class="container">
+      <div class="tour-hero">
+        <img src="${esc(primaryImg)}" alt="${esc(t.name)}"
+             onerror="this.src='https://via.placeholder.com/1400x600/1a6644/fff?text=Safari'">
+        <div class="tour-hero-overlay"></div>
+        <span class="hero-badge">🌿 Southern Highlands</span>
+        ${priceDisplay !== 'Contact us' ? `
+        <div class="hero-price-pill">
+          <span class="hp-from">From</span>
+          <span class="hp-val">${esc(priceDisplay)}</span>
+          <span class="hp-per">/ person</span>
+        </div>` : ''}
+      </div>
     </div>`;
 
   // ── Gallery filmstrip ───────────────────────────────────────────────────────
@@ -739,7 +873,314 @@ function renderTour(t) {
     openBookingModal({ tourName: t.name });
   });
 
-  </script>
+  
 
+// ═══════════════════════════════════════════════════════════════════
+// REVIEWS SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+
+const REVIEWS_PAGE = 5; // how many to show at a time
+let _reviews = [];
+let _reviewsShown = REVIEWS_PAGE;
+let _currentRating = 0;
+let _tourId = null;
+let _tourName = '';
+
+function starsHTML(rating, size = 16, interactive = false) {
+  return [1,2,3,4,5].map(i => {
+    const filled = i <= Math.round(rating);
+    const color  = filled ? '#e6a817' : '#d1d5db';
+    if (interactive) {
+      return `<button class="star-btn" data-star="${i}" aria-label="${i} star${i>1?'s':''}">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="${color}" stroke-width="1">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+        </svg>
+      </button>`;
+    }
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="${color}" stroke-width="1">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>`;
+  }).join('');
+}
+
+function avgRating(reviews) {
+  if (!reviews.length) return 0;
+  return reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length;
+}
+
+function avatarColor(name) {
+  const colors = ['#1a6644','#124d33','#2d6a9f','#7c3aed','#b45309','#0f766e','#be123c'];
+  let h = 0;
+  for (const c of (name||'G')) h = c.charCodeAt(0) + ((h<<5)-h);
+  return colors[Math.abs(h) % colors.length];
+}
+
+function fmtDate(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function renderRatingBars(reviews) {
+  const counts = [0,0,0,0,0];
+  reviews.forEach(r => { if (r.rating >= 1 && r.rating <= 5) counts[r.rating-1]++; });
+  return [5,4,3,2,1].map(star => {
+    const c = counts[star-1];
+    const pct = reviews.length ? Math.round((c/reviews.length)*100) : 0;
+    return `<div class="rv-bar-row">
+      <span class="rv-bar-label">${star}</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#e6a817" stroke="#e6a817" stroke-width="1" style="flex-shrink:0">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+      <div class="rv-bar-track"><div class="rv-bar-fill" style="width:${pct}%"></div></div>
+      <span class="rv-bar-count">${c}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderReviewCard(r) {
+  const initials = (r.reviewer_name||'G').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const bg = avatarColor(r.reviewer_name);
+  return `<div class="rv-card">
+    <div class="rv-card-top">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <div class="rv-avatar" style="background:${bg}">${esc(initials)}</div>
+        <div class="rv-meta">
+          <div class="rv-name">${esc(r.reviewer_name||'Guest')}</div>
+          <div class="rv-date">${fmtDate(r.created_at)}</div>
+        </div>
+      </div>
+      <div class="rv-stars-row">${starsHTML(r.rating||0,14)}</div>
+    </div>
+    ${r.title ? `<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">${esc(r.title)}</div>` : ''}
+    <p class="rv-body">${esc(r.body||'')}</p>
+    ${r.verified_booking ? `<div class="rv-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Verified booking
+    </div>` : ''}
+  </div>`;
+}
+
+function renderReviewsSection() {
+  const section = document.getElementById('reviews-section');
+  const inner   = document.getElementById('reviews-inner');
+  if (!section || !inner) return;
+  section.style.display = 'block';
+
+  const avg   = avgRating(_reviews);
+  const shown = _reviews.slice(0, _reviewsShown);
+  const hasMore = _reviews.length > _reviewsShown;
+
+  inner.innerHTML = `
+    <div class="rv-header">
+      <div class="rv-header-left">
+        <h2>Guest Reviews</h2>
+        <div class="rv-summary">
+          <span class="rv-score">${avg > 0 ? avg.toFixed(1) : '—'}</span>
+          <div>
+            <div class="rv-stars-row">${starsHTML(avg, 18)}</div>
+            <div class="rv-count">${_reviews.length} review${_reviews.length !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+      </div>
+      <a href="reviews.html?id=${_tourId}" target="_blank"
+         style="font-size:13px;font-weight:600;color:var(--primary);border:1.5px solid var(--primary);padding:8px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        All reviews
+      </a>
+    </div>
+
+    ${_reviews.length > 0 ? `
+    <div class="rv-bars">${renderRatingBars(_reviews)}</div>` : ''}
+
+    <div class="rv-list" id="rv-list">
+      ${shown.length > 0
+        ? shown.map(renderReviewCard).join('')
+        : `<div class="rv-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <p>No reviews yet — be the first to share your experience!</p>
+           </div>`
+      }
+    </div>
+
+    ${hasMore ? `<button class="rv-load-more" id="rv-load-more">
+      Show more reviews (${_reviews.length - _reviewsShown} remaining)
+    </button>` : ''}
+
+    <!-- Write review form -->
+    <div class="rv-form-wrap" id="rv-form-wrap">
+      <h3>Leave a Review</h3>
+      <p>Have you been on this tour? Share your experience with future guests.</p>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-2);margin-bottom:8px;">Your Rating *</div>
+        <div class="star-picker" id="star-picker" role="group" aria-label="Rating">
+          ${starsHTML(0, 28, true)}
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:4px;" id="star-label">Tap to rate</div>
+      </div>
+
+      <div class="rv-ff-row">
+        <div class="rv-ff">
+          <label>Your Name *</label>
+          <input type="text" id="rv-name" placeholder="Full name" autocomplete="name">
+        </div>
+        <div class="rv-ff">
+          <label>Email (private)</label>
+          <input type="email" id="rv-email" placeholder="your@email.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="rv-ff">
+        <label>Review Title</label>
+        <input type="text" id="rv-title" placeholder="e.g. Absolutely stunning!">
+      </div>
+      <div class="rv-ff">
+        <label>Your Review *</label>
+        <textarea id="rv-body" placeholder="Tell future guests what the tour was like, what you enjoyed most, any tips…"></textarea>
+      </div>
+      <button class="btn-review" id="rv-submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Review
+      </button>
+    </div>`;
+
+  // Wire load more
+  document.getElementById('rv-load-more')?.addEventListener('click', () => {
+    _reviewsShown += REVIEWS_PAGE;
+    renderReviewsSection();
+    document.getElementById('rv-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Wire star picker
+  wireStarPicker();
+  // Wire submit
+  document.getElementById('rv-submit')?.addEventListener('click', submitReview);
+}
+
+function wireStarPicker() {
+  const picker = document.getElementById('star-picker');
+  const label  = document.getElementById('star-label');
+  if (!picker) return;
+
+  const labels = ['','Terrible','Poor','Average','Good','Excellent'];
+
+  picker.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => highlightStars(parseInt(btn.dataset.star)));
+    btn.addEventListener('mouseleave', () => highlightStars(_currentRating));
+    btn.addEventListener('click', () => {
+      _currentRating = parseInt(btn.dataset.star);
+      highlightStars(_currentRating);
+      if (label) label.textContent = labels[_currentRating] || 'Tap to rate';
+    });
+  });
+
+  function highlightStars(n) {
+    picker.querySelectorAll('.star-btn svg').forEach((svg, i) => {
+      const filled = i < n;
+      svg.setAttribute('fill', filled ? '#e6a817' : '#d1d5db');
+      svg.setAttribute('stroke', filled ? '#e6a817' : '#d1d5db');
+    });
+  }
+}
+
+async function submitReview() {
+  const name  = document.getElementById('rv-name')?.value.trim();
+  const email = document.getElementById('rv-email')?.value.trim();
+  const title = document.getElementById('rv-title')?.value.trim();
+  const body  = document.getElementById('rv-body')?.value.trim();
+  const btn   = document.getElementById('rv-submit');
+
+  // Validate
+  let ok = true;
+  const mark = (id, bad) => {
+    document.getElementById(id)?.classList.toggle('err', bad);
+    if (bad && ok) { document.getElementById(id)?.focus(); ok = false; }
+  };
+  mark('rv-name', !name || name.length < 2);
+  mark('rv-body', !body || body.length < 10);
+
+  if (!_currentRating) {
+    toast('Please select a star rating', 'warning');
+    document.getElementById('star-picker')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (!ok) { toast('Please fill in required fields', 'warning'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px"></span>Submitting…';
+
+  const rst = () => {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Submit Review';
+  };
+
+  try {
+    const { error } = await supabase.from('reviews').insert([{
+      tour_id:       _tourId,
+      tour_name:     _tourName,
+      reviewer_name: name,
+      reviewer_email: email || null,
+      title:         title || null,
+      body,
+      rating:        _currentRating
+    }]);
+
+    if (error) { toast('Could not submit: ' + error.message, 'error'); rst(); return; }
+
+    toast('Review submitted — thank you!', 'success', 5000);
+    _currentRating = 0;
+
+    // Reload reviews
+    await loadReviews(_tourId);
+    renderReviewsSection();
+
+    // Scroll to reviews list
+    document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) {
+    toast('Something went wrong. Please try again.', 'error');
+    rst();
+  }
+}
+
+async function loadReviews(tourId) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id,tour_id,reviewer_name,title,body,rating,verified_booking,created_at')
+    .eq('tour_id', tourId)
+    .eq('approved', true)
+    .order('created_at', { ascending: false });
+
+  if (!error) {
+    _reviews = data || [];
+  }
+}
+
+// Inject star rating into tour meta row after renderTour
+async function initReviews(tourId, tourName) {
+  _tourId   = tourId;
+  _tourName = tourName;
+  _reviewsShown = REVIEWS_PAGE;
+
+  await loadReviews(tourId);
+
+  // Update meta row with live star rating
+  const avg = avgRating(_reviews);
+  const metaRow = document.querySelector('.tour-meta-row');
+  if (metaRow && _reviews.length > 0) {
+    const chip = document.createElement('div');
+    chip.className = 'meta-chip';
+    chip.innerHTML = `
+      <span class="star-inline">${starsHTML(avg, 14)}</span>
+      <span style="font-weight:600;color:var(--text)">${avg.toFixed(1)}</span>
+      <span style="color:var(--text-3)">(${_reviews.length})</span>`;
+    metaRow.appendChild(chip);
+  }
+
+  renderReviewsSection();
+}
+</script>
+
+<style>
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+</style>
 </body>
 </html>

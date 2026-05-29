@@ -669,26 +669,56 @@ textarea:focus-visible {
                 <div id="addActivitySuccess" class="success-message"></div>
                 
                 <form id="addActivityForm">
-                    <div class="form-group">
-                        <label for="activityName">Activity Name *</label>
-                        <input type="text" id="activityName" required placeholder="e.g., Safari Adventure">
-                    </div>
-                    <div class="form-group">
-                        <label for="activityDesc">Description</label>
-                        <textarea id="activityDesc" placeholder="Describe the activity..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="activityPrice">Price (USD $) — enter amount in US dollars</label>
-                        <input type="number" id="activityPrice" step="0.01" min="0" placeholder="0.00">
-                    </div>
-                    <div class="form-group">
-                        <label for="activityImage">Activity Image *</label>
-                        <input type="file" id="activityImage" accept="image/*" required>
-                        <small style="color: #6c757d; font-size: 12px;">Supported formats: JPG, PNG, GIF (Max 5MB)</small>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                      <div class="form-group" style="grid-column:1/-1">
+                          <label for="activityName">Tour Name *</label>
+                          <input type="text" id="activityName" required placeholder="e.g., Lake Ngosi 2-Day Safari">
+                      </div>
+                      <div class="form-group" style="grid-column:1/-1">
+                          <label for="activityDesc">Description</label>
+                          <textarea id="activityDesc" rows="3" placeholder="Describe the tour experience, what makes it special…"></textarea>
+                      </div>
+                      <div class="form-group">
+                          <label for="activityPrice">Price per person (USD $) *</label>
+                          <input type="number" id="activityPrice" step="0.01" min="0" placeholder="0.00">
+                      </div>
+                      <div class="form-group">
+                          <label for="activityDuration">Duration</label>
+                          <input type="text" id="activityDuration" placeholder="e.g., 2 Days / 1 Night">
+                      </div>
+                      <div class="form-group">
+                          <label for="activityDifficulty">Difficulty Level</label>
+                          <select id="activityDifficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Easy–Moderate" selected>Easy–Moderate</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Moderate–Challenging">Moderate–Challenging</option>
+                            <option value="Challenging">Challenging</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="activityGroupSize">Max Group Size</label>
+                          <input type="text" id="activityGroupSize" placeholder="e.g., Up to 12">
+                      </div>
+                      <div class="form-group" style="grid-column:1/-1">
+                          <label for="activityHighlights">What's Included (one per line)</label>
+                          <textarea id="activityHighlights" rows="4" placeholder="Expert local guides&#10;Park entry fees included&#10;Transport &amp; transfers&#10;Meals as per itinerary"></textarea>
+                          <small style="color:#6c757d;font-size:12px;">Each line becomes a highlight bullet on the tour page</small>
+                      </div>
+                      <div class="form-group" style="grid-column:1/-1">
+                          <label for="activityItinerary">Itinerary (one day per line: Day Title | Description)</label>
+                          <textarea id="activityItinerary" rows="4" placeholder="Arrival &amp; Orientation | Meet your guide and settle in&#10;Crater Lake Hike | Trek to Lake Ngosi via the forest trail&#10;Return Journey | Morning game drive then transfer back"></textarea>
+                          <small style="color:#6c757d;font-size:12px;">Format: <code>Day Title | Day description</code> — each line is one day</small>
+                      </div>
+                      <div class="form-group" style="grid-column:1/-1">
+                          <label for="activityImage">Tour Cover Image *</label>
+                          <input type="file" id="activityImage" accept="image/*" required>
+                          <small style="color:#6c757d;font-size:12px;">JPG, PNG, GIF — Max 5MB</small>
+                      </div>
                     </div>
                     <button type="submit" id="addActivityBtn" class="btn">
                         <span class="loading-spinner" id="addActivitySpinner"></span>
-                        Add Activity
+                        Add Tour
                     </button>
                 </form>
             </div>
@@ -711,7 +741,12 @@ textarea:focus-visible {
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
-                                <th>Price (USD $)</th>
+                                <th>Price (USD)</th>
+                                <th>Duration</th>
+                                <th>Difficulty</th>
+                                <th>Group Size</th>
+                                <th>Included (highlights)</th>
+                                <th>Itinerary</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -1044,37 +1079,76 @@ function renderActivitiesTable() {
     
     activities.forEach(activity => {
         const row = document.createElement("tr");
+        // Parse highlights array
+        const hlArr = Array.isArray(activity.highlights) ? activity.highlights : [];
+        const hlText = hlArr.join('\n');
+        // Parse itinerary array
+        const itArr = Array.isArray(activity.itinerary) ? activity.itinerary : [];
+        const itText = itArr.map(d => `${d.title || ''}|${d.description || ''}`).join('\n');
+
         row.innerHTML = `
             <td>
                 <img src="${activity.image_url || '/placeholder-image.jpg'}" alt="${activity.name}" class="activity-image">
             </td>
             <td>
                 <input type="text" value="${activity.name || ''}" 
-                       data-id="${activity.id}" class="editActivityField" data-field="name">
+                       data-id="${activity.id}" class="editActivityField" data-field="name"
+                       style="min-width:140px;">
             </td>
             <td>
                 <textarea data-id="${activity.id}" class="editActivityField" data-field="description"
-                          style="min-height: 60px; resize: vertical;">${activity.description || ''}</textarea>
+                          style="min-height:60px;resize:vertical;min-width:160px;">${activity.description || ''}</textarea>
             </td>
             <td>
                 <div style="display:flex;align-items:center;gap:4px">
                   <span style="font-weight:600;color:#6b7280;font-size:13px">$</span>
                   <input type="number" value="${activity.price_usd ?? activity.price ?? 0}" 
                          data-id="${activity.id}" class="editActivityField" data-field="price_usd"
-                         step="0.01" min="0" placeholder="0.00" style="max-width:100px">
+                         step="0.01" min="0" placeholder="0.00" style="max-width:90px">
                 </div>
             </td>
             <td>
-                <button class="updateImageBtn btn btn-info" data-id="${activity.id}" style="margin-bottom: 5px; padding: 5px 10px; font-size: 12px;">
+                <input type="text" value="${activity.duration || ''}"
+                       data-id="${activity.id}" class="editActivityField" data-field="duration"
+                       placeholder="e.g. 2 Days" style="min-width:100px;">
+            </td>
+            <td>
+                <select data-id="${activity.id}" class="editActivityField" data-field="difficulty" style="min-width:120px;">
+                  <option value="Easy" ${activity.difficulty==='Easy'?'selected':''}>Easy</option>
+                  <option value="Easy–Moderate" ${(activity.difficulty==='Easy–Moderate'||!activity.difficulty)?'selected':''}>Easy–Moderate</option>
+                  <option value="Moderate" ${activity.difficulty==='Moderate'?'selected':''}>Moderate</option>
+                  <option value="Moderate–Challenging" ${activity.difficulty==='Moderate–Challenging'?'selected':''}>Moderate–Challenging</option>
+                  <option value="Challenging" ${activity.difficulty==='Challenging'?'selected':''}>Challenging</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" value="${activity.group_size || ''}"
+                       data-id="${activity.id}" class="editActivityField" data-field="group_size"
+                       placeholder="e.g. Up to 12" style="min-width:100px;">
+            </td>
+            <td>
+                <textarea data-id="${activity.id}" class="editActivityField" data-field="highlights"
+                          data-type="highlights"
+                          placeholder="One item per line" style="min-height:72px;resize:vertical;min-width:160px;font-size:12px;">${hlText}</textarea>
+                <small style="color:#6b7280;font-size:10px;display:block;margin-top:2px;">One item per line</small>
+            </td>
+            <td>
+                <textarea data-id="${activity.id}" class="editActivityField" data-field="itinerary"
+                          data-type="itinerary"
+                          placeholder="Day Title|Day description" style="min-height:72px;resize:vertical;min-width:200px;font-size:12px;">${itText}</textarea>
+                <small style="color:#6b7280;font-size:10px;display:block;margin-top:2px;">Format: Title|Description (one day per line)</small>
+            </td>
+            <td style="white-space:nowrap;">
+                <button class="updateImageBtn btn btn-info" data-id="${activity.id}" style="margin-bottom:5px;padding:5px 10px;font-size:12px;">
                     Update Image
                 </button>
-                <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display: none;">
+                <input type="file" id="imageFile_${activity.id}" accept="image/*" style="display:none;">
                 <br>
-                <a href="tour.html?id=${activity.id}" target="_blank" class="btn btn-success" style="margin-bottom: 5px; padding: 5px 10px; font-size: 12px; display:inline-block; text-decoration:none;">
+                <a href="tour.html?id=${activity.id}" target="_blank" class="btn btn-success" style="margin-bottom:5px;padding:5px 10px;font-size:12px;display:inline-block;text-decoration:none;">
                     View Tour ↗
                 </a>
                 <br>
-                <button class="deleteActivityBtn btn btn-danger" data-id="${activity.id}" style="padding: 5px 10px; font-size: 12px;">
+                <button class="deleteActivityBtn btn btn-danger" data-id="${activity.id}" style="padding:5px 10px;font-size:12px;">
                     Delete
                 </button>
             </td>
@@ -1221,6 +1295,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log("Form data:", { name, description, price, file: file ? file.name : 'none' });
 
+            // Image is required only if no activities yet; allow no-image in future
+            // (file validation below already handles this)
+
             // Validation
             if (!name) {
                 showError("addActivityError", "Activity name is required.");
@@ -1277,6 +1354,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const publicUrl = urlData.publicUrl;
             console.log("Public URL:", publicUrl);
 
+            // Collect extra fields
+            const duration   = document.getElementById("activityDuration").value.trim() || null;
+            const difficulty = document.getElementById("activityDifficulty").value || null;
+            const group_size = document.getElementById("activityGroupSize").value.trim() || null;
+
+            // Parse highlights (one per line → array)
+            const hlRaw = document.getElementById("activityHighlights").value.trim();
+            const highlights = hlRaw
+                ? hlRaw.split('\n').map(s => s.trim()).filter(Boolean)
+                : null;
+
+            // Parse itinerary (Title|Description per line → array of objects)
+            const itRaw = document.getElementById("activityItinerary").value.trim();
+            const itinerary = itRaw
+                ? itRaw.split('\n').map(line => {
+                    const [title, ...rest] = line.split('|');
+                    return { title: title.trim(), description: rest.join('|').trim() };
+                  }).filter(d => d.title)
+                : null;
+
             // Save activity with image_url
             console.log("Saving activity to database...");
             const { data: activityData, error: dbError } = await supabase
@@ -1284,8 +1381,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 .insert([{ 
                     name, 
                     description, 
-                    price, 
-                    image_url: publicUrl 
+                    price,
+                    price_usd: price,
+                    image_url: publicUrl,
+                    duration,
+                    difficulty,
+                    group_size,
+                    highlights,
+                    itinerary
                 }])
                 .select()
                 .single();
@@ -1362,17 +1465,35 @@ document.addEventListener("change", async e => {
     if (e.target.classList.contains("editActivityField")) {
         const id = e.target.dataset.id;
         const field = e.target.dataset.field;
+        const dtype = e.target.dataset.type;
         let value = e.target.value;
         
-        // Convert price to number
-        if (field === "price") {
+        // Convert price fields to number
+        if (field === "price" || field === "price_usd") {
             value = parseFloat(value) || 0;
+        }
+
+        // Convert highlights textarea → JSONB array
+        if (dtype === "highlights") {
+            value = value.split('\n').map(s => s.trim()).filter(Boolean);
+        }
+
+        // Convert itinerary textarea → JSONB array of {title, description}
+        if (dtype === "itinerary") {
+            value = value.split('\n').map(line => {
+                const [title, ...rest] = line.split('|');
+                return { title: title.trim(), description: rest.join('|').trim() };
+            }).filter(d => d.title);
         }
         
         try {
+            const updateObj = { [field]: value };
+            // Keep price and price_usd in sync
+            if (field === "price_usd") updateObj.price = value;
+
             const { error } = await supabase
                 .from("activities")
-                .update({ [field]: value })
+                .update(updateObj)
                 .eq("id", id);
                 
             if (error) {

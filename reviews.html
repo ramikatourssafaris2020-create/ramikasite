@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews — Ramika Safaris</title>
+  <meta name="description" content="Read genuine guest reviews for all Ramika Safaris tours. See star ratings, verified bookings, and share your own experience.">
+  <link rel="icon" href="/logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --primary:    #1a6644;
+  --primary-dk: #124d33;
+  --primary-lt: #eef7f2;
+  --accent:     #e6a817;
+  --accent-lt:  #fdf6e3;
+  --danger:     #c0392b;
+  --danger-lt:  #fdf1f0;
+  --text:       #111827;
+  --text-2:     #374151;
+  --text-3:     #6b7280;
+  --border:     #e5e7eb;
+  --surface:    #fff;
+  --bg:         #f9fafb;
+  --bg-alt:     #f3f4f6;
+  --nav-h:      68px;
+  --r:          12px;
+  --r-sm:       8px;
+  --r-lg:       18px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+img  { display: block; max-width: 100%; }
+a    { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+
+.container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+@media (min-width: 768px) { .container { padding: 0 32px; } }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; z-index: 900;
+  background: var(--surface); box-shadow: 0 1px 0 var(--border);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.brand-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
+.brand-name em { font-style: italic; font-weight: 500; }
+.nav-links { display: flex; gap: 16px; align-items: center; }
+.nav-links a { font-size: 13px; font-weight: 500; color: var(--text-2); transition: color .15s; }
+.nav-links a:hover { color: var(--primary); }
+.nav-cta { padding: 8px 16px; background: var(--primary); color: #fff !important; border-radius: var(--r-sm); font-size: 13px; font-weight: 600; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  margin-top: var(--nav-h);
+  background: var(--primary);
+  padding: 48px 0 0;
+  position: relative; overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.ph-inner { position: relative; z-index: 1; }
+.ph-eyebrow { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.6); margin-bottom: 8px; }
+.ph-title { font-family: 'Playfair Display', serif; font-size: clamp(26px,5vw,42px); font-weight: 600; color: #fff; margin-bottom: 10px; }
+.ph-sub { font-size: 15px; color: rgba(255,255,255,.75); max-width: 480px; line-height: 1.6; margin-bottom: 32px; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.6); padding-bottom: 24px; }
+.breadcrumb a { color: rgba(255,255,255,.75); }
+.breadcrumb a:hover { color: #fff; }
+
+/* ── GLOBAL STATS BAR ── */
+.stats-bar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+.stats-inner { display: flex; gap: 32px; flex-wrap: wrap; align-items: center; }
+.stat-item { text-align: center; }
+.stat-num { font-size: 24px; font-weight: 700; color: var(--text); }
+.stat-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-top: 2px; }
+.global-stars { display: flex; align-items: center; gap: 6px; }
+.global-score { font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; }
+.global-stars-row { display: flex; gap: 3px; }
+
+/* ── TOUR FILTER TABS ── */
+.tour-tabs {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: var(--nav-h); z-index: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.tabs-inner {
+  display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+  padding: 0;
+}
+.tabs-inner::-webkit-scrollbar { display: none; }
+.tab-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 14px 20px; font-size: 13px; font-weight: 500;
+  color: var(--text-3); border: none; background: none;
+  border-bottom: 3px solid transparent; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: color .15s, border-color .15s;
+}
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.tab-count {
+  background: var(--bg-alt); color: var(--text-3);
+  font-size: 11px; font-weight: 700; padding: 2px 7px;
+  border-radius: 99px; min-width: 20px; text-align: center;
+}
+.tab-btn.active .tab-count { background: var(--primary-lt); color: var(--primary); }
+
+/* ── MAIN LAYOUT ── */
+.reviews-main { padding: 32px 0 64px; }
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media (min-width: 860px) {
+  .reviews-layout { grid-template-columns: 260px 1fr; align-items: start; }
+}
+
+/* ── SIDEBAR: Write review + sort ── */
+.reviews-sidebar {}
+.write-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; margin-bottom: 20px;
+}
+.wc-head {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dk) 100%);
+  padding: 20px;
+}
+.wc-head h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; margin-bottom: 4px; }
+.wc-head p  { font-size: 12px; color: rgba(255,255,255,.7); line-height: 1.5; }
+.wc-body { padding: 18px 20px; }
+
+/* Sort / filter controls */
+.sort-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px;
+}
+.sort-card h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-bottom: 12px; }
+.sort-btn {
+  display: block; width: 100%; text-align: left; padding: 8px 10px;
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  background: none; border: none; border-radius: var(--r-sm); cursor: pointer;
+  transition: all .15s;
+}
+.sort-btn:hover { background: var(--bg-alt); color: var(--primary); }
+.sort-btn.active { background: var(--primary-lt); color: var(--primary); font-weight: 600; }
+
+/* ── REVIEW LIST AREA ── */
+.rv-list-area {}
+.rvl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+}
+.rvl-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--text); }
+.rvl-count { font-size: 13px; color: var(--text-3); }
+
+/* Rating bars (sidebar in review page) */
+.rv-bars { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
+.rv-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+.rv-bar-label { width: 10px; text-align: right; flex-shrink: 0; }
+.rv-bar-track { flex: 1; height: 7px; background: var(--bg-alt); border-radius: 3px; overflow: hidden; }
+.rv-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .6s; }
+.rv-bar-count { width: 22px; text-align: left; flex-shrink: 0; font-weight: 600; color: var(--text-2); }
+
+/* Review card */
+.rv-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px;
+  margin-bottom: 14px; transition: box-shadow .2s;
+}
+.rv-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+.rv-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.rv-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; flex-shrink: 0; color: #fff;
+  font-family: 'Playfair Display', serif;
+}
+.rv-meta { flex: 1; }
+.rv-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.rv-sub  { font-size: 12px; color: var(--text-3); margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; }
+.rv-tour-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--primary);
+  background: var(--primary-lt); padding: 2px 8px; border-radius: 99px;
+}
+.rv-stars-row { display: flex; gap: 2px; flex-shrink: 0; }
+.rv-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.rv-body  { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+.rv-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  background: var(--primary-lt); color: var(--primary-dk); border-radius: 99px; margin-top: 10px;
+}
+
+/* Star picker */
+.star-picker { display: flex; gap: 5px; margin-bottom: 12px; }
+.star-btn { background: none; border: none; padding: 0; cursor: pointer; transition: transform .1s; }
+.star-btn:hover { transform: scale(1.2); }
+
+/* Form fields */
+.rv-ff { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.rv-ff label { font-size: 11px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .04em; }
+.rv-ff input, .rv-ff select, .rv-ff textarea {
+  width: 100%; padding: 9px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  font-size: 13px; color: var(--text); background: var(--surface);
+  font-family: inherit; outline: none; appearance: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.rv-ff input:focus, .rv-ff select:focus, .rv-ff textarea:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,102,68,.1);
+}
+.rv-ff input.err, .rv-ff textarea.err { border-color: var(--danger); }
+.rv-ff textarea { resize: vertical; min-height: 80px; }
+.btn-review {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 11px; background: var(--primary); color: #fff;
+  border: none; border-radius: var(--r-sm); font-size: 13px; font-weight: 600;
+  transition: background .15s;
+}
+.btn-review:hover { background: var(--primary-dk); }
+.btn-review:disabled { opacity: .65; cursor: not-allowed; }
+
+/* Empty state */
+.rv-empty { text-align: center; padding: 60px 20px; color: var(--text-3); }
+.rv-empty svg { margin: 0 auto 14px; color: var(--border); }
+.rv-empty h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text); margin-bottom: 6px; }
+
+/* Skeleton */
+.sk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 14px; }
+.sk-line { height: 13px; border-radius: 4px; background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; margin-bottom: 10px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* Toast */
+#toast-root { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; }
+.toast { padding:10px 18px; border-radius:var(--r-sm); font-size:13px; font-weight:500; max-width:360px; text-align:center; opacity:0; transform:translateY(8px); transition:opacity .25s,transform .25s; pointer-events:all; box-shadow:0 4px 12px rgba(0,0,0,.12); }
+.toast.show { opacity:1; transform:translateY(0); }
+.toast-success { background:#f0fdf4; border:1px solid #86efac; color:#166534; }
+.toast-error   { background:var(--danger-lt); border:1px solid #fca5a5; color:var(--danger); }
+.toast-warning { background:var(--accent-lt); border:1px solid #fde68a; color:#7a4f00; }
+
+/* Footer */
+.footer { background: var(--text); padding: 28px 0; }
+.footer-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; }
+.footer .brand-name { color:rgba(255,255,255,.9); }
+.footer-copy { font-size:13px; color:rgba(255,255,255,.45); }
+.footer-links { display:flex; gap:18px; }
+.footer-links a { font-size:13px; color:rgba(255,255,255,.55); }
+.footer-links a:hover { color:#fff; }
+
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <img src="logo.png" alt="Ramika" style="width:32px;height:32px;">
+    <span class="brand-name">Ramika <em>Safaris</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="tours.html">Tours</a>
+    <a href="contact.html">Contact</a>
+    <a href="index.html#book" class="nav-cta">Book Now</a>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="container ph-inner">
+    <p class="ph-eyebrow">Ramika Safaris · Tanzania</p>
+    <h1 class="ph-title">Guest Reviews</h1>
+    <p class="ph-sub">Real experiences from real travellers. See what our guests say about their safari adventures.</p>
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Reviews</span>
+    </div>
+  </div>
+</div>
+
+<!-- Global Stats Bar -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-inner" id="stats-bar-inner">
+      <div style="display:flex;gap:6px;align-items:center;">
+        <div class="sk-line" style="width:80px;height:36px;border-radius:6px;"></div>
+        <div class="sk-line" style="width:120px;height:14px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tour Filter Tabs -->
+<div class="tour-tabs">
+  <div class="container">
+    <div class="tabs-inner" id="tour-tabs">
+      <button class="tab-btn active" data-tour-id="all">
+        All Tours <span class="tab-count" id="tab-count-all">—</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="reviews-main">
+  <div class="container">
+    <div class="reviews-layout">
+
+      <!-- Sidebar -->
+      <div class="reviews-sidebar">
+        <!-- Write Review Card -->
+        <div class="write-card">
+          <div class="wc-head">
+            <h3>Write a Review</h3>
+            <p>Share your safari experience with future guests.</p>
+          </div>
+          <div class="wc-body">
+            <div class="rv-ff">
+              <label>Tour *</label>
+              <select id="rv-tour-select">
+                <option value="">Loading tours…</option>
+              </select>
+            </div>
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-2);margin-bottom:8px;">Your Rating *</div>
+              <div class="star-picker" id="star-picker"></div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:3px;" id="star-label">Tap to rate</div>
+            </div>
+            <div class="rv-ff">
+              <label>Your Name *</label>
+              <input type="text" id="rv-name" placeholder="Full name" autocomplete="name">
+            </div>
+            <div class="rv-ff">
+              <label>Email (private)</label>
+              <input type="email" id="rv-email" placeholder="you@email.com" autocomplete="email">
+            </div>
+            <div class="rv-ff">
+              <label>Title</label>
+              <input type="text" id="rv-title" placeholder="e.g. Breathtaking experience!">
+            </div>
+            <div class="rv-ff">
+              <label>Your Review *</label>
+              <textarea id="rv-body" placeholder="Describe your experience, what you loved, any tips…"></textarea>
+            </div>
+            <button class="btn-review" id="rv-submit">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Submit Review
+            </button>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="sort-card">
+          <h4>Sort By</h4>
+          <button class="sort-btn active" data-sort="newest">Newest first</button>
+          <button class="sort-btn" data-sort="highest">Highest rated</button>
+          <button class="sort-btn" data-sort="lowest">Lowest rated</button>
+        </div>
+
+        <!-- Rating breakdown (filled by JS) -->
+        <div id="sidebar-bars" style="margin-top:16px;"></div>
+      </div>
+
+      <!-- Review List -->
+      <div class="rv-list-area">
+        <div class="rvl-header">
+          <div>
+            <h2 class="rvl-title" id="rvl-title">All Reviews</h2>
+            <p class="rvl-count" id="rvl-count">Loading…</p>
+          </div>
+        </div>
+        <div id="rv-list">
+          <!-- Skeletons -->
+          ${[1,2,3].map(() => `
+          <div class="sk-card">
+            <div style="display:flex;gap:12px;margin-bottom:12px;">
+              <div class="sk-line" style="width:42px;height:42px;border-radius:50%;flex-shrink:0;margin-bottom:0;"></div>
+              <div style="flex:1;"><div class="sk-line" style="width:50%;"></div><div class="sk-line" style="width:30%;"></div></div>
+            </div>
+            <div class="sk-line" style="width:80%;"></div>
+            <div class="sk-line" style="width:95%;"></div>
+            <div class="sk-line" style="width:60%;"></div>
+          </div>`).join('')}
+        </div>
+        <button class="rv-load-more" id="rv-load-more" style="display:none;width:100%;padding:11px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--text-2);font-size:13px;font-weight:500;cursor:pointer;margin-top:4px;">
+          Show more
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="nav-brand" style="display:flex;align-items:center;gap:10px;">
+      <img src="logo.png" alt="Ramika" style="width:30px;height:30px;">
+      <span class="brand-name">Ramika <em>Safaris</em></span>
+    </div>
+    <p class="footer-copy">&copy; 2025 Ramika Safaris · Njombe, Tanzania</p>
+    <div class="footer-links">
+      <a href="tours.html">Tours</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-root"></div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SB_URL = "https://tmqxjnegtiuircaxqkof.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXhqbmVndGl1aXJjYXhxa29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTIwNTEsImV4cCI6MjA3Mjg4ODA1MX0.Mx-7VrVhR5kxiKwpuBVHyKy1LO278Z3EbcAqWLXX8Yk";
+const supabase = createClient(SB_URL, SB_KEY);
+
+const esc  = s => (s||'').replace(/[&<>'"]/g, t=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]||t));
+const $    = id => document.getElementById(id);
+const PAGE = 8;
+
+let _allReviews  = [];  // all approved reviews
+let _tours       = [];  // all tours
+let _activeTour  = 'all'; // 'all' or tour id (number)
+let _sort        = 'newest';
+let _shown       = PAGE;
+let _rating      = 0;   // star picker value
+
+function toast(msg, type='info', dur=4000) {
+  const r = $('toast-root'), el = document.createElement('div');
+  el.className = `toast toast-${type}`; el.textContent = msg;
+  r.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, dur);
+}
+
+// ── Stars helpers ─────────────────────────────────────────────────────────────
+function starsHTML(rating, size=15) {
+  return [1,2,3,4,5].map(i => {
+    const c = i <= Math.round(rating) ? '#e6a817' : '#d1d5db';
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${c}" stroke="${c}" stroke-width="1">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>`;
+  }).join('');
+}
+
+function starPickerHTML(size=26) {
+  return [1,2,3,4,5].map(i => `
+    <button class="star-btn" data-star="${i}" aria-label="${i} star${i>1?'s':''}">
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#d1d5db" stroke="#d1d5db" stroke-width="1">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+    </button>`).join('');
+}
+
+function avgOf(reviews) {
+  if (!reviews.length) return 0;
+  return reviews.reduce((s,r) => s+(r.rating||0), 0) / reviews.length;
+}
+
+function avatarColor(name) {
+  const colors = ['#1a6644','#124d33','#2d6a9f','#7c3aed','#b45309','#0f766e','#be123c'];
+  let h=0; for(const c of (name||'G')) h=c.charCodeAt(0)+((h<<5)-h);
+  return colors[Math.abs(h)%colors.length];
+}
+
+function fmtDate(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ── Load data ─────────────────────────────────────────────────────────────────
+async function init() {
+  const [revRes, tourRes] = await Promise.all([
+    supabase.from('reviews').select('*').eq('approved', true).order('created_at', { ascending: false }),
+    supabase.from('activities').select('id,name').order('created_at', { ascending: false })
+  ]);
+
+  _allReviews = revRes.data || [];
+  _tours      = tourRes.data || [];
+
+  // Check URL param ?id= to pre-select a tour
+  const params = new URLSearchParams(window.location.search);
+  const preId  = params.get('id');
+  if (preId) _activeTour = parseInt(preId);
+
+  buildTabs();
+  buildTourSelect();
+  buildStarPicker();
+  renderStatsBar();
+  renderAll();
+}
+
+// ── Build tour tabs ───────────────────────────────────────────────────────────
+function buildTabs() {
+  const tabs = $('tour-tabs');
+
+  // Update "All" count
+  $('tab-count-all').textContent = _allReviews.length;
+
+  _tours.forEach(t => {
+    const count = _allReviews.filter(r => r.tour_id === t.id).length;
+    const btn   = document.createElement('button');
+    btn.className = `tab-btn${_activeTour === t.id ? ' active' : ''}`;
+    btn.dataset.tourId = t.id;
+    btn.innerHTML = `${esc(t.name)} <span class="tab-count">${count}</span>`;
+    tabs.appendChild(btn);
+  });
+
+  // If pre-selected, scroll tab into view
+  if (_activeTour !== 'all') {
+    const activeBtn = tabs.querySelector(`[data-tour-id="${_activeTour}"]`);
+    activeBtn?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    // Remove active from "All"
+    tabs.querySelector('[data-tour-id="all"]')?.classList.remove('active');
+    activeBtn?.classList.add('active');
+  }
+
+  tabs.addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _activeTour = btn.dataset.tourId === 'all' ? 'all' : parseInt(btn.dataset.tourId);
+    _shown = PAGE;
+    renderAll();
+  });
+}
+
+// ── Build tour select (form) ──────────────────────────────────────────────────
+function buildTourSelect() {
+  const sel = $('rv-tour-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Choose a tour…</option>' +
+    _tours.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+
+  // Pre-fill if URL has ?id=
+  const params = new URLSearchParams(window.location.search);
+  const preId  = params.get('id');
+  if (preId) sel.value = preId;
+}
+
+// ── Star picker ───────────────────────────────────────────────────────────────
+function buildStarPicker() {
+  const picker = $('star-picker');
+  const label  = $('star-label');
+  if (!picker) return;
+  picker.innerHTML = starPickerHTML();
+
+  const labels = ['','Terrible','Poor','Average','Good','Excellent'];
+  const svgs   = picker.querySelectorAll('.star-btn svg');
+
+  function highlight(n) {
+    svgs.forEach((svg, i) => {
+      const c = i < n ? '#e6a817' : '#d1d5db';
+      svg.setAttribute('fill', c); svg.setAttribute('stroke', c);
+    });
+  }
+
+  picker.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => highlight(parseInt(btn.dataset.star)));
+    btn.addEventListener('mouseleave', () => highlight(_rating));
+    btn.addEventListener('click', () => {
+      _rating = parseInt(btn.dataset.star);
+      highlight(_rating);
+      if (label) label.textContent = labels[_rating] || 'Tap to rate';
+    });
+  });
+}
+
+// ── Global stats bar ─────────────────────────────────────────────────────────
+function renderStatsBar() {
+  const el  = $('stats-bar-inner');
+  if (!el) return;
+  const avg = avgOf(_allReviews);
+  el.innerHTML = `
+    <div class="global-stars">
+      <span class="global-score">${avg > 0 ? avg.toFixed(1) : '—'}</span>
+      <div>
+        <div class="global-stars-row">${starsHTML(avg, 20)}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:3px;">Overall rating</div>
+      </div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${_allReviews.length}</div>
+      <div class="stat-lbl">Total Reviews</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${_tours.length}</div>
+      <div class="stat-lbl">Tours reviewed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${_allReviews.filter(r=>r.verified_booking).length}</div>
+      <div class="stat-lbl">Verified bookings</div>
+    </div>`;
+}
+
+// ── Rating breakdown bars ─────────────────────────────────────────────────────
+function renderBars(reviews) {
+  const el = $('sidebar-bars');
+  if (!el || !reviews.length) { if(el) el.innerHTML=''; return; }
+  const counts = [0,0,0,0,0];
+  reviews.forEach(r => { if(r.rating>=1&&r.rating<=5) counts[r.rating-1]++; });
+  el.innerHTML = `<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:10px;">Rating Breakdown</div>
+    <div class="rv-bars">
+    ${[5,4,3,2,1].map(star => {
+      const c   = counts[star-1];
+      const pct = Math.round((c/reviews.length)*100);
+      return `<div class="rv-bar-row">
+        <span class="rv-bar-label">${star}</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="#e6a817" stroke="#e6a817" stroke-width="1" style="flex-shrink:0"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <div class="rv-bar-track"><div class="rv-bar-fill" style="width:${pct}%"></div></div>
+        <span class="rv-bar-count">${c}</span>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+// ── Render reviews list ───────────────────────────────────────────────────────
+function renderAll() {
+  let reviews = _activeTour === 'all'
+    ? [..._allReviews]
+    : _allReviews.filter(r => r.tour_id === _activeTour);
+
+  // Sort
+  if (_sort === 'newest')  reviews.sort((a,b) => new Date(b.created_at)-new Date(a.created_at));
+  if (_sort === 'highest') reviews.sort((a,b) => (b.rating||0)-(a.rating||0));
+  if (_sort === 'lowest')  reviews.sort((a,b) => (a.rating||0)-(b.rating||0));
+
+  const tourName = _activeTour === 'all' ? 'All Reviews'
+    : (_tours.find(t=>t.id===_activeTour)?.name || 'Tour Reviews');
+
+  $('rvl-title').textContent = tourName;
+  $('rvl-count').textContent = `${reviews.length} review${reviews.length!==1?'s':''}`;
+
+  renderBars(reviews);
+
+  const list = $('rv-list');
+  const shown = reviews.slice(0, _shown);
+
+  if (shown.length === 0) {
+    list.innerHTML = `<div class="rv-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <h3>No reviews yet</h3>
+      <p>Be the first to review this tour!</p>
+    </div>`;
+  } else {
+    list.innerHTML = shown.map(r => {
+      const tour = _tours.find(t => t.id === r.tour_id);
+      const initials = (r.reviewer_name||'G').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const bg = avatarColor(r.reviewer_name);
+      return `<div class="rv-card">
+        <div class="rv-card-top">
+          <div style="display:flex;align-items:center;gap:10px;flex:1">
+            <div class="rv-avatar" style="background:${bg}">${esc(initials)}</div>
+            <div class="rv-meta">
+              <div class="rv-name">${esc(r.reviewer_name||'Guest')}</div>
+              <div class="rv-sub">
+                <span>${fmtDate(r.created_at)}</span>
+                ${tour && _activeTour === 'all' ? `<a href="tour.html?id=${tour.id}" class="rv-tour-tag">${esc(tour.name)}</a>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="rv-stars-row">${starsHTML(r.rating||0, 15)}</div>
+        </div>
+        ${r.title ? `<div class="rv-title">${esc(r.title)}</div>` : ''}
+        <p class="rv-body">${esc(r.body||'')}</p>
+        ${r.verified_booking ? `<div class="rv-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Verified booking
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  const loadMoreBtn = $('rv-load-more');
+  if (reviews.length > _shown) {
+    loadMoreBtn.style.display = 'block';
+    loadMoreBtn.textContent = `Show more reviews (${reviews.length - _shown} remaining)`;
+  } else {
+    loadMoreBtn.style.display = 'none';
+  }
+}
+
+// ── Submit review ─────────────────────────────────────────────────────────────
+async function submitReview() {
+  const tourId = $('rv-tour-select')?.value;
+  const name   = $('rv-name')?.value.trim();
+  const email  = $('rv-email')?.value.trim();
+  const title  = $('rv-title')?.value.trim();
+  const body   = $('rv-body')?.value.trim();
+  const btn    = $('rv-submit');
+
+  // Validate
+  let ok = true;
+  const mark = (id, bad) => { $(`rv-${id}`)?.classList.toggle('err', bad); if(bad&&ok){$(`rv-${id}`)?.focus();ok=false;} };
+
+  if (!tourId) { toast('Please select a tour', 'warning'); $('rv-tour-select')?.focus(); return; }
+  if (!_rating) { toast('Please select a star rating', 'warning'); $('star-picker')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  mark('name',  !name || name.length < 2);
+  mark('body',  !body || body.length < 10);
+  if (!ok) { toast('Please fill in the required fields', 'warning'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = `<span style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px"></span>Submitting…`;
+
+  const rst = () => {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Submit Review`;
+  };
+
+  const tour = _tours.find(t => t.id == tourId);
+
+  try {
+    const { error } = await supabase.from('reviews').insert([{
+      tour_id:        parseInt(tourId),
+      tour_name:      tour?.name || '',
+      reviewer_name:  name,
+      reviewer_email: email || null,
+      title:          title || null,
+      body,
+      rating:         _rating
+    }]);
+
+    if (error) { toast('Could not submit: ' + error.message, 'error'); rst(); return; }
+
+    toast('Review submitted! It will appear once approved. Thank you 🙏', 'success', 6000);
+
+    // Reset form
+    $('rv-tour-select').value = '';
+    $('rv-name').value = '';
+    $('rv-email').value = '';
+    $('rv-title').value = '';
+    $('rv-body').value = '';
+    _rating = 0;
+    $('star-picker').querySelectorAll('svg').forEach(svg => {
+      svg.setAttribute('fill','#d1d5db'); svg.setAttribute('stroke','#d1d5db');
+    });
+    $('star-label').textContent = 'Tap to rate';
+
+    rst();
+  } catch(e) {
+    toast('Something went wrong. Please try again.', 'error');
+    rst();
+  }
+}
+
+// ── Wire controls ─────────────────────────────────────────────────────────────
+$('rv-submit').addEventListener('click', submitReview);
+
+$('rv-load-more').addEventListener('click', () => {
+  _shown += PAGE;
+  renderAll();
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _sort  = btn.dataset.sort;
+    _shown = PAGE;
+    renderAll();
+  });
+});
+
+init();
+</script>
+</body>
+</html>

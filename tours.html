@@ -410,7 +410,7 @@ async function loadTours() {
   try {
     const { data, error } = await supabase
       .from('activities')
-      .select('id,name,price,price_usd,image_url,description,duration,group_size,difficulty,created_at')
+      .select('id,name,price,price_usd,image_url,description,duration,group_size,difficulty,highlights,created_at')
       .order('created_at', { ascending: false });
 
     if (error) { toast('Could not load tours — please refresh.', 'error'); return; }
@@ -485,6 +485,7 @@ function renderTours() {
             Southern Highlands, TZ
           </span>
           ${dur ? `<span class="tc-dur"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${esc(dur)}</span>` : ''}
+          ${t.difficulty ? `<span class="tc-dur" style="color:var(--text-3);">${esc(t.difficulty)}</span>` : ''}
         </div>
         <h3 class="tc-title">${esc(t.name)}</h3>
         <p class="tc-desc">${esc(t.description || 'A spectacular safari experience in Tanzania\'s Southern Highlands with expert local guides.')}</p>
@@ -494,6 +495,7 @@ function renderTours() {
               ? `<span class="tc-from">From</span><span class="tc-price">${priceUSD}<span style="font-size:11px;font-weight:500;color:var(--text-3)"> / person</span></span>`
               : `<span class="tc-price-contact">Contact for pricing</span>`
             }
+            ${t.group_size ? `<span style="display:block;font-size:11px;color:var(--text-3);margin-top:2px;">👥 ${esc(t.group_size)}</span>` : ''}
           </div>
           <div class="tc-btns">
             <a href="tour.html?id=${t.id}" class="btn-card-ghost">Details</a>
